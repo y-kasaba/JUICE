@@ -111,6 +111,29 @@ def _get_frequencies(n_freq, samp, sample_rate):
     return freq, f_step, f_width
 
 #---------------------------------------------------------------------
+# power label
+def power_label(cal_mode, hz_mode):
+    if hz_mode == 0:
+        if cal_mode == 0:
+            str = 'Power [RAW]'
+        elif cal_mode == 1:
+            str = 'Power [dBm@AD]'
+        elif cal_mode == 2:
+            str = 'Power [V@ADC]'
+        elif cal_mode == 2:
+            str = 'Power [V^2@ADC]'
+    else:
+        if cal_mode == 0:
+            str = 'Power [RAW/Hz]'
+        elif cal_mode == 1:
+            str = 'Power [dBm@AD/Hz]'
+        elif cal_mode == 2:
+            str = 'Power [V@ADC/Hz]'
+        elif cal_mode == 2:
+            str = 'Power [V^2@ADC/Hz]'
+    return str
+
+#---------------------------------------------------------------------
 def juice_getdata_hf_sid02(cdf):
 
     data = struct()
@@ -158,7 +181,7 @@ def juice_getdata_hf_sid02(cdf):
     
     return data
 
-def juice_getspec_hf_sid02(data, mode):
+def juice_getspec_hf_sid02(data, mode, hz_mode):
 
     # INPUT
     Eu_i_1d = np.ravel(data.Eu_i)
@@ -182,7 +205,6 @@ def juice_getspec_hf_sid02(data, mode):
     index_1d = np.where(sweep_start_1d)
     index = np.where(data.sweep_start == 1)
     index_n = len(index_1d[0])
-    # print(index_1d)
 
     # N_samp detection + Error packet rejection
     index_n_tmp = 0
@@ -207,9 +229,6 @@ def juice_getspec_hf_sid02(data, mode):
         decimation = data.decimation[index[0][i]]
         sample_rate = _sample_rate(decimation)  # Hz
         dt = 1.0 / (296e+3 / 2**decimation)
-        # ###TMP###
-        # print("decimation:", decimation, sample_rate, dt)
-        # ###TMP###
 
         # number of sweep step (fixed for ver.1 SW SID2)
         n_step = data.N_step[index[0][i]]
@@ -219,14 +238,13 @@ def juice_getspec_hf_sid02(data, mode):
         n_samp = np.int16(n_len / n_step)
 
         # get_frequency
-        frequency_1d, f_step, f_width = _get_frequencies(n_step, n_samp, sample_rate)
+        frequency_1d, f_step_1d, f_width_1d = _get_frequencies(n_step, n_samp, sample_rate)
 
         # data length
         index_len = index_1d[0][i+1]-index_1d[0][i]
         if index_len == n_step * n_samp:
             # epoch
             epoch.append(data.epoch[index[0][i]])
-            # print("[", i, index_n0, epoch[i], "] length:", index_len, "==", n_samp, "*", n_step)
             index_n0 = index_n0 + 1
 
             # data cut
@@ -255,20 +273,28 @@ def juice_getspec_hf_sid02(data, mode):
                 Ev_power.extend(np.mean(Ev_i_array**2 + Ev_q_array**2, axis=1))
                 Ew_power.extend(np.mean(Ew_i_array**2 + Ew_q_array**2, axis=1))
                 """
-                # high resolution power spectra
                 for ii in range(n_step):
+                    freq0 = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array[ii][:]
+                    df = freq0[np.int16(n_samp/2-n_samp/8)]-freq0[np.int16(n_samp/2+n_samp/8)]
+                    
                     s = np.fft.fft(Eu_i_array[ii][:] - Eu_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / (n_samp / 2), 2.0)
-                    Eu_power.append(np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp]))
+                    power = np.power(np.abs(s) / n_samp, 2.0)
+                    if hz_mode > 0:
+                        power = power / (df * 1000)
+                    Eu_power.append(np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp]+np.sum(power[0:np.int16(n_samp/2-n_samp/8)])))
                     #
                     s = np.fft.fft(Ev_i_array[ii][:] - Ev_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / (n_samp / 2), 2.0)
-                    Ev_power.append(np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp]))
+                    power = np.power(np.abs(s) / n_samp, 2.0)
+                    if hz_mode > 0:
+                        power = power / (df * 1000)
+                    Ev_power.append(np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp]+np.sum(power[0:np.int16(n_samp/2-n_samp/8)])))
                     #
                     s = np.fft.fft(Ew_i_array[ii][:] - Ew_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / (n_samp / 2), 2.0)
-                    Ew_power.append(np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp]))
-                
+                    power = np.power(np.abs(s) / n_samp, 2.0)
+                    if hz_mode > 0:
+                        power = power / (df * 1000)
+                    Ew_power.append(np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp]+np.sum(power[0:np.int16(n_samp/2-n_samp/8)])))
+
                 # freq = np.array(frequency_1d[index_1d[0][i]:index_1d[0][i+1]])
                 freq = freq.reshape(n_step, n_samp)
                 freq = freq[:, 0]
@@ -277,32 +303,40 @@ def juice_getspec_hf_sid02(data, mode):
             else:
                 # high resolution power spectra
                 for ii in range(n_step):
+                    freq = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array[ii][:]
+                    frequency.extend(freq[np.int16(n_samp/2+n_samp/8):n_samp])
+                    frequency.extend(freq[0:np.int16(n_samp/2-n_samp/8)])
+                    df = freq[1]-freq[0]
+                    # frequency.extend(freq[np.int16(n_samp/2):n_samp])
+                    # frequency.extend(freq[0:np.int16(n_samp/2)])
+
                     s = np.fft.fft(Eu_i_array[ii][:] - Eu_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / (n_samp / 2), 2.0)
+                    power = np.power(np.abs(s) / n_samp, 2.0) 
+                    if hz_mode > 0:
+                        power = power / (df * 1000)
                     Eu_power.extend(power[np.int16(n_samp/2+n_samp/8):n_samp])
                     Eu_power.extend(power[0:np.int16(n_samp/2-n_samp/8)])
                     # Eu_power.extend(power[np.int16(n_samp/2):n_samp])
                     # Eu_power.extend(power[0:np.int16(n_samp/2)])
                     #
                     s = np.fft.fft(Ev_i_array[ii][:] - Ev_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / (n_samp / 2), 2.0)
+                    power = np.power(np.abs(s) / n_samp, 2.0) 
+                    if hz_mode > 0:
+                        power = power / (df * 1000)
                     Ev_power.extend(power[np.int16(n_samp/2+n_samp/8):n_samp])
                     Ev_power.extend(power[0:np.int16(n_samp/2-n_samp/8)])
                     # Ev_power.extend(power[np.int16(n_samp/2):n_samp])
                     # Ev_power.extend(power[0:np.int16(n_samp/2)])
                     #
                     s = np.fft.fft(Ew_i_array[ii][:] - Ew_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / (n_samp / 2), 2.0)
+                    power = np.power(np.abs(s) / n_samp, 2.0)
+                    if hz_mode > 0:
+                        power = power / (df * 1000)
                     Ew_power.extend(power[np.int16(n_samp/2+n_samp/8):n_samp])
                     Ew_power.extend(power[0:np.int16(n_samp/2-n_samp/8)])
                     # Ew_power.extend(power[np.int16(n_samp/2):n_samp])
                     # Ew_power.extend(power[0:np.int16(n_samp/2)])
-                    #
-                    freq = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array[ii][:]
-                    frequency.extend(freq[np.int16(n_samp/2+n_samp/8):n_samp])
-                    frequency.extend(freq[0:np.int16(n_samp/2-n_samp/8)])
-                    # frequency.extend(freq[np.int16(n_samp/2):n_samp])
-                    # frequency.extend(freq[0:np.int16(n_samp/2)])
+
         else:
             print("****ERROR**** [", i, index_n0, data.epoch[index[0][i]], "] length:", index_len, "!=", n_samp, "*", n_step)
 
@@ -317,9 +351,6 @@ def juice_getspec_hf_sid02(data, mode):
 
     index_n = index_n0
     n_set = int(Eu_power.size / index_n)
-    # TMP
-    print(frequency.shape, Eu_power.shape, Ev_power.shape, Ew_power.shape, index_n, n_set)
-    # TMP
 
     spec.frequency = frequency.reshape(index_n, n_set).transpose()
     spec.Eu_power = Eu_power.reshape(index_n, n_set).transpose()
