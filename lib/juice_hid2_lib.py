@@ -149,55 +149,20 @@ def hf_sid02_getspec(data, mode, hz_mode, ave_mode):
             else:               # [ave_mode] 0: simple sum   1: FFT sum   2: median sum   3: min sum
                 for ii in range(n_step):
                     freq0 = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array[ii][:]
-                    df = freq0[np.int16(n_samp/2-n_samp/8)]-freq0[np.int16(n_samp/2+n_samp/8)]
-                    #
-                    s = np.fft.fft(Eu_i_array[ii][:] - Eu_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / n_samp, 2.0)
-                    if hz_mode > 0:
-                        power = power / (df * 1000)
-                    if (ave_mode == 1):
-                        power0 = np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp])+np.sum(power[0:np.int16(n_samp/2-n_samp/8)])
-                    elif (ave_mode == 2):
-                        power0 = statistics.median(power[np.int16(n_samp/2+n_samp/8):n_samp])*(n_samp/8*3) + statistics.median(power[0:np.int16(n_samp/2-n_samp/8)])*(n_samp/8*3)
-                    else:
-                        power0 = min(power[np.int16(n_samp/2+n_samp/8):n_samp])*(n_samp/8*3) + min(power[0:np.int16(n_samp/2-n_samp/8)])*(n_samp/8*3)                            
-                    Eu_power.append(power0)
-                    #
-                    s = np.fft.fft(Ev_i_array[ii][:] - Ev_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / n_samp, 2.0)
-                    if hz_mode > 0:
-                        power = power / (df * 1000)
-                    if (ave_mode == 1):
-                        power0 = np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp])+np.sum(power[0:np.int16(n_samp/2-n_samp/8)])
-                    elif (ave_mode == 2):
-                        power0 = statistics.median(power[np.int16(n_samp/2+n_samp/8):n_samp])*(n_samp/8*3) + statistics.median(power[0:np.int16(n_samp/2-n_samp/8)])*(n_samp/8*3)
-                    else:
-                        power0 = min(power[np.int16(n_samp/2+n_samp/8):n_samp])*(n_samp/8*3) + min(power[0:np.int16(n_samp/2-n_samp/8)])*(n_samp/8*3)                            
-                    Ev_power.append(power0)
-                    #
-                    s = np.fft.fft(Ew_i_array[ii][:] - Ew_q_array[ii][:] * 1j)
-                    power = np.power(np.abs(s) / n_samp, 2.0)
-                    if hz_mode > 0:
-                        power = power / (df * 1000)
-                    if (ave_mode == 1):
-                        power0 = np.sum(power[np.int16(n_samp/2+n_samp/8):n_samp])+np.sum(power[0:np.int16(n_samp/2-n_samp/8)])
-                    elif (ave_mode == 2):
-                        power0 = statistics.median(power[np.int16(n_samp/2+n_samp/8):n_samp])*(n_samp/8*3) + statistics.median(power[0:np.int16(n_samp/2-n_samp/8)])*(n_samp/8*3)
-                    else:
-                        power0 = min(power[np.int16(n_samp/2+n_samp/8):n_samp])*(n_samp/8*3) + min(power[0:np.int16(n_samp/2-n_samp/8)])*(n_samp/8*3)                            
-                    Ew_power.append(power0)
-
+                    df = freq0[np.int16(n_samp/3)]-freq0[np.int16(n_samp*2/3)]
+                    juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, hz_mode, ave_mode)
+                    juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, hz_mode, ave_mode)
+                    juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, hz_mode, ave_mode)
             freq = freq.reshape(n_step, n_samp)
             freq = freq[:, 0]
             frequency.extend(freq)
-
         # high resolution power spectra
         else:
             for ii in range(n_step):
                 df = juice_math._fft_freq(n_samp, freq_array[ii][:], frequency, dt)
-                juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, dt, df, hz_mode)
-                juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, dt, df, hz_mode)
-                juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, dt, df, hz_mode)
+                juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, hz_mode, 0)
+                juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, hz_mode, 0)
+                juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, hz_mode, 0)
 
     # return: "spec"
     frequency = np.array(frequency)
