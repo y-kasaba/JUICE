@@ -149,7 +149,7 @@ def hf_sid02_getspec(data, mode, hz_mode, ave_mode):
             else:               # [ave_mode] 0: simple sum   1: FFT sum   2: median sum   3: min sum
                 for ii in range(n_step):
                     freq0 = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array[ii][:]
-                    df = freq0[np.int16(n_samp/3)]-freq0[np.int16(n_samp*2/3)]
+                    df = freq0[np.int16(n_samp/3+1)]-freq0[np.int16(n_samp*2/3-1)]
                     juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, hz_mode, ave_mode)
                     juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, hz_mode, ave_mode)
                     juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, hz_mode, ave_mode)

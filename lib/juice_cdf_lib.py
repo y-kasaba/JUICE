@@ -80,11 +80,13 @@ def juice_gethk_lvps(data):
 #---------------------------------------------------------------------
 #--- QL --------------------------------------------------------------
 #---------------------------------------------------------------------
+"""
 def clean_rfi(power, kernel_size=5):
     from scipy.signal import medfilt
     clean_power = medfilt(power, kernel_size)
     # clean_power = minfilt(power, kernel_size)
     return clean_power
+"""
 
 #---------------------------------------------------------------------
 # Sampling rate [Hz]
