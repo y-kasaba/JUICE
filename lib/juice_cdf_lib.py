@@ -47,7 +47,6 @@ def juice_gethk_hf(data):
     hk.temp_rwi_u = data['LWT03337_CALIBRATED'][...]
     hk.temp_rwi_w = data['LWT03339_CALIBRATED'][...]
     hk.temp_hf_fpga = data['LWT0333B_CALIBRATED'][...]
-
     return hk
 
 #---------------------------------------------------------------------
@@ -61,7 +60,6 @@ def juice_gethk_dpu(data):
     hk.lf_temp = data['LWT0343A_CALIBRATED'][...]
     hk.hf_temp = data['LWT0343B_CALIBRATED'][...]
     hk.scm_temp = data['LWT0343C_CALIBRATED'][...]
-
     return hk
 
 #---------------------------------------------------------------------
@@ -74,20 +72,10 @@ def juice_gethk_lvps(data):
     hk.cur_hf_33 = data['LWT03362_CALIBRATED'][...]
     hk.cur_hf_85 = data['LWT03363_CALIBRATED'][...]
     hk.hf_on_off = data['LWT03372'][...]
-
     return hk
 
 #---------------------------------------------------------------------
 #--- QL --------------------------------------------------------------
-#---------------------------------------------------------------------
-"""
-def clean_rfi(power, kernel_size=5):
-    from scipy.signal import medfilt
-    clean_power = medfilt(power, kernel_size)
-    # clean_power = minfilt(power, kernel_size)
-    return clean_power
-"""
-
 #---------------------------------------------------------------------
 # Sampling rate [Hz]
 def _sample_rate(decimation):
@@ -113,7 +101,6 @@ def _get_frequencies(n_freq, samp, sample_rate):
     f_width = np.float32(
         (i_freq * 0. + sample_rate * 0.7566) / 1000.)
     f_width = np.repeat(f_width, samp)
-
     return freq, f_step, f_width
 
 #---------------------------------------------------------------------
@@ -142,36 +129,3 @@ def power_label(cal_mode, hz_mode):
         elif cal_mode == 4:
             str = 'Power [V^2/Hz @ RWI-in]'
     return str
-
-#---------------------------------------------------------------------
-#--- HID3 ------------------------------------------------------------
-#---------------------------------------------------------------------
-def juice_getdata_hf_sid03(cdf):
-
-    data = struct()
-
-    data.EuEu = cdf['EuEu'][...]
-    data.EvEv = cdf['EvEv'][...]
-    data.EwEw = cdf['EwEw'][...]
-    data.frequency = cdf['frequency'][...]
-    data.freq_step = cdf['freq_step'][...]
-    data.freq_width = cdf['freq_width'][...]
-
-    data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
-    data.N_samp = cdf['N_samp'][...]
-    data.N_step = cdf['N_step'][...]
-    data.decimation = cdf['decimation'][...]
-    data.B0_step = cdf['B0_step'][...]
-
-    # shaping
-    n_num = data.B0_step[0]
-    if n_num == 255:
-        data.EuEu = data.EuEu[:, 0:n_num] 
-        data.EvEv = data.EvEv[:, 0:n_num] 
-        data.EwEw = data.EwEw[:, 0:n_num] 
-        data.frequency = data.frequency[:, 0:n_num] 
-        data.freq_step = data.freq_step[:, 0:n_num] 
-        data.freq_width = data.freq_width[:, 0:n_num]     
-
-    return data

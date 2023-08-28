@@ -47,3 +47,12 @@ def _mean_power(E_i_array, E_q_array, E_power, df, hz_mode):
 
     E_power.extend( power )
     return
+
+#---------------------------------------------------------------------
+#--- HID-3 RAW data --------------------------------------------------
+#---------------------------------------------------------------------
+def clean_rfi(power, kernel_size=5):
+    from scipy.signal import medfilt
+    clean_power = medfilt(power, kernel_size)
+    # clean_power = minfilt(power, kernel_size)
+    return clean_power
