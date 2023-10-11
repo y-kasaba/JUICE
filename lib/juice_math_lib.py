@@ -1,3 +1,6 @@
+#---------------------------------------------------------------------
+#--- Y Kasaba   2023/10/11 -------------------------------------------
+#---------------------------------------------------------------------
 import numpy as np
 # import statistics
 
@@ -13,14 +16,14 @@ def _fft_freq(n_samp, freq_array, frequency, dt):
 
 #---------------------------------------------------------------------
 # FFT power
-def _fft_power(n_samp, E_i, E_q, E_power, df, hz_mode, ave_mode):
+def _fft_power(n_samp, E_i, E_q, E_power, df, unit_mode, ave_mode):
     # Hunning
     window = np.hanning( n_samp ) 
     acf = 1/(sum(window)/n_samp)
     s = np.fft.fft((E_i - E_q * 1j) * window)
     power = np.power(np.abs(s) / n_samp, 2.0) * acf * acf
 
-    if hz_mode > 0:
+    if unit_mode > 0:
         power = power / (df * 1000)
 
     if (ave_mode == 0):
@@ -39,10 +42,10 @@ def _fft_power(n_samp, E_i, E_q, E_power, df, hz_mode, ave_mode):
 
 #---------------------------------------------------------------------
 # mean power
-def _mean_power(E_i_array, E_q_array, E_power, df, hz_mode):
+def _mean_power(E_i_array, E_q_array, E_power, df, unit_mode):
     power = np.mean(E_i_array**2 + E_q_array**2, axis=1)
 
-    if hz_mode > 0:
+    if unit_mode > 0:
         power = power / (df * 1000)
 
     E_power.extend( power )
@@ -56,3 +59,14 @@ def clean_rfi(power, kernel_size=5):
     clean_power = medfilt(power, kernel_size)
     # clean_power = minfilt(power, kernel_size)
     return clean_power
+
+
+#---------------------------------------------------------------------
+#--- HID-3 RAW data --------------------------------------------------
+#---------------------------------------------------------------------
+def hf_proc_get_stokes(p1, p2, re, im):
+    I = p1 + p2;
+    Q = p1 - p2;
+    U = re * 2.0;
+    V = im * 2.0;
+    return I, Q, U, V 
