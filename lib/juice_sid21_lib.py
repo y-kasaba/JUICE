@@ -1,3 +1,4 @@
+# JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/10/14
 class struct:
     pass
 

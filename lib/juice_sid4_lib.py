@@ -1,3 +1,4 @@
+# JUICE RPWI HF SID4 (Burst surv): L1a QL -- 2023/10/14
 class struct:
     pass
 
@@ -78,8 +79,8 @@ def juice_getdata_hf_sid4(cdf):
     data.BG_downlink = cdf['BG_downlink'][...]
 
     data.N_block = cdf['N_block'][...]
-    data.T_RWI_U = cdf['T_RWI_U'][...]
-    data.T_RWI_W = cdf['T_RWI_W'][...]
+    data.T_RWI_CH1 = cdf['T_RWI_CH1'][...]
+    data.T_RWI_CH2 = cdf['T_RWI_CH2'][...]
     data.T_HF_FPGA = cdf['T_HF_FPGA'][...]
 
     # Header
@@ -112,24 +113,5 @@ def juice_getdata_hf_sid4(cdf):
     data.B4_step = cdf['B4_step'][...]
     data.B4_repeat = cdf['B4_repeat'][...]
     data.B4_subdiv = cdf['B4_subdiv'][...]
-
-    """
-    # CUT
-    n_num = data.B0_step[0] * data.B0_subdiv[0]
-    if n_num < data.EuEu.shape[1]:
-        print("Cut: ", data.EuEu.shape[1], " ->", n_num)
-        data.EuEu = data.EuEu[:, 0:n_num]
-        data.EvEv = data.EvEv[:, 0:n_num]
-        data.EwEw = data.EwEw[:, 0:n_num]
-        data.EuEv_re = data.EuEv_re[:, 0:n_num]
-        data.EuEv_im = data.EuEv_im[:, 0:n_num]
-        data.EvEw_re = data.EvEw_re[:, 0:n_num]
-        data.EvEw_im = data.EvEw_im[:, 0:n_num]
-        data.EwEu_re = data.EwEu_re[:, 0:n_num]
-        data.EwEu_im = data.EwEu_im[:, 0:n_num]
-        data.frequency = data.frequency[:, 0:n_num]
-        data.freq_step = data.freq_step[:, 0:n_num]
-        data.freq_width = data.freq_width[:, 0:n_num]
-    """
 
     return data

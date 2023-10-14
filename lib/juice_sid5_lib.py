@@ -1,3 +1,5 @@
+# JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2023/10/14
+
 import numpy as np
 class struct:
     pass
@@ -34,8 +36,8 @@ def juice_getdata_hf_sid5(cdf):
     data.freq_stop = cdf['freq_stop'][...]          # [same with ‘B0_stopf’]
     data.subdiv_reduction = cdf['subdiv_reduction'][...]
     
-    data.T_RWI_U = cdf['T_RWI_U'][...]
-    data.T_RWI_W = cdf['T_RWI_W'][...]
+    data.T_RWI_CH1 = cdf['T_RWI_CH1'][...]
+    data.T_RWI_CH2 = cdf['T_RWI_CH2'][...]
     data.T_HF_FPGA = cdf['T_HF_FPGA'][...]
 
     # Header
