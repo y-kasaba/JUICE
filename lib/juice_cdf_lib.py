@@ -1,3 +1,5 @@
+# JUICE RPWI HF CDF -- 2023/10/16
+
 import glob
 import spacepy.pycdf
 import numpy as np
@@ -24,55 +26,6 @@ def juice_read_cdfs(date_str, label, ver_str="01", base_dir="/db/JUICE/juice/dat
         ret = 0
 
     return ret, err
-
-#---------------------------------------------------------------------
-#--- HK --------------------------------------------------------------
-#---------------------------------------------------------------------
-def juice_gethk_hf(data):
-
-    hk = struct()
-    hk.epoch = data['Epoch'][...]
-    
-    hk.heater_ena = data['LWT03314']
-    hk.calsig_ena = data['LWT0332C']
-
-    hk.deploy_pri_x=data['LWT0332E']
-    hk.deploy_red_x=data['LWT0332F']
-    hk.deploy_pri_y=data['LWT03330']
-    hk.deploy_red_y=data['LWT03331']
-    hk.deploy_pri_z=data['LWT03332']
-    hk.deploy_red_z=data['LWT03333']
-    hk.deploy_lock_stat=data['LWT03334']
-
-    hk.temp_rwi_u = data['LWT03337_CALIBRATED'][...]
-    hk.temp_rwi_w = data['LWT03339_CALIBRATED'][...]
-    hk.temp_hf_fpga = data['LWT0333B_CALIBRATED'][...]
-    return hk
-
-#---------------------------------------------------------------------
-def juice_gethk_dpu(data):
-
-    hk = struct()
-    hk.epoch = data['Epoch'][...]
-    hk.dpu_temp = data['LWT03437_CALIBRATED'][...]
-    hk.lvps_temp = data['LWT03438_CALIBRATED'][...]
-    hk.lp_temp = data['LWT03439_CALIBRATED'][...]
-    hk.lf_temp = data['LWT0343A_CALIBRATED'][...]
-    hk.hf_temp = data['LWT0343B_CALIBRATED'][...]
-    hk.scm_temp = data['LWT0343C_CALIBRATED'][...]
-    return hk
-
-#---------------------------------------------------------------------
-def juice_gethk_lvps(data):
-
-    hk = struct()
-    hk.epoch = data['Epoch'][...]
-    hk.vol_hf_33 = data['LWT03358_CALIBRATED'][...]
-    hk.vol_hf_85 = data['LWT03359_CALIBRATED'][...]
-    hk.cur_hf_33 = data['LWT03362_CALIBRATED'][...]
-    hk.cur_hf_85 = data['LWT03363_CALIBRATED'][...]
-    hk.hf_on_off = data['LWT03372'][...]
-    return hk
 
 #---------------------------------------------------------------------
 #--- QL --------------------------------------------------------------
@@ -105,8 +58,8 @@ def _get_frequencies(n_freq, samp, sample_rate):
 
 #---------------------------------------------------------------------
 # power label
-def power_label(cal_mode, hz_mode):
-    if hz_mode == 0:
+def power_label(cal_mode, unit_mode):
+    if unit_mode == 0:
         if cal_mode == 0:
             str = 'Power [RAW @ ADC]'
         elif cal_mode == 1:

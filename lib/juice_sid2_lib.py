@@ -8,7 +8,7 @@ class struct:
     pass
 
 #---------------------------------------------------------------------
-#--- HID2 ------------------------------------------------------------
+#--- SID2 ------------------------------------------------------------
 #---------------------------------------------------------------------
 def hf_sid02_getdata(cdf):
 
@@ -45,7 +45,7 @@ def hf_sid02_getdata(cdf):
     return data
 
 #---------------------------------------------------------------------
-def hf_sid02_getspec(data, mode, hz_mode, ave_mode):
+def hf_sid02_getspec(data, mode, unit_mode, ave_mode):
 
     # INPUT: convrsion to 1D
     Eu_i_1d = np.ravel(data.Eu_i)
@@ -143,16 +143,16 @@ def hf_sid02_getspec(data, mode, hz_mode, ave_mode):
         # low resolution power spectra
         if mode == 0:
             if (ave_mode == 0):  # [ave_mode] 0: simple sum   1: FFT sum   2: median sum   3: min sum
-                juice_math._mean_power(Eu_i_array, Eu_q_array, Eu_power, f_width_1d[0], hz_mode)
-                juice_math._mean_power(Ev_i_array, Ev_q_array, Ev_power, f_width_1d[0], hz_mode)
-                juice_math._mean_power(Ew_i_array, Ew_q_array, Ew_power, f_width_1d[0], hz_mode)
+                juice_math._mean_power(Eu_i_array, Eu_q_array, Eu_power, f_width_1d[0], unit_mode)
+                juice_math._mean_power(Ev_i_array, Ev_q_array, Ev_power, f_width_1d[0], unit_mode)
+                juice_math._mean_power(Ew_i_array, Ew_q_array, Ew_power, f_width_1d[0], unit_mode)
             else:               # [ave_mode] 0: simple sum   1: FFT sum   2: median sum   3: min sum
                 for ii in range(n_step):
                     freq0 = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array[ii][:]
                     df = freq0[np.int16(n_samp/3+1)]-freq0[np.int16(n_samp*2/3-1)]
-                    juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, hz_mode, ave_mode)
-                    juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, hz_mode, ave_mode)
-                    juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, hz_mode, ave_mode)
+                    juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, unit_mode, ave_mode)
+                    juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, unit_mode, ave_mode)
+                    juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, unit_mode, ave_mode)
             freq = freq.reshape(n_step, n_samp)
             freq = freq[:, 0]
             frequency.extend(freq)
@@ -160,9 +160,9 @@ def hf_sid02_getspec(data, mode, hz_mode, ave_mode):
         else:
             for ii in range(n_step):
                 df = juice_math._fft_freq(n_samp, freq_array[ii][:], frequency, dt)
-                juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, hz_mode, 0)
-                juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, hz_mode, 0)
-                juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, hz_mode, 0)
+                juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, unit_mode, 0)
+                juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, unit_mode, 0)
+                juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, unit_mode, 0)
 
     # return: "spec"
     frequency = np.array(frequency)
