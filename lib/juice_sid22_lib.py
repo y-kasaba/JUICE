@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2023/10/13
+# JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2023/10/18
 
 class struct:
     pass

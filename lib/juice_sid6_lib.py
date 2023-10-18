@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID6 (PSSR2 surv): L1a QL -- 2023/10/15
+# JUICE RPWI HF SID6 (PSSR2 surv): L1a QL -- 2023/10/18
 
 class struct:
     pass
@@ -46,7 +46,7 @@ def juice_getdata_hf_sid6(cdf):
     data.auto_corr = np.array(data.auto_corr).reshape(n_time, data.N_step_AUX[0], data.N_auto_corr[0])
 
     # Time
-    data.time = np.arange(0, data.N_auto_corr[0], 1) / (296e+3 / 2**data.decimation_AUX[0]) / data.N_auto_corr[0]
+    data.time = np.arange(0, data.N_auto_corr[0], 1) / (296e+3 / 2**data.decimation_AUX[0]) * 16 # / data.N_auto_corr[0]
     data.freq = data.freq_start[0] + np.arange(0, data.N_step_AUX[0]-3, 1) * (data.freq_stop[0] - data.freq_start[0]) / (data.N_step_AUX[0] - 4)
 
     return data
