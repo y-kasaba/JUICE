@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID4 (Burst surv): L1a QL -- 2023/10/14
+# JUICE RPWI HF SID4 (Burst surv): L1a QL -- 2023/10/25
 class struct:
     pass
 
@@ -92,25 +92,5 @@ def juice_getdata_hf_sid4(cdf):
     data.B0_step = cdf['B0_step'][...]
     data.B0_repeat = cdf['B0_repeat'][...]
     data.B0_subdiv = cdf['B0_subdiv'][...]
-    data.B1_startf = cdf['B1_startf'][...]
-    data.B1_stopf = cdf['B1_stopf'][...]
-    data.B1_step = cdf['B1_step'][...]
-    data.B1_repeat = cdf['B1_repeat'][...]
-    data.B1_subdiv = cdf['B1_subdiv'][...]
-    data.B2_startf = cdf['B2_startf'][...]
-    data.B2_stopf = cdf['B2_stopf'][...]
-    data.B2_step = cdf['B2_step'][...]
-    data.B2_repeat = cdf['B2_repeat'][...]
-    data.B2_subdiv = cdf['B2_subdiv'][...]
-    data.B3_startf = cdf['B3_startf'][...]
-    data.B3_stopf = cdf['B3_stopf'][...]
-    data.B3_step = cdf['B3_step'][...]
-    data.B3_repeat = cdf['B3_repeat'][...]
-    data.B3_subdiv = cdf['B3_subdiv'][...]
-    data.B4_startf = cdf['B4_startf'][...]
-    data.B4_stopf = cdf['B4_stopf'][...]
-    data.B4_step = cdf['B4_step'][...]
-    data.B4_repeat = cdf['B4_repeat'][...]
-    data.B4_subdiv = cdf['B4_subdiv'][...]
 
     return data
