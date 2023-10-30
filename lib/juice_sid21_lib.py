@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/10/14
+# JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/10/18
 class struct:
     pass
 
@@ -31,7 +31,6 @@ def juice_getdata_hf_sid21(cdf):
     data.U_selected = cdf['U_selected'][...]
     data.V_selected = cdf['V_selected'][...]
     data.W_selected = cdf['W_selected'][...]
-    data.N_component = cdf['N_component'][...]      # [b2:U  b1:V  b0:W]
     data.complex = cdf['complex'][...]
     #
     data.cal_signal = cdf['cal_signal'][...]

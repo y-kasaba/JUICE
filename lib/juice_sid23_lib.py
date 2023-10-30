@@ -1,11 +1,12 @@
-# JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/10/15
+# JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/10/30
 
 class struct:
     pass
 import numpy as np
+import juice_cdf_lib as juice_cdf
 
 #---------------------------------------------------------------------
-#--- SID20 ------------------------------------------------------------
+#--- SID23 ------------------------------------------------------------
 #---------------------------------------------------------------------
 def juice_getdata_hf_sid23(cdf):
 
@@ -23,8 +24,8 @@ def juice_getdata_hf_sid23(cdf):
     data.reduction = cdf['reduction'][...]
     data.overflow = cdf['overflow'][...]
     #
-    data.time = cdf['time'][...]
-    #s
+    # data.time = cdf['time'][...]
+    #
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
 
@@ -46,11 +47,77 @@ def juice_getdata_hf_sid23(cdf):
     data.decimation = cdf['decimation'][...]
     data.pol = cdf['pol'][...]
 
-    # Reshape: Auto_Corr
-    # n_time = data.auto_corr.shape[0]
-    # data.auto_corr = np.array(data.auto_corr).reshape(n_time, 16, data.N_samp_AUX[0])
-
-    # Time
-    # data.time = np.arange(0, data.N_samp_AUX[0], 1) / (296e+3 / 2**data.decimation_AUX[0])
+    # CUT & Reshape
+    data.n_time = data.Eu_i.shape[0]
+    n_num0 = data.N_feed[0] * 128
+    n_num1 = (data.N_feed[0] + data.N_skip[0]) * 128
+    n_num = n_num0 * data.N_block[0]
+    if n_num < data.Eu_i.shape[1]:
+        print(" org:", data.Eu_i.shape, data.N_block[0], data.N_feed[0])
+        data.Eu_i = data.Eu_i[:, 0:n_num]
+        data.Eu_q = data.Eu_q[:, 0:n_num]
+        data.Ev_i = data.Ev_i[:, 0:n_num]
+        data.Ev_q = data.Ev_q[:, 0:n_num]
+        data.Ew_i = data.Ew_i[:, 0:n_num]
+        data.Ew_q = data.Ew_q[:, 0:n_num]
+        # data.time = data.time[:, 0:n_num]
+    
+    print(" cut:", data.Eu_i.shape, data.N_block[0], data.N_feed[0])
+    data.Eu_i = np.array(data.Eu_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.Eu_q = np.array(data.Eu_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.Ev_i = np.array(data.Ev_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.Ev_q = np.array(data.Ev_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.Ew_i = np.array(data.Ew_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.Ew_q = np.array(data.Ew_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    # data.time = np.array(data.time).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    # print("time:", data.time.shape, data.time)
+    
+    # Time   
+    time = np.arange(0, n_num0, 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
+    data.time = np.float32(np.arange(0, n_num, 1))
+    for i in range(data.N_block[0]):
+        data.time[n_num0*i:n_num0*(i+1)] = time + i * n_num1 / juice_cdf._sample_rate(data.decimation_AUX[0])
+        # print(i, n_num0*i, data.time[n_num0*i:n_num0*(i+1)])
+    data.time = np.array(data.time).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
 
     return data
+
+
+#---------------------------------------------------------------------
+def hf_sid23_getspec(data, unit_mode):
+
+    # Spec formation
+    spec = struct()
+    n_data = data.N_feed[0]*128
+
+    # Frequency
+    dt = 1.0 / juice_cdf._sample_rate(data.decimation_AUX[0])
+    spec.freq = np.fft.fftshift( np.fft.fftfreq(data.N_feed[0]*128, d=dt)) / 1000.
+    spec.freq = spec.freq + data.freq_center
+
+    # FFT
+    window = np.hanning(n_data) 
+    acf = 1/(sum(window)/n_data)
+    #
+    s = np.fft.fft( (data.Eu_i - data.Eu_q * 1j) * window)
+    s = np.power(np.abs(s) / n_data, 2.0) * acf * acf
+    spec.EuEu = np.fft.fftshift(s, axes=(2,))
+    s  = np.fft.fft( (data.Ev_i - data.Ev_q * 1j) * window)
+    s = np.power(np.abs(s) / n_data, 2.0) * acf * acf
+    spec.EvEv = np.fft.fftshift(s, axes=(2,))
+    s  = np.fft.fft( (data.Ew_i - data.Ew_q * 1j) * window)
+    s = np.power(np.abs(s) / n_data, 2.0) * acf * acf
+    spec.EwEw = np.fft.fftshift(s, axes=(2,))
+
+    # *** tmp: no filter ***
+    s  = np.fft.fft( (data.Eu_i - data.Eu_q * 1j))
+    s  = np.power(np.abs(s) / n_data, 2.0)
+    spec.EuEu0 = np.fft.fftshift(s, axes=(2,))
+    s  = np.fft.fft( (data.Ev_i - data.Ev_q * 1j))
+    s  = np.power(np.abs(s) / n_data, 2.0)
+    spec.EvEv0 = np.fft.fftshift(s, axes=(2,))
+    s  = np.fft.fft( (data.Ew_i - data.Ew_q * 1j))
+    s  = np.power(np.abs(s) / n_data, 2.0)
+    spec.EwEw0 = np.fft.fftshift(s, axes=(2,))
+
+    return spec
