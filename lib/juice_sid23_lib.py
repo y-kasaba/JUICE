@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/10/30
+# JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/11/5
 
 class struct:
     pass
@@ -23,8 +23,6 @@ def juice_getdata_hf_sid23(cdf):
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]
     data.overflow = cdf['overflow'][...]
-    #
-    # data.time = cdf['time'][...]
     #
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
@@ -60,7 +58,6 @@ def juice_getdata_hf_sid23(cdf):
         data.Ev_q = data.Ev_q[:, 0:n_num]
         data.Ew_i = data.Ew_i[:, 0:n_num]
         data.Ew_q = data.Ew_q[:, 0:n_num]
-        # data.time = data.time[:, 0:n_num]
     
     print(" cut:", data.Eu_i.shape, data.N_block[0], data.N_feed[0])
     data.Eu_i = np.array(data.Eu_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
@@ -69,8 +66,7 @@ def juice_getdata_hf_sid23(cdf):
     data.Ev_q = np.array(data.Ev_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ew_i = np.array(data.Ew_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ew_q = np.array(data.Ew_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
-    # data.time = np.array(data.time).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
-    # print("time:", data.time.shape, data.time)
+    print(" --->", data.Eu_i.shape, data.n_time, data.N_block[0], data.N_feed[0])
     
     # Time   
     time = np.arange(0, n_num0, 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
@@ -78,7 +74,8 @@ def juice_getdata_hf_sid23(cdf):
     for i in range(data.N_block[0]):
         data.time[n_num0*i:n_num0*(i+1)] = time + i * n_num1 / juice_cdf._sample_rate(data.decimation_AUX[0])
         # print(i, n_num0*i, data.time[n_num0*i:n_num0*(i+1)])
-    data.time = np.array(data.time).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    # data.time = np.array(data.time).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.time = np.array(data.time).reshape(data.N_block[0], data.N_feed[0]*128)
 
     return data
 
@@ -93,7 +90,7 @@ def hf_sid23_getspec(data, unit_mode):
     # Frequency
     dt = 1.0 / juice_cdf._sample_rate(data.decimation_AUX[0])
     spec.freq = np.fft.fftshift( np.fft.fftfreq(data.N_feed[0]*128, d=dt)) / 1000.
-    spec.freq = spec.freq + data.freq_center
+    spec.freq = spec.freq + data.freq_center[0]
 
     # FFT
     window = np.hanning(n_data) 
@@ -108,16 +105,5 @@ def hf_sid23_getspec(data, unit_mode):
     s  = np.fft.fft( (data.Ew_i - data.Ew_q * 1j) * window)
     s = np.power(np.abs(s) / n_data, 2.0) * acf * acf
     spec.EwEw = np.fft.fftshift(s, axes=(2,))
-
-    # *** tmp: no filter ***
-    s  = np.fft.fft( (data.Eu_i - data.Eu_q * 1j))
-    s  = np.power(np.abs(s) / n_data, 2.0)
-    spec.EuEu0 = np.fft.fftshift(s, axes=(2,))
-    s  = np.fft.fft( (data.Ev_i - data.Ev_q * 1j))
-    s  = np.power(np.abs(s) / n_data, 2.0)
-    spec.EvEv0 = np.fft.fftshift(s, axes=(2,))
-    s  = np.fft.fft( (data.Ew_i - data.Ew_q * 1j))
-    s  = np.power(np.abs(s) / n_data, 2.0)
-    spec.EwEw0 = np.fft.fftshift(s, axes=(2,))
 
     return spec
