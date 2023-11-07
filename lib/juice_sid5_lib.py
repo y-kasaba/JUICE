@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2023/10/14
+# JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2023/10/18
 
 import numpy as np
 class struct:
@@ -25,7 +25,6 @@ def juice_getdata_hf_sid5(cdf):
     data.U_selected = cdf['U_selected'][...]
     data.V_selected = cdf['V_selected'][...]
     data.W_selected = cdf['W_selected'][...]
-    data.N_component = cdf['N_component'][...]      # [b2:U  b1:V  b0:W]
     #
     data.cal_signal = cdf['cal_signal'][...]
     data.sweep_table = cdf['sweep_table'][...]      # (fixed: not defined in V.2)
