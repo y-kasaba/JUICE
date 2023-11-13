@@ -1,23 +1,21 @@
-# JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2023/10/29
+# JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2023/11/11
+import numpy as np
+import juice_cdf_lib as juice_cdf
+
 
 class struct:
     pass
-import numpy as np
-import juice_cdf_lib as juice_cdf
+
 
 #---------------------------------------------------------------------
 #--- SID20 ------------------------------------------------------------
 #---------------------------------------------------------------------
 def juice_getdata_hf_sid22(cdf):
-
+    """
+    input:  CDF, cf:conversion factor
+    return: data
+    """
     data = struct()
-
-    # Data
-    data.auto_corr = cdf['auto_corr'][...]
-    data.freq_auto_corr = cdf['freq_auto_corr'][...]
-
-    data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
 
     # AUX
     data.ch_selected = cdf['ch_selected'][...]      # [0:U  1:V  2:W]
@@ -32,14 +30,21 @@ def juice_getdata_hf_sid22(cdf):
 
     # Header
     data.N_samp = cdf['N_samp'][...]            # not used
-    data.N_step = cdf['N_step'][...]            # not used  [same with ‘N_step_AUX’]
-    data.decimation = cdf['decimation'][...]    #           [same with ‘decimation_AUX’]
-    data.pol = cdf['pol'][...]                  #           [same with ‘pol_AUX’]	
+    data.N_step = cdf['N_step'][...]            # [same with ‘N_step_AUX’]
+    data.decimation = cdf['decimation'][...]    # [same with ‘decimation_AUX’]
+    data.pol = cdf['pol'][...]                  # [same with ‘pol_AUX’]	
     data.B0_startf = cdf['B0_startf'][...]
     data.B0_stopf = cdf['B0_stopf'][...]
     data.B0_step = cdf['B0_step'][...]
     data.B0_repeat = cdf['B0_repeat'][...]
     data.B0_subdiv = cdf['B0_subdiv'][...]
+
+    # Data
+    data.auto_corr = cdf['auto_corr'][...]
+    data.freq_auto_corr = cdf['freq_auto_corr'][...]
+
+    data.epoch = cdf['Epoch'][...]
+    data.scet = cdf['SCET'][...]
 
     # Reshape: Auto_Corr
     n_time = data.auto_corr.shape[0]

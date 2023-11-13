@@ -1,31 +1,19 @@
-# JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/10/18
+# JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/11/11
+
+
 class struct:
     pass
 
-#---------------------------------------------------------------------
-#--- SID21 ------------------------------------------------------------
-#---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+# --- SID21 ------------------------------------------------------------
+# ---------------------------------------------------------------------
 def juice_getdata_hf_sid21(cdf):
-
+    """
+    input:  CDF, cf:conversion factor
+    return: data
+    """
     data = struct()
-
-    # Data
-    data.EuEu = cdf['EuEu'][...]
-    data.EvEv = cdf['EvEv'][...]
-    data.EwEw = cdf['EwEw'][...]
-    data.EuEv_re = cdf['EuEv_re'][...]
-    data.EuEv_im = cdf['EuEv_im'][...]
-    data.EvEw_re = cdf['EvEw_re'][...]
-    data.EvEw_im = cdf['EvEw_im'][...]
-    data.EwEu_re = cdf['EwEu_re'][...]
-    data.EwEu_im = cdf['EwEu_im'][...]
-
-    data.frequency = cdf['frequency'][...]
-    data.freq_step = cdf['freq_step'][...]
-    data.freq_width = cdf['freq_width'][...]
-
-    data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
 
     # AUX
     data.U_selected = cdf['U_selected'][...]
@@ -34,22 +22,22 @@ def juice_getdata_hf_sid21(cdf):
     data.complex = cdf['complex'][...]
     #
     data.cal_signal = cdf['cal_signal'][...]
-    data.sweep_table = cdf['sweep_table'][...]      # (fixed: not defined in V.2)
-    data.onboard_cal = cdf['onboard_cal'][...]      # (not used)
+    data.sweep_table = cdf['sweep_table'][...]    # (fixed: not defined in V.2)
+    data.onboard_cal = cdf['onboard_cal'][...]    # (not used)
     data.BG_subtract = cdf['BG_subtract'][...]
     data.BG_select = cdf['BG_select'][...]
     data.FFT_window = cdf['FFT_window'][...]
     data.RFI_rejection = cdf['RFI_rejection'][...]
     data.Pol_sep_thres = cdf['Pol_sep_thres'][...]
     data.Pol_sep_SW = cdf['Pol_sep_SW'][...]
-    data.overflow_U = cdf['overflow_U'][...]        # (fixed: not defined in V.2)
-    data.overflow_V = cdf['overflow_V'][...]        # (fixed: not defined in V.2)
-    data.overflow_W = cdf['overflow_W'][...]        # (fixed: not defined in V.2)
+    data.overflow_U = cdf['overflow_U'][...]      # (fixed: not defined in V.2)
+    data.overflow_V = cdf['overflow_V'][...]      # (fixed: not defined in V.2)
+    data.overflow_W = cdf['overflow_W'][...]      # (fixed: not defined in V.2)
     data.proc_param0 = cdf['proc_param0'][...]
     data.proc_param1 = cdf['proc_param1'][...]
     data.proc_param2 = cdf['proc_param2'][...]
     data.proc_param3 = cdf['proc_param3'][...]
-    data.freq_start = cdf['freq_start'][...]        # [same with ‘B0_startf’]
+    data.freq_start = cdf['freq_start'][...]      # [same with ‘B0_startf’]
 
     # Header
     data.N_samp = cdf['N_samp'][...]
@@ -61,6 +49,24 @@ def juice_getdata_hf_sid21(cdf):
     data.B0_step = cdf['B0_step'][...]
     data.B0_repeat = cdf['B0_repeat'][...]
     data.B0_subdiv = cdf['B0_subdiv'][...]
+
+    # Data
+    data.EuEu = cdf['EuEu'][...]
+    data.EvEv = cdf['EvEv'][...]
+    data.EwEw = cdf['EwEw'][...]
+    data.EuEv_re = cdf['EuEv_re'][...]
+    data.EuEv_im = cdf['EuEv_im'][...]
+    data.EvEw_re = cdf['EvEw_re'][...]
+    data.EvEw_im = cdf['EvEw_im'][...]
+    data.EwEu_re = cdf['EwEu_re'][...]
+    data.EwEu_im = cdf['EwEu_im'][...]
+    #
+    data.frequency = cdf['frequency'][...]
+    data.freq_step = cdf['freq_step'][...]
+    data.freq_width = cdf['freq_width'][...]
+    #
+    data.epoch = cdf['Epoch'][...]
+    data.scet = cdf['SCET'][...]
 
     # CUT
     n_num = data.B0_step[0] * data.B0_subdiv[0]
