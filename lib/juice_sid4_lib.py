@@ -65,11 +65,9 @@ def juice_getdata_hf_sid4(cdf, cf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    if data.complex[0] < 2:     # Power
-        data.EuEu = cdf['EuEu'][...] * 10**(cf/10)
-        data.EvEv = cdf['EvEv'][...] * 10**(cf/10)
-        data.EwEw = cdf['EwEw'][...] * 10**(cf/10)
-    #
+    data.EuEu = cdf['EuEu'][...] * 10**(cf/10)
+    data.EvEv = cdf['EvEv'][...] * 10**(cf/10)
+    data.EwEw = cdf['EwEw'][...] * 10**(cf/10)
     if data.complex[0] == 1:    # Matrix
         data.EuEv_re = cdf['EuEv_re'][...] * 10**(cf/10)
         data.EuEv_im = cdf['EuEv_im'][...] * 10**(cf/10)

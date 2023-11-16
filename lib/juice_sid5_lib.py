@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2023/11/11
+# JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2023/11/15
 import numpy as np
 
 
@@ -9,7 +9,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID21 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid5(cdf):
+def juice_getdata_hf_sid5(cdf, cf):
     """
     Input:  cdf
     Output: data
@@ -46,17 +46,18 @@ def juice_getdata_hf_sid5(cdf):
     data.B0_subdiv = cdf['B0_subdiv'][...]
 
     # Data
-    data.EE = cdf['EE'][...]
-    #
     data.frequency = cdf['frequency'][...]
     data.freq_step = cdf['freq_step'][...]
     data.freq_width = cdf['freq_width'][...]
     #
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
+    #
+    data.EE = cdf['EE'][...] * 10**(cf/10)
 
     # CUT
     n_num = np.int16(data.B0_step[0] * data.B0_subdiv[0] / data.subdiv_reduction[0])
+    print(data.B0_step[0], data.B0_subdiv[0], data.subdiv_reduction[0])
     if n_num < data.EE.shape[1]:
         print("Cut: ", data.EE.shape[1], " ->", n_num)
         data.EE = data.EE[:, 0:n_num]
