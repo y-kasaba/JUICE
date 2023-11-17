@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID6 (PSSR2 surv): L1a QL -- 2023/11/11
+# JUICE RPWI HF SID6 (PSSR2 surv): L1a QL -- 2023/11/17
 import numpy as np
 import juice_cdf_lib as juice_cdf
 
@@ -10,7 +10,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID6 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid6(cdf):
+def juice_getdata_hf_sid6(cdf, cf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -42,17 +42,14 @@ def juice_getdata_hf_sid6(cdf):
     data.B0_subdiv = cdf['B0_subdiv'][...]
 
     # Data: N_auto_corr (128) * N_step_AUX (48) x 4B = 24576
-    data.auto_corr = cdf['auto_corr'][...]
-    #
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
-
-    # Reshape: Auto_Corr
+    #
+    data.auto_corr = cdf['auto_corr'][...]
     n_time = data.auto_corr.shape[0]
     data.auto_corr = np.array(data.auto_corr).reshape(n_time, data.N_step_AUX[0], data.N_auto_corr[0])
-
-    # Time
-    data.time = np.arange(0, data.N_auto_corr[0], 1) / juice_cdf._sample_rate(data.decimation_AUX[0]) * 16
+    #
     data.freq = data.freq_start[0] + np.arange(0, data.N_step_AUX[0]-3, 1) * (data.freq_stop[0] - data.freq_start[0]) / (data.N_step_AUX[0] - 4)
+    data.time = np.arange(0, data.N_auto_corr[0], 1) / juice_cdf._sample_rate(data.decimation_AUX[0]) * 16
 
     return data

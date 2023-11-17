@@ -1,4 +1,4 @@
-# JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2023/11/11
+# JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2023/11/17
 import numpy as np
 import juice_cdf_lib as juice_cdf
 
@@ -10,7 +10,7 @@ class struct:
 #---------------------------------------------------------------------
 #--- SID20 ------------------------------------------------------------
 #---------------------------------------------------------------------
-def juice_getdata_hf_sid22(cdf):
+def juice_getdata_hf_sid22(cdf, cf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -40,17 +40,14 @@ def juice_getdata_hf_sid22(cdf):
     data.B0_subdiv = cdf['B0_subdiv'][...]
 
     # Data
-    data.auto_corr = cdf['auto_corr'][...]
-    data.freq_auto_corr = cdf['freq_auto_corr'][...]
-
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
-
-    # Reshape: Auto_Corr
+    #
+    data.auto_corr = cdf['auto_corr'][...]
     n_time = data.auto_corr.shape[0]
     data.auto_corr = np.array(data.auto_corr).reshape(n_time, 16, data.N_samp_AUX[0])
-
-    # Time
+    #
+    data.freq_auto_corr = cdf['freq_auto_corr'][...]
     data.time = np.arange(0, data.N_samp_AUX[0], 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
 
     return data
