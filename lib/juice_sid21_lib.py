@@ -1,4 +1,6 @@
-# JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/11/16
+"""
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/11/16
+"""
 import juice_math_lib as juice_math
 
 

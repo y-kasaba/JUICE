@@ -1,6 +1,9 @@
-# JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/11/5
+"""
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/11/19
+"""
 import numpy as np
 import juice_cdf_lib as juice_cdf
+import scipy.stats as stats
 
 
 class struct:
@@ -10,7 +13,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID23 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid23(cdf):
+def juice_getdata_hf_sid23(cdf, cf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -36,19 +39,19 @@ def juice_getdata_hf_sid23(cdf):
     data.pol = cdf['pol'][...]
 
     # Data
-    data.Eu_i = cdf['Eu_i'][...]
-    data.Eu_q = cdf['Eu_q'][...]
-    data.Ev_i = cdf['Ev_i'][...]
-    data.Ev_q = cdf['Ev_q'][...]
-    data.Ew_i = cdf['Ew_i'][...]
-    data.Ew_q = cdf['Ew_q'][...]
+    data.epoch = cdf['Epoch'][...]
+    data.scet = cdf['SCET'][...]
+    #
+    data.Eu_i = cdf['Eu_i'][...] * 10**(cf/20)
+    data.Eu_q = cdf['Eu_q'][...] * 10**(cf/20)
+    data.Ev_i = cdf['Ev_i'][...] * 10**(cf/20)
+    data.Ev_q = cdf['Ev_q'][...] * 10**(cf/20)
+    data.Ew_i = cdf['Ew_i'][...] * 10**(cf/20)
+    data.Ew_q = cdf['Ew_q'][...] * 10**(cf/20)
     data.pps_count = cdf['pps_count'][...]
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]
     data.overflow = cdf['overflow'][...]
-    #
-    data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
 
     # CUT & Reshape
     data.n_time = data.Eu_i.shape[0]
@@ -63,22 +66,25 @@ def juice_getdata_hf_sid23(cdf):
         data.Ev_q = data.Ev_q[:, 0:n_num]
         data.Ew_i = data.Ew_i[:, 0:n_num]
         data.Ew_q = data.Ew_q[:, 0:n_num]
-
-    print(" cut:", data.Eu_i.shape, data.N_block[0], data.N_feed[0])
+        print(" cut:", data.Eu_i.shape, data.N_block[0], data.N_feed[0])
     data.Eu_i = np.array(data.Eu_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Eu_q = np.array(data.Eu_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ev_i = np.array(data.Ev_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ev_q = np.array(data.Ev_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ew_i = np.array(data.Ew_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ew_q = np.array(data.Ew_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
-    print(" --->", data.Eu_i.shape, data.n_time, data.N_block[0], data.N_feed[0])
 
     # Time   
     time = np.arange(0, n_num0, 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
-    data.time = np.float32(np.arange(0, n_num, 1))
+    time0 = np.float32(np.arange(0, n_num, 1))
     for i in range(data.N_block[0]):
-        data.time[n_num0*i:n_num0*(i+1)] = time + i * n_num1 / juice_cdf._sample_rate(data.decimation_AUX[0])
-    data.time = np.array(data.time).reshape(data.N_block[0], data.N_feed[0]*128)
+        time0[n_num0*i:n_num0*(i+1)] = time + i * n_num1 / juice_cdf._sample_rate(data.decimation_AUX[0])
+    time0 = np.array(time0).reshape(data.N_block[0], data.N_feed[0]*128)
+    #
+    data.time = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    data.time = data.time.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    for i in range(data.n_time):
+        data.time[i][:][:] = time0
 
     return data
 
@@ -112,4 +118,56 @@ def hf_sid23_getspec(data, unit_mode):
     s = np.power(np.abs(s) / n_data, 2.0) * acf * acf
     spec.EwEw = np.fft.fftshift(s, axes=(2,))
 
+    spec.EE = spec.EuEu + spec.EvEv + spec.EwEw
+
     return spec
+
+
+# ---------------------------------------------------------------------
+def hf_sid23_getauto(data):
+    """
+    input:  data
+    return: auto
+    """
+    # Spec formation
+    auto = struct()
+    auto.EuEu = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EvEv = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EwEw = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EE   = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EuEu = auto.EuEu.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    auto.EvEv = auto.EvEv.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    auto.EwEw = auto.EwEw.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    auto.EE   = auto.EE.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+
+    for i in range(data.n_time):
+        for j in range(data.N_block[0]):
+            EuEu = data.Eu_i[i][j]**2 + data.Eu_q[i][j]**2  
+            EvEv = data.Ev_i[i][j]**2 + data.Ev_q[i][j]**2  
+            EwEw = data.Ew_i[i][j]**2 + data.Ew_q[i][j]**2  
+            EE = EuEu + EvEv + EwEw
+            EuEu = stats.zscore(EuEu); EvEv = stats.zscore(EvEv); EwEw = stats.zscore(EwEw); EE = stats.zscore(EE)
+
+            EuEu_auto = np.correlate(EuEu, EuEu, mode='full')
+            EuEu_auto = EuEu_auto[EuEu_auto.shape[0]//2:]
+            EuEu_auto /= len(EuEu_auto)
+            auto.EuEu[i][j] = EuEu_auto
+
+            EvEv_auto = np.correlate(EvEv, EvEv, mode='full')
+            EvEv_auto = EvEv_auto[EvEv_auto.shape[0]//2:]
+            EvEv_auto /= len(EvEv_auto)
+            auto.EvEv[i][j] = EvEv_auto
+
+            EwEw_auto = np.correlate(EwEw, EwEw, mode='full')
+            EwEw_auto = EwEw_auto[EwEw_auto.shape[0]//2:]
+            EwEw_auto /= len(EwEw_auto)
+            auto.EwEw[i][j] = EwEw_auto
+
+            EE_auto   = np.correlate(EE, EE, mode='full')
+            EE_auto   = EE_auto[EE_auto.shape[0]//2:]
+            EE_auto   /= len(EE_auto)
+            auto.EE[i][j] = EE_auto
+
+            auto.EuEu[i][j][0] = auto.EvEv[i][j][0] = auto.EwEw[i][j][0] = auto.EE[i][j][0] = 0
+            auto.EuEu[i][j][1] = auto.EvEv[i][j][1] = auto.EwEw[i][j][1] = auto.EE[i][j][1] = 0
+    return auto

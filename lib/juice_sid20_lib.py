@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID20 (Burst rich): L1a QL -- 2023/11/13
+    JUICE RPWI HF SID20 (Burst rich): L1a QL -- 2023/11/19
 """
 import juice_math_lib as juice_math
 
@@ -142,9 +142,9 @@ def juice_getdata_hf_sid20(cdf, cf):
         data.EuEv_re = data.EuiEvi + data.EuqEvq
         data.EvEw_re = data.EviEwi + data.EvqEwq
         data.EwEu_re = data.EwiEui + data.EwqEuq
-        data.EuEv_im = -data.EuiEvq + data.EuqEvi     # why?
-        data.EvEw_im = -data.EviEwq + data.EviEvq     # why?
-        data.EwEu_im = -data.EwiEuq + data.EwqEui     # why?
+        data.EuEv_im = -data.EuiEvq + data.EuqEvi
+        data.EvEw_im = -data.EviEwq + data.EviEvq
+        data.EwEu_im = -data.EwiEuq + data.EwqEui
         #
         data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
             juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
@@ -167,5 +167,9 @@ def juice_getdata_hf_sid20(cdf, cf):
         data.E_Vw_3d = -2. * (data.EuiEvq - data.EuqEvi)
         data.E_DoP_3d, data.E_DoL_3d, data.E_DoC_3d, data.E_ANG_3d, data.E_k_lon, data.E_k_lat = \
             juice_math.get_pol_3D(data.E_I_3d, data.E_Q_3d, data.E_U_3d, data.E_Vu_3d, data.E_Vv_3d, data.E_Vw_3d)
+
+    # CUT
+    if data.EuEu.shape[1] != 72:
+        print("Mode: **** error ****")
 
     return data

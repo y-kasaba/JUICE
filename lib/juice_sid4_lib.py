@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 (Burst surv): L1a QL -- 2023/11/13
+    JUICE RPWI HF SID4 (Burst surv): L1a QL -- 2023/11/19
 """
 import juice_math_lib as juice_math
 
@@ -145,5 +145,9 @@ def juice_getdata_hf_sid4(cdf, cf):
         data.E_Vw_3d = -2. * (data.EuiEvq - data.EuqEvi)
         data.E_DoP_3d, data.E_DoL_3d, data.E_DoC_3d, data.E_ANG_3d, data.E_k_lon, data.E_k_lat = \
             juice_math.get_pol_3D(data.E_I_3d, data.E_Q_3d, data.E_U_3d, data.E_Vu_3d, data.E_Vv_3d, data.E_Vw_3d)
+
+    # CUT
+    if data.EuEu.shape[1] != 72:
+        print("Mode: **** error ****")
 
     return data

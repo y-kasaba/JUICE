@@ -1,4 +1,6 @@
-# JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2023/11/15
+"""
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2023/11/15
+"""
 import numpy as np
 
 

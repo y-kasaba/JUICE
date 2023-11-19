@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2023/11/13
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2023/11/19
 """
 import juice_math_lib as juice_math
 
@@ -237,9 +237,9 @@ def juice_getdata_hf_sid3(cdf, cf):
         data.EuEv_re = data.EuiEvi + data.EuqEvq
         data.EvEw_re = data.EviEwi + data.EvqEwq
         data.EwEu_re = data.EwiEui + data.EwqEuq
-        data.EuEv_im = -data.EuiEvq + data.EuqEvi     # why?
-        data.EvEw_im = -data.EviEwq + data.EviEvq     # why?
-        data.EwEu_im = -data.EwiEuq + data.EwqEui     # why?
+        data.EuEv_im = -data.EuiEvq + data.EuqEvi
+        data.EvEw_im = -data.EviEwq + data.EviEvq
+        data.EwEu_im = -data.EwiEuq + data.EwqEui
         #
         data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
             juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
@@ -277,7 +277,9 @@ def juice_getdata_hf_sid3(cdf, cf):
         data.freq_step = data.freq_step[:, 0:n_num]
         data.freq_width = data.freq_width[:, 0:n_num]
         print("Mode: Ver.1")
-    else:
+    elif n_num == 256:
         print("Mode: Ver.2")
-
+    else:
+        print("Mode: **** error ****")
+        
     return data

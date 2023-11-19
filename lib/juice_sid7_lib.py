@@ -1,4 +1,6 @@
-# JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2023/11/11
+"""
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2023/11/18
+"""
 import numpy as np
 import juice_cdf_lib as juice_cdf
 
@@ -10,7 +12,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID7 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid7(cdf):
+def juice_getdata_hf_sid7(cdf, cf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -39,19 +41,20 @@ def juice_getdata_hf_sid7(cdf):
     data.pol = cdf['pol'][...]                  # [same with ‘pol_AUX’]	
 
     # Data: N_auto_corr (128) * N_step_AUX (48) x 4B = 24576
-    data.auto_corr = cdf['auto_corr'][...]
-    #
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
-
+    #
+    data.auto_corr = cdf['auto_corr'][...] * 10**(cf/10)
+ 
     # CUT & Reshape
     data.n_time = data.auto_corr.shape[0]
     n_num = data.N_block[0] * data.N_samp_AUX[0]
     if n_num < data.auto_corr.shape[1]:
+        print(" org:", data.auto_corr.shape, data.N_block[0], data.N_samp_AUX[0])
         data.auto_corr = data.auto_corr[:, 0:n_num]
+        print(" cut:", data.auto_corr.shape, data.N_block[0], data.N_samp_AUX[0])
     data.auto_corr = np.array(data.auto_corr).reshape(data.n_time, data.N_block[0], data.N_samp_AUX[0])
-    print("sort:", data.auto_corr.shape, data.N_block[0], data.N_samp_AUX[0])
-
+    
     # Time
     data.time = np.arange(0, data.N_samp_AUX[0], 1) / data.N_samp_AUX[0] / juice_cdf._sample_rate(data.decimation_AUX[0]) * 2048
 
