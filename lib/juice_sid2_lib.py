@@ -1,26 +1,69 @@
+"""
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/11/19
+"""
 import numpy as np
-import statistics
-
 import juice_cdf_lib as juice_cdf
-import juice_math_lib as juice_math
+import scipy.stats as stats
+
 
 class struct:
     pass
 
-#---------------------------------------------------------------------
-#--- SID2 ------------------------------------------------------------
-#---------------------------------------------------------------------
-def hf_sid02_getdata(cdf):
 
+# ---------------------------------------------------------------------
+# --- SID2 ------------------------------------------------------------
+# ---------------------------------------------------------------------
+def juice_getdata_hf_sid2(cdf, cf):
+    """
+    input:  CDF, cf:conversion factor
+    return: data
+    """
     data = struct()
 
-    # all data
-    data.Eu_i = cdf['Eu_i'][...]
-    data.Eu_q = cdf['Eu_q'][...]
-    data.Ev_i = cdf['Ev_i'][...]
-    data.Ev_q = cdf['Ev_q'][...]
-    data.Ew_i = cdf['Ew_i'][...]
-    data.Ew_q = cdf['Ew_q'][...]
+    # AUX
+    data.U_selected = cdf['U_selected'][...]
+    data.V_selected = cdf['V_selected'][...]
+    data.W_selected = cdf['W_selected'][...]
+    data.cal_signal = cdf['cal_signal'][...]
+    data.sweep_table = cdf['sweep_table'][...]   # (fixed: not defined in V.2)
+    #
+    data.onboard_cal = cdf['onboard_cal'][...]   # (not used)
+    data.complex = cdf['complex'][...]
+    data.BG_subtract = cdf['BG_subtract'][...]
+    data.BG_select = cdf['BG_select'][...]
+    data.FFT_window = cdf['FFT_window'][...]
+    data.RFI_rejection = cdf['RFI_rejection'][...]
+    data.Pol_sep_thres = cdf['Pol_sep_thres'][...]
+    data.Pol_sep_SW = cdf['Pol_sep_SW'][...]
+    data.overflow_U = cdf['overflow_U'][...]     # (fixed: not defined in V.2)
+    data.overflow_V = cdf['overflow_V'][...]     # (fixed: not defined in V.2)
+    data.overflow_W = cdf['overflow_W'][...]     # (fixed: not defined in V.2)
+    data.proc_param0 = cdf['proc_param0'][...]
+    data.proc_param1 = cdf['proc_param1'][...]
+    data.proc_param2 = cdf['proc_param2'][...]
+    data.proc_param3 = cdf['proc_param3'][...]
+    data.BG_downlink = cdf['BG_downlink'][...]
+    data.N_block = cdf['N_block'][...]
+    data.T_RWI_CH1 = cdf['T_RWI_CH1'][...]
+    data.T_RWI_CH2 = cdf['T_RWI_CH2'][...]
+    data.T_HF_FPGA = cdf['T_HF_FPGA'][...]
+
+    # Header
+    data.N_samp = cdf['N_samp'][...]
+    data.N_step = cdf['N_step'][...]
+    data.decimation = cdf['decimation'][...]
+    data.pol = cdf['pol'][...]
+
+    # Data
+    data.epoch = cdf['Epoch'][...]
+    data.scet = cdf['SCET'][...]
+    #
+    data.Eu_i = cdf['Eu_i'][...] * 10**(cf/20)
+    data.Eu_q = cdf['Eu_q'][...] * 10**(cf/20)
+    data.Ev_i = cdf['Ev_i'][...] * 10**(cf/20)
+    data.Ev_q = cdf['Ev_q'][...] * 10**(cf/20)
+    data.Ew_i = cdf['Ew_i'][...] * 10**(cf/20)
+    data.Ew_q = cdf['Ew_q'][...] * 10**(cf/20)
     data.pps_count = cdf['pps_count'][...]
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]
@@ -31,152 +74,217 @@ def hf_sid02_getdata(cdf):
     data.freq_step = cdf['freq_step'][...]
     data.freq_width = cdf['freq_width'][...]
 
-    # once per data
-    data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
-    #
-    data.N_samp = cdf['N_samp'][...]
-    data.N_step = cdf['N_step'][...]
-    data.decimation = cdf['decimation'][...]
-    #
-    n_num = len(data.scet)
-    data.n_data = np.arange(0, n_num, 1)
+    # ### SPECIAL: 202305 & 202307 -- data shift -16
+    date = data.epoch[0];  month = date.strftime('%Y%m')
+    if month == "202305" or month == "202307":
+        data.Eu_i = np.roll(data.Eu_i, -16);  data.Eu_q = np.roll(data.Eu_q, -16)
+        data.Ev_i = np.roll(data.Ev_i, -16);  data.Ev_q = np.roll(data.Ev_q, -16)
+        data.Ew_i = np.roll(data.Ew_i, -16);  data.Ew_q = np.roll(data.Ew_q, -16)
+        print("-16 shift in 202305 data")
+    # ### SPECIAL: 202305 & 202307 -- data shift -16
 
+    # CUT & Reshape
+    n_time = data.Eu_i.shape[0]
+    n_freq = data.N_step[0]
+    n_samp = data.N_samp[0]
+    n_num = n_freq * n_samp
+    print("  org:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
+    if n_num < data.Eu_i.shape[1]:
+        data.Eu_i = data.Eu_i[:, 0:n_num];  data.Eu_q = data.Eu_q[:, 0:n_num]
+        data.Ev_i = data.Ev_i[:, 0:n_num];  data.Ev_q = data.Ev_q[:, 0:n_num]
+        data.Ew_i = data.Ew_i[:, 0:n_num];  data.Ew_q = data.Ew_q[:, 0:n_num]
+        data.frequency = data.frequency[:, 0:n_num]
+        data.freq_step = data.freq_step[:, 0:n_num]
+        data.freq_width = data.freq_width[:, 0:n_num]
+        data.time = data.time[:, 0:n_num]
+        data.pps_count = data.pps_count[:, 0:n_num]
+        data.sweep_start = data.sweep_start[:, 0:n_num]
+        data.reduction = data.reduction[:, 0:n_num]
+        data.overflow = data.overflow[:, 0:n_num]
+        print("cut1 :", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+    # Merge & CUT
+    n_freq0 = n_freq
+    if data.frequency[0][0] < data.frequency[1][0]:
+        i = 1
+        while data.frequency[0][0] < data.frequency[i][0]:
+            i += 1
+            if i >= n_time:
+                break
+            n_freq0 += data.N_step[i]
+        n_time = n_time // i
+        n_freq = n_freq * i
+        print(" cut2:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+        data.epoch = np.array(data.epoch).reshape(n_time, i)
+        print(data.epoch.shape)
+        print(data.epoch)
+        data.epoch = data.epoch[:, 0]
+        print(data.epoch.shape)
+        print(data.epoch)
+    # Reshape
+    data.Eu_i = np.array(data.Eu_i).reshape(n_time, n_freq, n_samp)
+    data.Eu_q = np.array(data.Eu_q).reshape(n_time, n_freq, n_samp)
+    data.Ev_i = np.array(data.Ev_i).reshape(n_time, n_freq, n_samp)
+    data.Ev_q = np.array(data.Ev_q).reshape(n_time, n_freq, n_samp)
+    data.Ew_i = np.array(data.Ew_i).reshape(n_time, n_freq, n_samp)
+    data.Ew_q = np.array(data.Ew_q).reshape(n_time, n_freq, n_samp)
+    data.frequency   = np.array(data.frequency).reshape(n_time, n_freq, n_samp)
+    data.freq_step   = np.array(data.freq_step).reshape(n_time, n_freq, n_samp)
+    data.freq_width  = np.array(data.freq_width).reshape(n_time, n_freq, n_samp)
+    data.time        = np.array(data.time).reshape(n_time, n_freq, n_samp)
+    data.pps_count   = np.array(data.pps_count).reshape(n_time, n_freq, n_samp)
+    data.sweep_start = np.array(data.sweep_start).reshape(n_time, n_freq, n_samp)
+    data.reduction   = np.array(data.reduction).reshape(n_time, n_freq, n_samp)
+    data.overflow    = np.array(data.overflow).reshape(n_time, n_freq, n_samp)
+
+    # CUT & Reshape
+    print(" sort:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+    if n_freq > n_freq0:
+        n_freq = n_freq0
+        data.Eu_i = data.Eu_i[:, 0:n_freq]
+        data.Eu_q = data.Eu_q[:, 0:n_freq]
+        data.Ev_i = data.Ev_i[:, 0:n_freq]
+        data.Ev_q = data.Ev_q[:, 0:n_freq]
+        data.Ew_i = data.Ew_i[:, 0:n_freq]
+        data.Ew_q = data.Ew_q[:, 0:n_freq]
+        data.frequency = data.frequency[:, 0:n_freq]
+        data.freq_step = data.freq_step[:, 0:n_freq]
+        data.freq_width = data.freq_width[:, 0:n_freq]
+        data.time = data.time[:, 0:n_freq]
+        data.pps_count = data.pps_count[:, 0:n_freq]
+        data.sweep_start = data.sweep_start[:, 0:n_freq]
+        data.reduction = data.reduction[:, 0:n_freq]
+        data.overflow = data.overflow[:, 0:n_freq]
+        print("  cut:", data.Eu_i.shape)
+    print("fixed:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+
+    # ### SPECIAL: 202305 & 202307 -- data shift -16
+    if month == "202305" or month == "202307":
+        data.Eu_i[:, -1, n_samp//2:n_samp] = 0.;  data.Eu_q[:, -1, n_samp//2:n_samp] = 0.
+        data.Ev_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ev_q[:, -1, n_samp//2:n_samp] = 0.
+        data.Ew_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ew_q[:, -1, n_samp//2:n_samp] = 0.
+    # ### SPECIAL: 202305 & 202307 -- data shift -16
     return data
 
-#---------------------------------------------------------------------
-def hf_sid02_getspec(data, mode, unit_mode, ave_mode):
 
-    # INPUT: convrsion to 1D
-    Eu_i_1d = np.ravel(data.Eu_i)
-    Eu_q_1d = np.ravel(data.Eu_q)
-    Ev_i_1d = np.ravel(data.Ev_i)
-    Ev_q_1d = np.ravel(data.Ev_q)
-    Ew_i_1d = np.ravel(data.Ew_i)
-    Ew_q_1d = np.ravel(data.Ew_q)
-    sweep_start_1d = np.ravel(data.sweep_start)
-    # frequency_1d = np.ravel(data.frequency)
-
-    # OUTPUT
-    epoch = []
-    Eu_power = []
-    Ev_power = []
-    Ew_power = []
-    frequency = []
-
-    # Index
-    index = np.where(data.sweep_start == 1)
-    sweep_start_1d = np.append(sweep_start_1d, [1])     # to show "last packet"
-    index_1d = np.where(sweep_start_1d)
-    index_n = len(index_1d[0])
+# ---------------------------------------------------------------------
+def hf_sid2_getspec(data, unit_mode):
     """
-    # Ver.1 -- longer packet case: N_samp detection + Error packet rejection
-    index_n_tmp = 0
-    for i in range(index_n):
-        if i < index_n-1:
-            if index[1][i] == 0:
-                index_1d[0][index_n_tmp] = index_1d[0][i]
-                index[0][index_n_tmp] = index[0][i]
-                index_n_tmp = index_n_tmp + 1
-        else:
-            index_1d[0][index_n_tmp] = index_1d[0][i]
-            index_n_tmp = index_n_tmp + 1            
-    index_n = index_n_tmp
-    n_len = index_1d[0][1] - index_1d[0][0]
+    input:  data, unit_mode
+    return: spec
     """
-    
     # Spec formation
     spec = struct()
-    index_n0 = 0
-    for i in range(index_n-1):
 
-        # number of sweep step (fixed for ver.1 SW SID2)
-        n_step = data.N_step[index[0][i]]
+    n_time = data.Eu_i.shape[0]
+    n_freq = data.Eu_i.shape[1]
+    n_samp = data.Eu_i.shape[2]
+    spec.EuEu = np.zeros(n_time * n_freq * n_samp)
+    spec.EvEv = np.zeros(n_time * n_freq * n_samp)
+    spec.EwEw = np.zeros(n_time * n_freq * n_samp)
+    spec.EE = np.zeros(n_time * n_freq * n_samp)
+    spec.freq = np.zeros(n_time * n_freq * n_samp)
+    spec.EuEu = spec.EuEu.reshape(n_time, n_freq, n_samp)
+    spec.EvEv = spec.EvEv.reshape(n_time, n_freq, n_samp)
+    spec.EwEw = spec.EwEw.reshape(n_time, n_freq, n_samp)
+    spec.EE = spec.EE.reshape(n_time, n_freq, n_samp)
+    spec.freq = spec.freq.reshape(n_time, n_freq, n_samp)
 
-        # number of sampling (fixed for ver.1 SW SID2)
-        n_samp = data.N_samp[index[0][i]]
-        #
-        # Ver.1 -- longer packet case
-        # n_samp = np.int16(n_len / n_step)
+    # Frequency
+    dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
+    freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
 
-        # 1/bandwidth [sec]
-        decimation = data.decimation[index[0][i]]
-        sample_rate = juice_cdf._sample_rate(decimation)  # Hz
-        dt = 1.0 / (296e+3 / 2**decimation)
+    for i in range(n_time):
+        for j in range(n_freq):
+            spec.freq[i][j] = data.frequency[i][j] + freq
 
-        # get_frequency  (f_step_1d: 87.90607kHz -- not used yet   f_width_1d: 111.9768 kHz = Sample_rate(148kHz) * 0.7566)
-        frequency_1d, f_step_1d, f_width_1d = juice_cdf._get_frequencies(n_step, n_samp, sample_rate)
-        # n_samp_width = np.int16(n_samp * f_step_1d[0] / (sample_rate/1000.) / 2.)
-        # print(n_samp, n_samp_width, sample_rate/1000, f_step_1d[0], sample_rate/1000, f_step_1d[0] / (sample_rate/1000.) / 2)
-        # print(len(frequency_1d), frequency_1d)
-        # print(n_samp_width, n_samp, len(f_step_1d), f_step_1d)
-        # print(sample_rate, len(f_width_1d), f_width_1d)
+    # FFT
+    window = np.hanning(n_samp)
+    acf = 1/(sum(window)/n_samp)
+    #
+    s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf
+    spec.EuEu = np.fft.fftshift(s, axes=(2,))
+    s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf
+    spec.EvEv = np.fft.fftshift(s, axes=(2,))
+    s = np.fft.fft((data.Ew_i - data.Ew_q * 1j) * window);  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf
+    spec.EwEw = np.fft.fftshift(s, axes=(2,))
+    spec.EE = spec.EuEu + spec.EvEv + spec.EwEw
+    
 
-        # data length
-        index_len = index_1d[0][i+1] - index_1d[0][i]
-        if index_len != n_step * n_samp:
-            print("****ERROR**** [", i, index_n0, data.epoch[index[0][i]], "] length:", index_len, "!=", n_samp, "*", n_step)
-            continue
+    samp1 = 0
+    samp2 = n_samp
+    """
+    # Cut: 75%
+    samp1 = n_samp//8
+    samp2 = n_samp - n_samp//8
 
-        # epoch
-        epoch.append(data.epoch[index[0][i]])
-        index_n0 = index_n0 + 1
+    # for i in range(data.n_freq - 1):
+    i = 0
+    while ( spec.freq[0][i][samp2] > spec.freq[0][i+1][samp1] ):
+        samp1 += 1
+        samp2 -= 1
+    print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%") 
+    spec.EuEu = spec.EuEu[:, :, samp1:samp2]
+    spec.EvEv = spec.EvEv[:, :, samp1:samp2]
+    spec.EwEw = spec.EwEw[:, :, samp1:samp2]
+    spec.EE   = spec.EE  [:, :, samp1:samp2]
+    spec.freq = spec.freq[:, :, samp1:samp2]
+    n_samp = samp2 - samp1
+    """
 
-        # data cut
-        Eu_i = np.array(Eu_i_1d[index_1d[0][i]:index_1d[0][i+1]])
-        Eu_q = np.array(Eu_q_1d[index_1d[0][i]:index_1d[0][i+1]])
-        Ev_i = np.array(Ev_i_1d[index_1d[0][i]:index_1d[0][i+1]])
-        Ev_q = np.array(Ev_q_1d[index_1d[0][i]:index_1d[0][i+1]])
-        Ew_i = np.array(Ew_i_1d[index_1d[0][i]:index_1d[0][i+1]])
-        Ew_q = np.array(Ew_q_1d[index_1d[0][i]:index_1d[0][i+1]])
-        # freq = np.array(frequency_1d[index_1d[0][i]:index_1d[0][i+1]])
-        freq = np.array(frequency_1d)
-
-        Eu_i_array = Eu_i.reshape(n_step, n_samp)
-        Eu_q_array = Eu_q.reshape(n_step, n_samp)
-        Ev_i_array = Ev_i.reshape(n_step, n_samp)
-        Ev_q_array = Ev_q.reshape(n_step, n_samp)
-        Ew_i_array = Ew_i.reshape(n_step, n_samp)
-        Ew_q_array = Ew_q.reshape(n_step, n_samp)
-        freq_array = freq.reshape(n_step, n_samp)
-
-        # low resolution power spectra
-        if mode == 0:
-            if (ave_mode == 0):  # [ave_mode] 0: simple sum   1: FFT sum   2: median sum   3: min sum
-                juice_math._mean_power(Eu_i_array, Eu_q_array, Eu_power, f_width_1d[0], unit_mode)
-                juice_math._mean_power(Ev_i_array, Ev_q_array, Ev_power, f_width_1d[0], unit_mode)
-                juice_math._mean_power(Ew_i_array, Ew_q_array, Ew_power, f_width_1d[0], unit_mode)
-            else:               # [ave_mode] 0: simple sum   1: FFT sum   2: median sum   3: min sum
-                for ii in range(n_step):
-                    freq0 = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array[ii][:]
-                    df = freq0[np.int16(n_samp/3+1)]-freq0[np.int16(n_samp*2/3-1)]
-                    juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, unit_mode, ave_mode)
-                    juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, unit_mode, ave_mode)
-                    juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, unit_mode, ave_mode)
-            freq = freq.reshape(n_step, n_samp)
-            freq = freq[:, 0]
-            frequency.extend(freq)
-        # high resolution power spectra
-        else:
-            for ii in range(n_step):
-                df = juice_math._fft_freq(n_samp, freq_array[ii][:], frequency, dt)
-                juice_math._fft_power(n_samp, Eu_i_array[ii][:], Eu_q_array[ii][:], Eu_power, df, unit_mode, 0)
-                juice_math._fft_power(n_samp, Ev_i_array[ii][:], Ev_q_array[ii][:], Ev_power, df, unit_mode, 0)
-                juice_math._fft_power(n_samp, Ew_i_array[ii][:], Ew_q_array[ii][:], Ew_power, df, unit_mode, 0)
-
-    # return: "spec"
-    frequency = np.array(frequency)
-    Eu_power = np.array(Eu_power)
-    Ev_power = np.array(Ev_power)
-    Ew_power = np.array(Ew_power)
-    index_n = index_n0
-    n_set = int(Eu_power.size / index_n)
-    spec.frequency = frequency.reshape(index_n, n_set).transpose()
-    spec.Eu_power = Eu_power.reshape(index_n, n_set).transpose()
-    spec.Ev_power = Ev_power.reshape(index_n, n_set).transpose()
-    spec.Ew_power = Ew_power.reshape(index_n, n_set).transpose()
-    spec.n_samp = n_samp
-    spec.n_step = n_step
-    spec.epoch = epoch
-
+    # Reshape
+    spec.EuEu = np.array(spec.EuEu).reshape(n_time, n_freq * n_samp)
+    spec.EvEv = np.array(spec.EvEv).reshape(n_time, n_freq * n_samp)
+    spec.EwEw = np.array(spec.EwEw).reshape(n_time, n_freq * n_samp)
+    spec.EE = np.array(spec.EE).reshape(n_time, n_freq * n_samp)
+    spec.freq = np.array(spec.freq).reshape(n_time, n_freq * n_samp)
     return spec
+
+
+# ---------------------------------------------------------------------
+def hf_sid2_getauto(data):
+    """
+    input:  data
+    return: auto
+    """
+    # AutoCorr formation
+    auto = struct()
+    auto.EuEu = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EvEv = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EwEw = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EE   = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
+    auto.EuEu = auto.EuEu.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    auto.EvEv = auto.EvEv.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    auto.EwEw = auto.EwEw.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    auto.EE   = auto.EE.reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+
+    for i in range(data.n_time):
+        for j in range(data.N_block[0]):
+            EuEu = data.Eu_i[i][j]**2 + data.Eu_q[i][j]**2  
+            EvEv = data.Ev_i[i][j]**2 + data.Ev_q[i][j]**2  
+            EwEw = data.Ew_i[i][j]**2 + data.Ew_q[i][j]**2  
+            EE = EuEu + EvEv + EwEw
+            EuEu = stats.zscore(EuEu); EvEv = stats.zscore(EvEv); EwEw = stats.zscore(EwEw); EE = stats.zscore(EE)
+
+            EuEu_auto = np.correlate(EuEu, EuEu, mode='full')
+            EuEu_auto = EuEu_auto[EuEu_auto.shape[0]//2:]
+            EuEu_auto /= len(EuEu_auto)
+            auto.EuEu[i][j] = EuEu_auto
+
+            EvEv_auto = np.correlate(EvEv, EvEv, mode='full')
+            EvEv_auto = EvEv_auto[EvEv_auto.shape[0]//2:]
+            EvEv_auto /= len(EvEv_auto)
+            auto.EvEv[i][j] = EvEv_auto
+
+            EwEw_auto = np.correlate(EwEw, EwEw, mode='full')
+            EwEw_auto = EwEw_auto[EwEw_auto.shape[0]//2:]
+            EwEw_auto /= len(EwEw_auto)
+            auto.EwEw[i][j] = EwEw_auto
+
+            EE_auto   = np.correlate(EE, EE, mode='full')
+            EE_auto   = EE_auto[EE_auto.shape[0]//2:]
+            EE_auto   /= len(EE_auto)
+            auto.EE[i][j] = EE_auto
+
+            auto.EuEu[i][j][0] = auto.EvEv[i][j][0] = auto.EwEw[i][j][0] = auto.EE[i][j][0] = 0
+            auto.EuEu[i][j][1] = auto.EvEv[i][j][1] = auto.EwEw[i][j][1] = auto.EE[i][j][1] = 0
+    return auto

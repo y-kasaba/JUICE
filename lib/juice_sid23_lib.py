@@ -58,21 +58,27 @@ def juice_getdata_hf_sid23(cdf, cf):
     n_num0 = data.N_feed[0] * 128
     n_num1 = (data.N_feed[0] + data.N_skip[0]) * 128
     n_num = n_num0 * data.N_block[0]
+    print(" org:", data.Eu_i.shape, data.n_time, n_num, data.N_block[0], data.N_feed[0])
     if n_num < data.Eu_i.shape[1]:
-        print(" org:", data.Eu_i.shape, data.N_block[0], data.N_feed[0])
-        data.Eu_i = data.Eu_i[:, 0:n_num]
-        data.Eu_q = data.Eu_q[:, 0:n_num]
-        data.Ev_i = data.Ev_i[:, 0:n_num]
-        data.Ev_q = data.Ev_q[:, 0:n_num]
-        data.Ew_i = data.Ew_i[:, 0:n_num]
-        data.Ew_q = data.Ew_q[:, 0:n_num]
-        print(" cut:", data.Eu_i.shape, data.N_block[0], data.N_feed[0])
+        data.Eu_i = data.Eu_i[:, 0:n_num];  data.Eu_q = data.Eu_q[:, 0:n_num]
+        data.Ev_i = data.Ev_i[:, 0:n_num];  data.Ev_q = data.Ev_q[:, 0:n_num]
+        data.Ew_i = data.Ew_i[:, 0:n_num];  data.Ew_q = data.Ew_q[:, 0:n_num]
+        data.pps_count = data.pps_count[:, 0:n_num]
+        data.sweep_start = data.sweep_start[:, 0:n_num]
+        data.reduction = data.reduction[:, 0:n_num]
+        data.overflow = data.overflow[:, 0:n_num]
+        print(" cut:", data.Eu_i.shape, data.n_time, n_num, data.N_block[0], data.N_feed[0])
     data.Eu_i = np.array(data.Eu_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Eu_q = np.array(data.Eu_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ev_i = np.array(data.Ev_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ev_q = np.array(data.Ev_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ew_i = np.array(data.Ew_i).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
     data.Ew_q = np.array(data.Ew_q).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.pps_count  = np.array(data.pps_count).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.sweep_start= np.array(data.sweep_start).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.reduction  = np.array(data.reduction).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    data.overflow   = np.array(data.overflow).reshape(data.n_time, data.N_block[0], data.N_feed[0]*128)
+    print("sort:", data.Eu_i.shape, data.n_time, n_num, data.N_block[0], data.N_feed[0])
 
     # Time   
     time = np.arange(0, n_num0, 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
