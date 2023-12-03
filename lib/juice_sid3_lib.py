@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2023/11/19
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2023/11/28
 """
 import juice_math_lib as juice_math
 
@@ -111,15 +111,24 @@ def juice_getdata_hf_sid3(cdf, cf):
             juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
     #
     if data.complex[0] == 2:    # Matrix - N/R/L-separated
-        data.EuEu = data.EuEu_NC = cdf['EuEu_NC'][...] * 10**(cf/10)
-        data.EvEv = data.EvEv_NC = cdf['EvEv_NC'][...] * 10**(cf/10)
-        data.EwEw = data.EwEw_NC = cdf['EwEw_NC'][...] * 10**(cf/10)
-        data.EuEv_re = data.EuEv_re_NC = cdf['EuEv_re_NC'][...] * 10**(cf/10)
-        data.EvEw_re = data.EvEw_re_NC = cdf['EvEw_re_NC'][...] * 10**(cf/10)
-        data.EwEu_re = data.EwEu_re_NC = cdf['EwEu_re_NC'][...] * 10**(cf/10)
-        data.EuEv_im = data.EuEv_im_NC = cdf['EuEv_im_NC'][...] * 10**(cf/10)
-        data.EvEw_im = data.EvEw_im_NC = cdf['EvEw_im_NC'][...] * 10**(cf/10)
-        data.EwEu_im = data.EwEu_im_NC = cdf['EwEu_im_NC'][...] * 10**(cf/10)
+        data.EuEu = cdf['EuEu_NC'][...] * 10**(cf/10)
+        data.EvEv = cdf['EvEv_NC'][...] * 10**(cf/10)
+        data.EwEw = cdf['EwEw_NC'][...] * 10**(cf/10)
+        data.EuEv_re = cdf['EuEv_re_NC'][...] * 10**(cf/10)
+        data.EvEw_re = cdf['EvEw_re_NC'][...] * 10**(cf/10)
+        data.EwEu_re = cdf['EwEu_re_NC'][...] * 10**(cf/10)
+        data.EuEv_im = cdf['EuEv_im_NC'][...] * 10**(cf/10)
+        data.EvEw_im = cdf['EvEw_im_NC'][...] * 10**(cf/10)
+        data.EwEu_im = cdf['EwEu_im_NC'][...] * 10**(cf/10)
+        data.EuEu_NC = cdf['EuEu_NC'][...] * 10**(cf/10)
+        data.EvEv_NC = cdf['EvEv_NC'][...] * 10**(cf/10)
+        data.EwEw_NC = cdf['EwEw_NC'][...] * 10**(cf/10)
+        data.EuEv_re_NC = cdf['EuEv_re_NC'][...] * 10**(cf/10)
+        data.EvEw_re_NC = cdf['EvEw_re_NC'][...] * 10**(cf/10)
+        data.EwEu_re_NC = cdf['EwEu_re_NC'][...] * 10**(cf/10)
+        data.EuEv_im_NC = cdf['EuEv_im_NC'][...] * 10**(cf/10)
+        data.EvEw_im_NC = cdf['EvEw_im_NC'][...] * 10**(cf/10)
+        data.EwEu_im_NC = cdf['EwEu_im_NC'][...] * 10**(cf/10)
         data.E_Iuv_NC, data.E_Quv_NC, data.E_Uuv_NC, data.E_Vuv_NC = \
             juice_math.get_stokes(data.EuEu_NC, data.EvEv_NC, data.EuEv_re_NC, data.EuEv_im_NC)
         data.E_Ivw_NC, data.E_Qvw_NC, data.E_Uvw_NC, data.E_Vvw_NC = \

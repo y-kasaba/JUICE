@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/11/19
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/2
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -53,6 +53,31 @@ def juice_getdata_hf_sid2(cdf, cf):
     data.N_step = cdf['N_step'][...]
     data.decimation = cdf['decimation'][...]
     data.pol = cdf['pol'][...]
+    data.B0_startf = cdf['B0_startf'][...]
+    data.B0_stopf = cdf['B0_stopf'][...]
+    data.B0_step = cdf['B0_step'][...]
+    data.B0_repeat = cdf['B0_repeat'][...]
+    data.B0_subdiv = cdf['B0_subdiv'][...]
+    data.B1_startf = cdf['B0_startf'][...]
+    data.B1_stopf = cdf['B0_stopf'][...]
+    data.B1_step = cdf['B0_step'][...]
+    data.B1_repeat = cdf['B0_repeat'][...]
+    data.B1_subdiv = cdf['B0_subdiv'][...]
+    data.B2_startf = cdf['B0_startf'][...]
+    data.B2_stopf = cdf['B0_stopf'][...]
+    data.B2_step = cdf['B0_step'][...]
+    data.B2_repeat = cdf['B0_repeat'][...]
+    data.B2_subdiv = cdf['B0_subdiv'][...]
+    data.B3_startf = cdf['B0_startf'][...]
+    data.B3_stopf = cdf['B0_stopf'][...]
+    data.B3_step = cdf['B0_step'][...]
+    data.B3_repeat = cdf['B0_repeat'][...]
+    data.B3_subdiv = cdf['B0_subdiv'][...]
+    data.B4_startf = cdf['B0_startf'][...]
+    data.B4_stopf = cdf['B0_stopf'][...]
+    data.B4_step = cdf['B0_step'][...]
+    data.B4_repeat = cdf['B0_repeat'][...]
+    data.B4_subdiv = cdf['B0_subdiv'][...]
 
     # Data
     data.epoch = cdf['Epoch'][...]
@@ -102,6 +127,9 @@ def juice_getdata_hf_sid2(cdf, cf):
         data.reduction = data.reduction[:, 0:n_num]
         data.overflow = data.overflow[:, 0:n_num]
         print("cut1 :", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+    print(data.frequency[:, 0])
+    print(data.frequency[:, -1])
+
     # Merge & CUT
     n_freq0 = n_freq
     if data.frequency[0][0] < data.frequency[1][0]:
@@ -167,9 +195,9 @@ def juice_getdata_hf_sid2(cdf, cf):
 
 
 # ---------------------------------------------------------------------
-def hf_sid2_getspec(data, unit_mode):
+def hf_sid2_getspec(data):
     """
-    input:  data, unit_mode
+    input:  data
     return: spec
     """
     # Spec formation
@@ -210,12 +238,9 @@ def hf_sid2_getspec(data, unit_mode):
     spec.EE = spec.EuEu + spec.EvEv + spec.EwEw
     
 
-    samp1 = 0
-    samp2 = n_samp
-    """
     # Cut: 75%
-    samp1 = n_samp//8
-    samp2 = n_samp - n_samp//8
+    samp1 = n_samp//8           # 0
+    samp2 = n_samp - n_samp//8  # n_samp
 
     # for i in range(data.n_freq - 1):
     i = 0
@@ -223,13 +248,15 @@ def hf_sid2_getspec(data, unit_mode):
         samp1 += 1
         samp2 -= 1
     print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%") 
+    print("df @ lowest-f  [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
+    i = n_freq-2
+    print("df @ highest-f [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
     spec.EuEu = spec.EuEu[:, :, samp1:samp2]
     spec.EvEv = spec.EvEv[:, :, samp1:samp2]
     spec.EwEw = spec.EwEw[:, :, samp1:samp2]
     spec.EE   = spec.EE  [:, :, samp1:samp2]
     spec.freq = spec.freq[:, :, samp1:samp2]
     n_samp = samp2 - samp1
-    """
 
     # Reshape
     spec.EuEu = np.array(spec.EuEu).reshape(n_time, n_freq * n_samp)
@@ -285,6 +312,12 @@ def hf_sid2_getauto(data):
             EE_auto   /= len(EE_auto)
             auto.EE[i][j] = EE_auto
 
-            auto.EuEu[i][j][0] = auto.EvEv[i][j][0] = auto.EwEw[i][j][0] = auto.EE[i][j][0] = 0
-            auto.EuEu[i][j][1] = auto.EvEv[i][j][1] = auto.EwEw[i][j][1] = auto.EE[i][j][1] = 0
+            auto.EuEu[i][j][0] = 0
+            auto.EvEv[i][j][0] = 0
+            auto.EwEw[i][j][0] = 0
+            auto.EE[i][j][0] = 0
+            auto.EuEu[i][j][1] = 0
+            auto.EvEv[i][j][1] = 0
+            auto.EwEw[i][j][1] = 0
+            auto.EE[i][j][1] = 0
     return auto

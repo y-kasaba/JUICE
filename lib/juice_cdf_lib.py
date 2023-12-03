@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2023/11/12
+# JUICE RPWI HF CDF lib -- 2023/12/2
 
 import glob
 import spacepy.pycdf
@@ -44,23 +44,64 @@ def _sample_rate(decimation):
 
 
 # Frequency: linear [kHz]
-def _get_frequencies(n_freq, samp, sample_rate):
+# output: freq, f_step, f_width
+# Frequency: linear [kHz]
+def _get_frequencies(sample_rate, n_freq, samp):
     fs = 80e3                       # start freq
     fe = 45e6                       # end   freq
     df = (fe - fs) / (n_freq - 1)   # band width
 
     i_freq = np.arange(0, n_freq)
     freq = np.float32((fs + df * i_freq) / 1000.)
+    step = np.float32((i_freq * 0. + df) / 1000.)
+    width = np.float32(
+        (i_freq * 0. + sample_rate * 0.7566) / 1000.,
+    )
+
     freq = np.repeat(freq, samp)
+    step = np.repeat(step, samp)
+    width = np.repeat(width, samp)
+    return freq, step, width
 
-    f_step = np.float32((i_freq * 0. + df) / 1000.)
-    f_step = np.repeat(f_step, samp)
 
-    f_width = np.float32(
-        (i_freq * 0. + sample_rate * 0.7566) / 1000.)
-    f_width = np.repeat(f_width, samp)
+# Frequency: Band
+# Output: freq, step, width
+def _get_frequencies_band(sample_rate, b_num, b_start, b_stop,
+                          b_step, b_repeat, b_sdiv, samp):
+    freq = []
+    step = []
+    width = []
+    for i in range(b_num):
+        f_freq, f_step, f_width = _get_band(
+            b_start[i], b_stop[i], b_step[i], b_sdiv[i], sample_rate,
+        )
+        freq.extend(f_freq)
+        step.extend(f_step)
+        width.extend(f_width)
 
-    return freq, f_step, f_width
+    freq = np.repeat(freq, samp)
+    step = np.repeat(step, samp)
+    width = np.repeat(width, samp)
+    return freq, step, width
+
+
+# Frequency: Band
+# Output: freq, step, width
+def _get_band(start, stop, step, sdiv, bw_eff):
+    freq_band = np.float32(np.repeat(-10 ** 30, step * sdiv))
+    freq_step = np.float32(np.repeat(-10 ** 30, step * sdiv))
+    freq_width = np.float32(np.repeat(-10 ** 30, step * sdiv))
+    f_step = (stop - start) / step
+    bw_eff = bw_eff * 0.75 / const.UNIT_KHZ
+    for i in range(step):
+        f_mid = start + f_step * i
+        f_div = bw_eff / sdiv
+        f_low = f_mid - bw_eff * 0.5
+        for j in range(sdiv):
+            freq_band[i*sdiv + j] = f_low + f_div*j + f_div*0.5
+            freq_step[i*sdiv + j] = f_step / sdiv
+            freq_width[i*sdiv + j] = f_div
+    return freq_band, freq_step, freq_width
 
 
 # ---------------------------------------------------------------------

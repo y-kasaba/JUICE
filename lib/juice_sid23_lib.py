@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/11/19
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/11/28
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -174,6 +174,12 @@ def hf_sid23_getauto(data):
             EE_auto   /= len(EE_auto)
             auto.EE[i][j] = EE_auto
 
-            auto.EuEu[i][j][0] = auto.EvEv[i][j][0] = auto.EwEw[i][j][0] = auto.EE[i][j][0] = 0
-            auto.EuEu[i][j][1] = auto.EvEv[i][j][1] = auto.EwEw[i][j][1] = auto.EE[i][j][1] = 0
+            auto.EuEu[i][j][0] = 0
+            auto.EvEv[i][j][0] = 0
+            auto.EwEw[i][j][0] = 0
+            auto.EE[i][j][0] = 0
+            auto.EuEu[i][j][1] = 0
+            auto.EvEv[i][j][1] = 0
+            auto.EwEw[i][j][1] = 0
+            auto.EE[i][j][1] = 0
     return auto
