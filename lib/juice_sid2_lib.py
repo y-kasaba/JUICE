@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/11
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/16
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -99,14 +99,14 @@ def hf_sid2_read(cdf, cf):
     data.freq_step = cdf['freq_step'][...]
     data.freq_width = cdf['freq_width'][...]
 
-    # ### SPECIAL: 202305 & 202307 -- data shift -16
+    # ### SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
-    if month == "202305" or month == "202307":
+    if month == "202304" or month == "202305" or month == "202307":
         data.Eu_i = np.roll(data.Eu_i, -16);  data.Eu_q = np.roll(data.Eu_q, -16)
         data.Ev_i = np.roll(data.Ev_i, -16);  data.Ev_q = np.roll(data.Ev_q, -16)
         data.Ew_i = np.roll(data.Ew_i, -16);  data.Ew_q = np.roll(data.Ew_q, -16)
-        print("-16 shift in 202305 data")
-    # ### SPECIAL: 202305 & 202307 -- data shift -16
+        print("-16 shift in ASW1 data")
+    # ### SPECIAL: data shift -16
 
     return data
 
@@ -240,11 +240,10 @@ def hf_sid2_proc(data):
         n_freq = n_freq * i
         print(" cut2:", data.Eu_i.shape)  # , n_time, "x", n_freq, "x", n_samp)
         data.epoch = np.array(data.epoch).reshape(n_time, i)
-        print(data.epoch.shape)
-        print(data.epoch)
+        # print(data.epoch.shape)
+        # print(data.epoch)
         data.epoch = data.epoch[:, 0]
-        print(data.epoch.shape)
-        print(data.epoch)
+        print(data.epoch.shape, data.epoch)
     # Reshape
     data.Eu_i = np.array(data.Eu_i).reshape(n_time, n_freq, n_samp)
     data.Eu_q = np.array(data.Eu_q).reshape(n_time, n_freq, n_samp)
@@ -282,13 +281,13 @@ def hf_sid2_proc(data):
         print("  cut:", data.Eu_i.shape)
     print("fixed:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
 
-    # ### SPECIAL: 202305 & 202307 -- data shift -16
+    # ### SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
-    if month == "202305" or month == "202307":
+    if month == "202304" or month == "202305" or month == "202307":
         data.Eu_i[:, -1, n_samp//2:n_samp] = 0.;  data.Eu_q[:, -1, n_samp//2:n_samp] = 0.
         data.Ev_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ev_q[:, -1, n_samp//2:n_samp] = 0.
         data.Ew_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ew_q[:, -1, n_samp//2:n_samp] = 0.
-    # ### SPECIAL: 202305 & 202307 -- data shift -16
+    # ### SPECIAL: data shift -16
     return data
 
 
