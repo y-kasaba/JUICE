@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2023/12/16
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2023/12/17
 """
 import numpy as np
 import juice_math_lib as juice_math
@@ -283,7 +283,7 @@ def hf_sid3_read(cdf, cf):
     data.BG_Ew = cdf['BG_Ew'][...] * 10**(cf/10)
 
     # CUT -- Ver.1
-    n_num = data.EuEu.shape[1]  # 
+    n_num = data.B0_step[0]  # data.EuEu.shape[1]
     if n_num == 255:
         data.EuEu = data.EuEu[:, 0:n_num]
         data.EvEv = data.EvEv[:, 0:n_num]
@@ -291,12 +291,8 @@ def hf_sid3_read(cdf, cf):
         data.frequency = data.frequency[:, 0:n_num]
         data.freq_step = data.freq_step[:, 0:n_num]
         data.freq_width = data.freq_width[:, 0:n_num]
-        print("Mode: Ver.1")
-    elif n_num == 256:
-        print("Mode: Ver.2")
-    else:
-        print("Mode: **** error **** n_num:", n_num, data.EuEu.shape)
-        
+        # print("Mode: Ver.1")
+
     return data
 
 

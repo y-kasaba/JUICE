@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/16
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/17
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -223,7 +223,7 @@ def hf_sid2_proc(data):
         data.sweep_start = data.sweep_start[:, 0:n_num]
         data.reduction = data.reduction[:, 0:n_num]
         data.overflow = data.overflow[:, 0:n_num]
-        print(" cut1:", data.Eu_i.shape)  # , n_time, "x", n_freq, "x", n_samp)
+        print(" cut1:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
     # print(data.frequency[:, 0])
     # print(data.frequency[:, -1])
 
@@ -278,8 +278,7 @@ def hf_sid2_proc(data):
         data.sweep_start = data.sweep_start[:, 0:n_freq]
         data.reduction = data.reduction[:, 0:n_freq]
         data.overflow = data.overflow[:, 0:n_freq]
-        print("  cut:", data.Eu_i.shape)
-    print("fixed:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+        print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
 
     # ### SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
