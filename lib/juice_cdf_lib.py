@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2023/12/2
+# JUICE RPWI HF CDF lib -- 2023/12/23
 
 import glob
 import spacepy.pycdf
@@ -43,6 +43,9 @@ def _sample_rate(decimation):
     return ret
 
 
+# ---------------------------------------------------------------------
+# --- Frequency -------------------------------------------------------
+# ---------------------------------------------------------------------
 # Frequency: linear [kHz]
 # output: freq, f_step, f_width
 # Frequency: linear [kHz]
@@ -92,7 +95,7 @@ def _get_band(start, stop, step, sdiv, bw_eff):
     freq_step = np.float32(np.repeat(-10 ** 30, step * sdiv))
     freq_width = np.float32(np.repeat(-10 ** 30, step * sdiv))
     f_step = (stop - start) / step
-    bw_eff = bw_eff * 0.75 / const.UNIT_KHZ
+    bw_eff = bw_eff * 0.75 / 1000.
     for i in range(step):
         f_mid = start + f_step * i
         f_div = bw_eff / sdiv
@@ -102,6 +105,104 @@ def _get_band(start, stop, step, sdiv, bw_eff):
             freq_step[i*sdiv + j] = f_step / sdiv
             freq_width[i*sdiv + j] = f_div
     return freq_band, freq_step, freq_width
+
+
+# Frequency: SID-3
+# Output: freq, f_step, f_width
+def _frequency_sid3(asw_ver):
+    if asw_ver == 1:
+        # ASW1
+        decimation = 0
+        N_step = 512
+        b_num = 1
+        b_start = [80, 0, 0, 0, 0]
+        b_stop = [45000, 0, 0, 0, 0]
+        b_step = [255, 0, 0, 0, 0]
+        b_repeat = [1, 0, 0, 0, 0]
+        b_sdiv = [1, 0, 0, 0, 0]
+        N_samp = 1
+        sample_rate = _sample_rate(decimation)
+        freq, f_step, f_width = _get_frequencies(sample_rate, N_step, 1)
+    else:
+        # ASW2
+        decimation = 0
+        N_step = 238
+        b_num = 5
+        b_start = [191, 413, 635, 1079, 2189]
+        b_stop = [413, 635, 1079, 2189, 45035]
+        b_step = [1, 1, 2, 5, 193]
+        b_repeat = [16, 8, 4, 2, 1]
+        b_sdiv = [24, 12, 6, 3, 1]
+        N_samp = 1
+        sample_rate = _sample_rate(decimation)
+        freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp)
+    return freq, f_step, f_width
+
+
+# Frequency: SID-4 & SID-20
+# Output: freq, f_step, f_width
+def _frequency_sid4_sid20():
+    decimation = 3
+    b_num = 1
+    b_start = [80, 0, 0, 0, 0]
+    b_stop = [2096, 0, 0, 0, 0]
+    b_step = [72, 0, 0, 0, 0]
+    b_repeat = [1, 0, 0, 0, 0]
+    b_sdiv = [1, 0, 0, 0, 0]
+    N_samp = 1
+    sample_rate = _sample_rate(decimation)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp)
+    return freq, f_step, f_width
+
+
+# Frequency: SID-5 & SID-21
+# Output: freq, f_step, f_width
+def _frequency_sid5_sid21():
+    decimation = 0
+    b_num = 1
+    b_start = [191, 0, 0, 0, 0]
+    b_stop = [10181, 0, 0, 0, 0]
+    b_step = [45, 0, 0, 0, 0]
+    b_repeat = [1, 0, 0, 0, 0]
+    b_sdiv = [96, 0, 0, 0, 0]
+    N_samp = 1
+    sample_rate = _sample_rate(decimation)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp)
+    return freq, f_step, f_width
+
+
+# Frequency: MASK frequency matching
+# Output: tbl_sid2_to_data
+def _frequency_sid2_to_data(freq, f_step, freq_sid2):
+    n_freq = len(freq)
+    n_freq_sid2 = len(freq_sid2)
+    print(n_freq, n_freq_sid2)
+    tbl_freq_to_data = np.zeros((n_freq, 3), dtype = int)
+
+    j = 0
+    for i in range(n_freq):
+        f_min = freq[i] - f_step[i]/2
+        f_max = freq[i] + f_step[i]/2
+        while freq_sid2[j] < f_min:
+            j = j+1
+            if j>=n_freq_sid2:
+                j = n_freq_sid2-1
+                break
+        if freq_sid2[j] >= f_min:
+            tbl_freq_to_data[i][0] = j
+        while freq_sid2[j] < f_max:
+            j = j+1
+            if j>=n_freq_sid2:
+                j = n_freq_sid2-1
+                break
+        if freq_sid2[j-1] <= f_max:
+            tbl_freq_to_data[i][1] = j-1
+        tbl_freq_to_data[i][2] = tbl_freq_to_data[i][1] - tbl_freq_to_data[i][0] + 1 
+        if tbl_freq_to_data[i][2] == 0:
+            tbl_freq_to_data[i][1] = -1
+            tbl_freq_to_data[i][0] = -1
+
+    return tbl_freq_to_data
 
 
 # ---------------------------------------------------------------------

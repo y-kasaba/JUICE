@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/17
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/23
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -58,26 +58,26 @@ def hf_sid2_read(cdf, cf):
     data.B0_step = cdf['B0_step'][...]
     data.B0_repeat = cdf['B0_repeat'][...]
     data.B0_subdiv = cdf['B0_subdiv'][...]
-    data.B1_startf = cdf['B0_startf'][...]
-    data.B1_stopf = cdf['B0_stopf'][...]
-    data.B1_step = cdf['B0_step'][...]
-    data.B1_repeat = cdf['B0_repeat'][...]
-    data.B1_subdiv = cdf['B0_subdiv'][...]
-    data.B2_startf = cdf['B0_startf'][...]
-    data.B2_stopf = cdf['B0_stopf'][...]
-    data.B2_step = cdf['B0_step'][...]
-    data.B2_repeat = cdf['B0_repeat'][...]
-    data.B2_subdiv = cdf['B0_subdiv'][...]
-    data.B3_startf = cdf['B0_startf'][...]
-    data.B3_stopf = cdf['B0_stopf'][...]
-    data.B3_step = cdf['B0_step'][...]
-    data.B3_repeat = cdf['B0_repeat'][...]
-    data.B3_subdiv = cdf['B0_subdiv'][...]
-    data.B4_startf = cdf['B0_startf'][...]
-    data.B4_stopf = cdf['B0_stopf'][...]
-    data.B4_step = cdf['B0_step'][...]
-    data.B4_repeat = cdf['B0_repeat'][...]
-    data.B4_subdiv = cdf['B0_subdiv'][...]
+    data.B1_startf = cdf['B1_startf'][...]
+    data.B1_stopf = cdf['B1_stopf'][...]
+    data.B1_step = cdf['B1_step'][...]
+    data.B1_repeat = cdf['B1_repeat'][...]
+    data.B1_subdiv = cdf['B1_subdiv'][...]
+    data.B2_startf = cdf['B2_startf'][...]
+    data.B2_stopf = cdf['B2_stopf'][...]
+    data.B2_step = cdf['B2_step'][...]
+    data.B2_repeat = cdf['B2_repeat'][...]
+    data.B2_subdiv = cdf['B2_subdiv'][...]
+    data.B3_startf = cdf['B3_startf'][...]
+    data.B3_stopf = cdf['B3_stopf'][...]
+    data.B3_step = cdf['B3_step'][...]
+    data.B3_repeat = cdf['B3_repeat'][...]
+    data.B3_subdiv = cdf['B3_subdiv'][...]
+    data.B4_startf = cdf['B4_startf'][...]
+    data.B4_stopf = cdf['B4_stopf'][...]
+    data.B4_step = cdf['B4_step'][...]
+    data.B4_repeat = cdf['B4_repeat'][...]
+    data.B4_subdiv = cdf['B4_subdiv'][...]
 
     # Data
     data.epoch = cdf['Epoch'][...]
@@ -207,8 +207,8 @@ def hf_sid2_proc(data):
 
     # CUT & Reshape
     n_time = data.Eu_i.shape[0]
-    n_freq = data.N_step[0]
-    n_samp = data.N_samp[0]
+    n_freq = data.N_step[n_time//2]
+    n_samp = data.N_samp[n_time//2]
     n_num = n_freq * n_samp
     print("  org:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
     if n_num < data.Eu_i.shape[1]:
@@ -229,21 +229,22 @@ def hf_sid2_proc(data):
 
     # Merge & CUT
     n_freq0 = n_freq
-    if data.frequency[0][0] < data.frequency[1][0]:
-        i = 1
-        while data.frequency[0][0] < data.frequency[i][0]:
-            i += 1
-            if i >= n_time:
-                break
-            n_freq0 += data.N_step[i]
-        n_time = n_time // i
-        n_freq = n_freq * i
-        print(" cut2:", data.Eu_i.shape)  # , n_time, "x", n_freq, "x", n_samp)
-        data.epoch = np.array(data.epoch).reshape(n_time, i)
-        # print(data.epoch.shape)
-        # print(data.epoch)
-        data.epoch = data.epoch[:, 0]
-        print(data.epoch.shape, data.epoch)
+    if n_time > 1:
+        if data.frequency[0][0] < data.frequency[1][0]:
+            i = 1
+            while data.frequency[0][0] < data.frequency[i][0]:
+                n_freq0 += data.N_step[i]
+                i += 1
+                if i >= n_time:
+                    break
+            n_time = n_time // i
+            n_freq = n_freq * i
+            print(" cut2:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+            data.epoch = np.array(data.epoch).reshape(n_time, i)
+            # print(data.epoch.shape)
+            # print(data.epoch)
+            data.epoch = data.epoch[:, 0]
+            print(data.epoch.shape, data.epoch)
     # Reshape
     data.Eu_i = np.array(data.Eu_i).reshape(n_time, n_freq, n_samp)
     data.Eu_q = np.array(data.Eu_q).reshape(n_time, n_freq, n_samp)
@@ -278,7 +279,7 @@ def hf_sid2_proc(data):
         data.sweep_start = data.sweep_start[:, 0:n_freq]
         data.reduction = data.reduction[:, 0:n_freq]
         data.overflow = data.overflow[:, 0:n_freq]
-        print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+        print(" cut2:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
 
     # ### SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
