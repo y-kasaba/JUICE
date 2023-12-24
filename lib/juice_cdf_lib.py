@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2023/12/23
+# JUICE RPWI HF CDF lib -- 2023/12/24
 
 import glob
 import spacepy.pycdf
@@ -208,12 +208,12 @@ def _frequency_sid2_to_data(freq, f_step, freq_sid2):
 # ---------------------------------------------------------------------
 # --- CAL --------------------------------------------------------------
 # ---------------------------------------------------------------------
-def cal_factors(unit_mode, cal_mode, cal, p_raw_max, p_raw_min):
+def cal_factors(band_mode, unit_mode, cal, p_raw_max, p_raw_min):
     """
     *** Conversion factor
-    unit_mode       0: sum    1: /Hz
-    cal_mode        0: raw    1: dBm＠ADC  2: V@HF   3:V2@HF   4:V2@RWI
-    cal             0: background     1: CAL
+    band_mode       0: sum    1: /Hz
+    unit_mode       0: raw    1: dBm＠ADC  2: V@HF   3:V2@HF   4:V2@RWI
+    cal             0: background     1: CAL    2: all
     """
     cf = 0.0                                # Conversion Factor: RAW
 
@@ -226,21 +226,21 @@ def cal_factors(unit_mode, cal_mode, cal, p_raw_max, p_raw_min):
     # "1-bit" = -110.1 dBm = -110.1 dB V  = 0.99E-7 V "  ==> "20-bit": 1.03 Vpp
     # "HF input"  +9dB(AMP)  -3dB(50-ohm) = "+6dB"       ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
     # ******************************************************
-    if cal_mode == 1:
+    if unit_mode == 1:
         cf = -104.1                         # dBm @ ADC 
-    elif cal_mode == 2:
+    elif unit_mode == 2:
         cf = -104.1 - 10.00 - 15.0          # V(amplitude) @ HF -- in EM2-1: HF-gain +15dB, ADC: 2Vpp  ==> EM2-3 & later: same [-6dB + 6dB]
-    elif cal_mode == 3:
+    elif unit_mode == 3:
         cf = -104.1 - 13.01 - 15.0          # V^2 @ HF (EM2-0 case)
-    elif cal_mode == 4:
+    elif unit_mode == 4:
         cf = -104.1 - 13.01 - 15.0 - 5.0    # V^2 @ RWIin -- temporary
 
     # *** Max / Min in plots ***
     p_max = p_raw_max + cf/10
     p_min = p_raw_min + cf/10
 
-    # *** Unit mode: Bandwidth is needed.
-    if unit_mode == 1:
+    # *** Band mode: Bandwidth is needed.
+    if band_mode == 1:
         p_max = p_max - 4.5
         p_min = p_min - 4.5
 
@@ -248,31 +248,31 @@ def cal_factors(unit_mode, cal_mode, cal, p_raw_max, p_raw_min):
 
 
 # power label
-def power_label(cal_mode, unit_mode):
+def power_label(band_mode, unit_mode):
     """
     Input:  cal_mode, unit_mode
     Outout: str
     """
-    if unit_mode == 0:
-        if cal_mode == 0:
+    if band_mode == 0:
+        if unit_mode == 0:
             str = 'Power [RAW^2 @ADC]'
-        elif cal_mode == 1:
+        elif unit_mode == 1:
             str = 'Power [dBm @ADC]'
-        elif cal_mode == 2:
+        elif unit_mode == 2:
             str = 'Power [V^2peak @HF]'
-        elif cal_mode == 3:
+        elif unit_mode == 3:
             str = 'Power [V^2 @HF]'
-        elif cal_mode == 4:
+        elif unit_mode == 4:
             str = 'Power [V^2 @RWI]'
     else:
-        if cal_mode == 0:
+        if unit_mode == 0:
             str = 'Power [RAW^2/Hz @ADC]'
-        elif cal_mode == 1:
+        elif unit_mode == 1:
             str = 'Power [dBm/Hz @ADC]'
-        elif cal_mode == 2:
+        elif unit_mode == 2:
             str = 'Power [V^2peak/Hz @HF]'
-        elif cal_mode == 3:
+        elif unit_mode == 3:
             str = 'Power [V^2/Hz @HF]'
-        elif cal_mode == 4:
+        elif unit_mode == 4:
             str = 'Power [V^2/Hz @RWI]'
     return str

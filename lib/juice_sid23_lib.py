@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/11/28
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/12/24
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -96,9 +96,9 @@ def juice_getdata_hf_sid23(cdf, cf):
 
 
 # ---------------------------------------------------------------------
-def hf_sid23_getspec(data, unit_mode):
+def hf_sid23_getspec(data, band_mode):
     """
-    input:  data, unit_mode
+    input:  data, band_mode
     return: spec
     """
     # Spec formation

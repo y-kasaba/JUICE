@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/23
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/24
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -292,7 +292,7 @@ def hf_sid2_proc(data):
 
 
 # ---------------------------------------------------------------------
-def hf_sid2_getspec(data):
+def hf_sid2_getspec(data, cal):
     """
     input:  data
     return: spec
@@ -333,7 +333,6 @@ def hf_sid2_getspec(data):
     s = np.fft.fft((data.Ew_i - data.Ew_q * 1j) * window);  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf
     spec.EwEw = np.fft.fftshift(s, axes=(2,))
     spec.EE = spec.EuEu + spec.EvEv + spec.EwEw
-    
 
     # Cut: 75%
     samp1 = n_samp//8           # 0
@@ -341,17 +340,16 @@ def hf_sid2_getspec(data):
 
     # for i in range(data.n_freq - 1):
     i = 0
-    while ( spec.freq[0][i][samp2] > spec.freq[0][i+1][samp1] ):
-        samp1 += 1
-        samp2 -= 1
+    while (spec.freq[0][i][samp2] > spec.freq[0][i+1][samp1]):
+        samp1 += 1; samp2 -= 1
     print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%") 
-    print("df @ lowest-f  [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
+    print("df @ f_low  [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
     i = n_freq-2
-    print("df @ highest-f [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
+    print("df @ f_high [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
     spec.EuEu = spec.EuEu[:, :, samp1:samp2]
     spec.EvEv = spec.EvEv[:, :, samp1:samp2]
     spec.EwEw = spec.EwEw[:, :, samp1:samp2]
-    spec.EE   = spec.EE  [:, :, samp1:samp2]
+    spec.EE = spec.EE[:, :, samp1:samp2]
     spec.freq = spec.freq[:, :, samp1:samp2]
     n_samp = samp2 - samp1
 
@@ -361,6 +359,18 @@ def hf_sid2_getspec(data):
     spec.EwEw = np.array(spec.EwEw).reshape(n_time, n_freq * n_samp)
     spec.EE = np.array(spec.EE).reshape(n_time, n_freq * n_samp)
     spec.freq = np.array(spec.freq).reshape(n_time, n_freq * n_samp)
+
+    # Median formation
+    if cal < 2:
+        index = np.where(data.cal_signal == cal)
+        spec.EuEu = spec.EuEu[index[0]]
+        spec.EvEv = spec.EvEv[index[0]]
+        spec.EwEw = spec.EwEw[index[0]]
+        spec.EE = spec.EE[index[0]]
+        spec.freq = spec.freq[index[0]]
+        spec.epoch = data.epoch[index[0]]
+    else:
+        spec.epoch = data.epoch[:]
     return spec
 
 
