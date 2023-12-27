@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/24
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/27
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -13,7 +13,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID2 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid2_read(cdf, cf):
+def hf_sid2_read(cdf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -83,12 +83,12 @@ def hf_sid2_read(cdf, cf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    data.Eu_i = cdf['Eu_i'][...] * 10**(cf/20)
-    data.Eu_q = cdf['Eu_q'][...] * 10**(cf/20)
-    data.Ev_i = cdf['Ev_i'][...] * 10**(cf/20)
-    data.Ev_q = cdf['Ev_q'][...] * 10**(cf/20)
-    data.Ew_i = cdf['Ew_i'][...] * 10**(cf/20)
-    data.Ew_q = cdf['Ew_q'][...] * 10**(cf/20)
+    data.Eu_i = cdf['Eu_i'][...] # * 10**(cf/20)
+    data.Eu_q = cdf['Eu_q'][...] # * 10**(cf/20)
+    data.Ev_i = cdf['Ev_i'][...] # * 10**(cf/20)
+    data.Ev_q = cdf['Ev_q'][...] # * 10**(cf/20)
+    data.Ew_i = cdf['Ew_i'][...] # * 10**(cf/20)
+    data.Ew_q = cdf['Ew_q'][...] # * 10**(cf/20)
     data.pps_count = cdf['pps_count'][...]
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]
@@ -99,14 +99,13 @@ def hf_sid2_read(cdf, cf):
     data.freq_step = cdf['freq_step'][...]
     data.freq_width = cdf['freq_width'][...]
 
-    # ### SPECIAL: data shift -16
+    # ### ASW1: SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
     if month == "202304" or month == "202305" or month == "202307":
         data.Eu_i = np.roll(data.Eu_i, -16);  data.Eu_q = np.roll(data.Eu_q, -16)
         data.Ev_i = np.roll(data.Ev_i, -16);  data.Ev_q = np.roll(data.Ev_q, -16)
         data.Ew_i = np.roll(data.Ew_i, -16);  data.Ew_q = np.roll(data.Ew_q, -16)
         print("-16 shift in ASW1 data")
-    # ### SPECIAL: data shift -16
 
     return data
 
@@ -224,8 +223,6 @@ def hf_sid2_proc(data):
         data.reduction = data.reduction[:, 0:n_num]
         data.overflow = data.overflow[:, 0:n_num]
         print(" cut1:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
-    # print(data.frequency[:, 0])
-    # print(data.frequency[:, -1])
 
     # Merge & CUT
     n_freq0 = n_freq
@@ -281,13 +278,21 @@ def hf_sid2_proc(data):
         data.overflow = data.overflow[:, 0:n_freq]
         print(" cut2:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
 
-    # ### SPECIAL: data shift -16
+    # ### ASW1: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
     if month == "202304" or month == "202305" or month == "202307":
         data.Eu_i[:, -1, n_samp//2:n_samp] = 0.;  data.Eu_q[:, -1, n_samp//2:n_samp] = 0.
         data.Ev_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ev_q[:, -1, n_samp//2:n_samp] = 0.
         data.Ew_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ew_q[:, -1, n_samp//2:n_samp] = 0.
-    # ### SPECIAL: data shift -16
+
+    # ### ASW1: CAL
+    if data.cal_signal[0] == 255:
+        power = data.Eu_i[:,-1]**2 + data.Eu_q[:,-1]**2 + data.Ev_i[:,-1]**2 + data.Ev_q[:,-1]**2 + data.Ew_i[:,-1]**2 + data.Ew_q[:,-1]**2
+        power = np.mean(power, axis=1)
+        index = np.where(power > 1e4)
+        data.cal_signal[:] = 0
+        data.cal_signal[index[0]]=1
+
     return data
 
 
@@ -317,7 +322,6 @@ def hf_sid2_getspec(data, cal):
     # Frequency
     dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
     freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
-
     for i in range(n_time):
         for j in range(n_freq):
             spec.freq[i][j] = data.frequency[i][j] + freq
