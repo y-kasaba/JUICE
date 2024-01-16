@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2023/12/27
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2024/1/16
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -297,9 +297,9 @@ def hf_sid2_proc(data):
 
 
 # ---------------------------------------------------------------------
-def hf_sid2_getspec(data, cal):
+def hf_sid2_getspec(data, cal_mode):
     """
-    input:  data
+    input:  data, cal_mode
     return: spec
     """
     # Spec formation
@@ -347,9 +347,9 @@ def hf_sid2_getspec(data, cal):
     while (spec.freq[0][i][samp2] > spec.freq[0][i+1][samp1]):
         samp1 += 1; samp2 -= 1
     print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%") 
-    print("df @ f_low  [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
-    i = n_freq-2
-    print("df @ f_high [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
+    # print("df @ f_low  [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
+    # i = n_freq-2
+    # print("df @ f_high [kHz]: ", spec.freq[0][i+1][samp1] - spec.freq[0][i][samp2], spec.freq[0][i][samp2+1] - spec.freq[0][i][samp2]) 
     spec.EuEu = spec.EuEu[:, :, samp1:samp2]
     spec.EvEv = spec.EvEv[:, :, samp1:samp2]
     spec.EwEw = spec.EwEw[:, :, samp1:samp2]
@@ -358,15 +358,15 @@ def hf_sid2_getspec(data, cal):
     n_samp = samp2 - samp1
 
     # Reshape
-    spec.EuEu = np.array(spec.EuEu).reshape(n_time, n_freq * n_samp)
     spec.EvEv = np.array(spec.EvEv).reshape(n_time, n_freq * n_samp)
     spec.EwEw = np.array(spec.EwEw).reshape(n_time, n_freq * n_samp)
     spec.EE = np.array(spec.EE).reshape(n_time, n_freq * n_samp)
+    spec.EuEu = np.array(spec.EuEu).reshape(n_time, n_freq * n_samp)
     spec.freq = np.array(spec.freq).reshape(n_time, n_freq * n_samp)
 
     # Median formation
-    if cal < 2:
-        index = np.where(data.cal_signal == cal)
+    if cal_mode < 2:
+        index = np.where(data.cal_signal == cal_mode)
         spec.EuEu = spec.EuEu[index[0]]
         spec.EvEv = spec.EvEv[index[0]]
         spec.EwEw = spec.EwEw[index[0]]
@@ -375,6 +375,52 @@ def hf_sid2_getspec(data, cal):
         spec.epoch = data.epoch[index[0]]
     else:
         spec.epoch = data.epoch[:]
+    return spec
+
+
+def hf_sid2_speccal_unit(spec, unit_mode):
+    """
+    input:  data, unit_mode
+    return: data
+    """
+    # CUT & Reshape
+    n_time = spec.EE.shape[0]
+    n_freq = spec.EE.shape[1]
+    freq_1d = spec.freq[n_time//2]
+    print(" speccal_org:", spec.EE.shape, n_time, "x", n_freq,)
+    print(freq_1d.shape, freq_1d)
+    
+    """
+    cal_unit = juice_cdf.cal_unit(unit_mode, freq_1d)
+
+    # unit_mode       0: raw    1: dBm＠ADC  2: V@HF   3:V2@HF   4:V2@RWI
+    # ******************************************************
+    # [EM2-0]
+    # "1-bit" = -104.1 dBm = -114.1 dB V  = 1.97E-6 V    ==> "20-bit": 2.06 Vpp
+    # "HF input"  +15dB(AMP) -3dB(50-ohm) = "+12dB"      ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
+    # ******************************************************
+    # [EM2-3 / FM / FS]
+    # "1-bit" = -110.1 dBm = -110.1 dB V  = 0.99E-7 V "  ==> "20-bit": 1.03 Vpp
+    # "HF input"  +9dB(AMP)  -3dB(50-ohm) = "+6dB"       ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
+    # ******************************************************
+
+    cf = 0.0                                # Conversion Factor: RAW
+
+    if unit_mode == 1:
+        cf = -104.1                         # dBm @ ADC 
+    elif unit_mode == 2:
+        cf = -104.1 - 10.00 - 15.0          # V(amplitude) @ HF -- in EM2-1: HF-gain +15dB, ADC: 2Vpp  ==> EM2-3 & later: same [-6dB + 6dB]
+    elif unit_mode == 3:
+        cf = -104.1 - 13.01 - 15.0          # V^2 @ HF (EM2-0 case)
+    elif unit_mode == 4:
+        cf = -104.1 - 13.01 - 15.0 - 5.0    # V^2 @ RWIin -- temporary
+
+    # *** Max / Min in plots ***
+    p_max = p_raw_max + cf/10
+    p_min = p_raw_min + cf/10
+
+    return cf, p_max, p_min
+    """
     return spec
 
 

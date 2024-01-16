@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2023/12/24
+# JUICE RPWI HF CDF lib -- 2024/1/16
 
 import glob
 import spacepy.pycdf
@@ -208,7 +208,38 @@ def _frequency_sid2_to_data(freq, f_step, freq_sid2):
 # ---------------------------------------------------------------------
 # --- CAL --------------------------------------------------------------
 # ---------------------------------------------------------------------
-def cal_factors(band_mode, unit_mode, cal, p_raw_max, p_raw_min):
+# power label
+def power_label(band_mode, unit_mode):
+    """
+    Input:  cal_mode, unit_mode
+    Outout: str
+    """
+    if band_mode == 0:
+        if unit_mode == 0:
+            str = 'Power [RAW^2 @ADC]'
+        elif unit_mode == 1:
+            str = 'Power [dBm @ADC]'
+        elif unit_mode == 2:
+            str = 'Power [V^2peak @HF]'
+        elif unit_mode == 3:
+            str = 'Power [V^2 @HF]'
+        elif unit_mode == 4:
+            str = 'Power [V^2 @RWI]'
+    else:
+        if unit_mode == 0:
+            str = 'Power [RAW^2/Hz @ADC]'
+        elif unit_mode == 1:
+            str = 'Power [dBm/Hz @ADC]'
+        elif unit_mode == 2:
+            str = 'Power [V^2peak/Hz @HF]'
+        elif unit_mode == 3:
+            str = 'Power [V^2/Hz @HF]'
+        elif unit_mode == 4:
+            str = 'Power [V^2/Hz @RWI]'
+    return str
+
+
+def cal_factors(unit_mode, p_raw_max, p_raw_min):
     """
     *** Conversion factor
     band_mode       0: sum    1: /Hz
@@ -239,40 +270,4 @@ def cal_factors(band_mode, unit_mode, cal, p_raw_max, p_raw_min):
     p_max = p_raw_max + cf/10
     p_min = p_raw_min + cf/10
 
-    # *** Band mode: Bandwidth is needed.
-    if band_mode == 1:
-        p_max = p_max - 4.5
-        p_min = p_min - 4.5
-
     return cf, p_max, p_min
-
-
-# power label
-def power_label(band_mode, unit_mode):
-    """
-    Input:  cal_mode, unit_mode
-    Outout: str
-    """
-    if band_mode == 0:
-        if unit_mode == 0:
-            str = 'Power [RAW^2 @ADC]'
-        elif unit_mode == 1:
-            str = 'Power [dBm @ADC]'
-        elif unit_mode == 2:
-            str = 'Power [V^2peak @HF]'
-        elif unit_mode == 3:
-            str = 'Power [V^2 @HF]'
-        elif unit_mode == 4:
-            str = 'Power [V^2 @RWI]'
-    else:
-        if unit_mode == 0:
-            str = 'Power [RAW^2/Hz @ADC]'
-        elif unit_mode == 1:
-            str = 'Power [dBm/Hz @ADC]'
-        elif unit_mode == 2:
-            str = 'Power [V^2peak/Hz @HF]'
-        elif unit_mode == 3:
-            str = 'Power [V^2/Hz @HF]'
-        elif unit_mode == 4:
-            str = 'Power [V^2/Hz @RWI]'
-    return str
