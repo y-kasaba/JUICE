@@ -239,7 +239,7 @@ def hf_sid2_proc(data):
             print(" cut2:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
             data.epoch = np.array(data.epoch).reshape(n_time, i)
             # print(data.epoch.shape)
-            # print(data.epoch)
+            print(data.epoch)
             data.epoch = data.epoch[:, 0]
             print(data.epoch.shape, data.epoch)
     # Reshape
@@ -276,7 +276,7 @@ def hf_sid2_proc(data):
         data.sweep_start = data.sweep_start[:, 0:n_freq]
         data.reduction = data.reduction[:, 0:n_freq]
         data.overflow = data.overflow[:, 0:n_freq]
-        print(" cut2:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+        print(" cut3:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
 
     # ### ASW1: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
