@@ -169,7 +169,7 @@ def juice_getdata_hf_sid20(cdf, cf):
             juice_math.get_pol_3D(data.E_I_3d, data.E_Q_3d, data.E_U_3d, data.E_Vu_3d, data.E_Vv_3d, data.E_Vw_3d)
 
     # CUT
-    if data.EuEu.shape[1] != 72:
+    if data.EuEu.shape[1] != 360:
         print("Mode: **** error ****")
 
     return data

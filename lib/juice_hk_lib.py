@@ -1,4 +1,4 @@
-# JUICE RPWI HF HK -- 2023/10/17
+# JUICE RPWI HF HK -- 2024/2/2
 
 import glob
 import spacepy.pycdf
@@ -38,7 +38,6 @@ def juice_gethk_hf(data):
     hk.temp_rwi_ch2 = data['LWT03339_CALIBRATED'][...]
     hk.temp_hf_fpga = data['LWT0333B_CALIBRATED'][...]
 
-
     """
     hk.deploy_pri_x=data['LWT0332E']
     hk.deploy_red_x=data['LWT0332F']
@@ -48,6 +47,20 @@ def juice_gethk_hf(data):
     hk.deploy_red_z=data['LWT03333']
     hk.deploy_lock_stat=data['LWT03334']
     """
+    
+    return hk
+
+def juice_gethk_hf2(data):
+
+    hk = struct()
+    hk.epoch = data['Epoch'][...]
+    
+    hk.heater_ena = data['LWT04332']
+    # hk.calsig_ena = data['LWT0332C']
+
+    hk.temp_rwi_ch1 = data['LWT04333'][...]
+    hk.temp_rwi_ch2 = data['LWT04334'][...]
+    hk.temp_hf_fpga = data['LWT04335'][...]
     
     return hk
 
