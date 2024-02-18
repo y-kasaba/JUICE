@@ -1,3 +1,6 @@
+"""
+    JUICE SPICE LIB -- 2024/2/18
+"""
 import numpy as np
 import math
 import spiceypy as spice
@@ -13,7 +16,7 @@ def spice_ini(source_dir='C:/share/Linux/doc/spice/juice/kernels/'):
     spice.furnsh(source_dir + 'spk/jup365_19900101_20500101.bsp')
     spice.furnsh(source_dir + 'spk/de432s.bsp')
     spice.furnsh(source_dir + 'lsk/naif0012.tls')
-    spice.furnsh(source_dir + 'pck/pck00010.tpc')
+    spice.furnsh(source_dir + 'pck/pck00011.tpc')
 
     return
 
@@ -112,6 +115,34 @@ def get_juice_pos_earth(et, x_ref='SUN'):
     return [x, y, z, r, lat, lon]
 
 # ---------------------------------------------------------
+#   Calculate JUICE orbit
+#   reference frame: IAU_MOON
+#   target: JUICE
+#   origin: MOON
+#   refernce target on the x-axis: x_ref
+# ---------------------------------------------------------
+def get_juice_pos_moon(et, x_ref='SUN'):
+
+    x, y, z, r, lat, lon = get_pos_xref(
+        et, ref='IAU_MOON', tar='JUICE', org='MOON', x_ref=x_ref, corr='LT+S')
+
+    return [x, y, z, r, lat, lon]
+
+# ---------------------------------------------------------
+#   Calculate JUICE orbit
+#   reference frame: IAU_VENUS
+#   target: JUICE
+#   origin: VENUS
+#   refernce target on the x-axis: x_ref
+# ---------------------------------------------------------
+def get_juice_pos_venus(et, x_ref='SUN'):
+
+    x, y, z, r, lat, lon = get_pos_xref(
+        et, ref='IAU_EARTH', tar='JUICE', org='VENUS', x_ref=x_ref, corr='LT+S')
+
+    return [x, y, z, r, lat, lon]
+
+# ---------------------------------------------------------
 #   Calculate orbit
 #   reference frame: ref
 #   origin: org
@@ -146,6 +177,8 @@ def get_pos(et, ref='IAU_SUN', tar='JUICE', org='SUN'):
 
     return [x, y, z, r, lat, lon]
 
+
+"""
 # ---------------------------------------------------------
 #   Calculate JUICE orbit
 #   reference frame: ref
@@ -199,3 +232,4 @@ def get_pos_ref(et, ref='IAU_JUPITER', tar='JUICE', org='JUPITER', tar_ref='GANY
         lon[i] = math.atan2(y[i], x[i])
 
     return [x, y, z, r, lat, lon]
+"""

@@ -1,4 +1,4 @@
-# JUICE RPWI HF HK -- 2024/2/2
+# JUICE RPWI HF HK -- 2024/2/７
 
 import glob
 import spacepy.pycdf
@@ -31,9 +31,9 @@ def juice_gethk_hf(data):
     hk = struct()
     hk.epoch = data['Epoch'][...]
     
+    hk.pol = data['LWT03313']
     hk.heater_ena = data['LWT03314']
     hk.calsig_ena = data['LWT0332C']
-
     hk.temp_rwi_ch1 = data['LWT03337_CALIBRATED'][...]
     hk.temp_rwi_ch2 = data['LWT03339_CALIBRATED'][...]
     hk.temp_hf_fpga = data['LWT0333B_CALIBRATED'][...]
