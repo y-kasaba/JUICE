@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2024/1/16
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2024/2/21
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf

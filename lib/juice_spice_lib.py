@@ -1,5 +1,5 @@
 """
-    JUICE SPICE LIB -- 2024/2/18
+    JUICE SPICE LIB -- 2024/2/20
 """
 import numpy as np
 import math
@@ -17,7 +17,23 @@ def spice_ini(source_dir='C:/share/Linux/doc/spice/juice/kernels/'):
     spice.furnsh(source_dir + 'spk/de432s.bsp')
     spice.furnsh(source_dir + 'lsk/naif0012.tls')
     spice.furnsh(source_dir + 'pck/pck00011.tpc')
+    return
 
+def spice_predict_ini(source_dir='C:/share/Linux/doc/spice/juice/kernels/'):
+
+    """
+    # load spice kernel files
+    spice.furnsh(source_dir + 'spk/juice_crema_5_1_150lb_23_1_v01.bsp')
+    spice.furnsh(source_dir + 'spk/jup365_19900101_20500101.bsp')
+    spice.furnsh(source_dir + 'spk/de432s.bsp')
+    spice.furnsh(source_dir + 'lsk/naif0012.tls')
+    spice.furnsh(source_dir + 'pck/pck00011.tpc')
+    """
+
+    # predicted
+    spice.furnsh(source_dir + 'ck/juice_sc_crema_5_1_150lb_23_1_default_v01.bc')
+    spice.furnsh(source_dir + 'mk/juice_plan.tm')
+    # spice.furnsh(source_dir + 'ck/juice_sc_crema_5_1_150lb_23_1_default_v01.bc')
     return
 
 # ---------------------------------------------------------
