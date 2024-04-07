@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2024/1/16
+# JUICE RPWI HF CDF lib -- 2024/3/31
 
 import glob
 import spacepy.pycdf
@@ -107,6 +107,24 @@ def _get_band(start, stop, step, sdiv, bw_eff):
     return freq_band, freq_step, freq_width
 
 
+# Frequency: SID-2
+# Output: freq, f_step, f_width
+def _frequency_sid2(asw_ver):
+    # ASW2
+    decimation = 0
+    N_step = 202
+    b_num = 1
+    b_start = [191, 0, 0, 0, 0]
+    b_stop = [45111, 0, 0, 0, 0]
+    b_step = [202, 0, 0, 0, 0]
+    b_repeat = [1, 0, 0, 0, 0]
+    b_sdiv = [1, 0, 0, 0, 0]
+    N_samp = 128
+    sample_rate = _sample_rate(decimation)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, 1)
+    return freq, f_step, f_width
+
+
 # Frequency: SID-3
 # Output: freq, f_step, f_width
 def _frequency_sid3(asw_ver):
@@ -176,7 +194,7 @@ def _frequency_sid5_sid21():
 def _frequency_sid2_to_data(freq, f_step, freq_sid2):
     n_freq = len(freq)
     n_freq_sid2 = len(freq_sid2)
-    print(n_freq, n_freq_sid2)
+    # print(n_freq, n_freq_sid2)
     tbl_freq_to_data = np.zeros((n_freq, 3), dtype = int)
 
     j = 0
@@ -195,7 +213,9 @@ def _frequency_sid2_to_data(freq, f_step, freq_sid2):
             if j>=n_freq_sid2:
                 j = n_freq_sid2-1
                 break
-        if freq_sid2[j-1] <= f_max:
+        if j==n_freq_sid2-1:
+            tbl_freq_to_data[i][1] = j
+        elif freq_sid2[j-1] <= f_max:
             tbl_freq_to_data[i][1] = j-1
         tbl_freq_to_data[i][2] = tbl_freq_to_data[i][1] - tbl_freq_to_data[i][0] + 1 
         if tbl_freq_to_data[i][2] == 0:
@@ -241,13 +261,9 @@ def power_label(band_mode, unit_mode):
 
 def cal_factors(unit_mode, p_raw_max, p_raw_min):
     """
-    *** Conversion factor
-    band_mode       0: sum    1: /Hz
-    unit_mode       0: raw    1: dBm＠ADC  2: V@HF   3:V2@HF   4:V2@RWI
-    cal             0: background     1: CAL    2: all
+    Input:  unit_mode   0: raw   1: dBm＠ADC   2: V@HF   3:V2@HF   4:V2@RWI
+    Output: cf, p_max, p_min
     """
-    cf = 0.0                                # Conversion Factor: RAW
-
     # ******************************************************
     # [EM2-0]
     # "1-bit" = -104.1 dBm = -114.1 dB V  = 1.97E-6 V    ==> "20-bit": 2.06 Vpp
@@ -257,14 +273,16 @@ def cal_factors(unit_mode, p_raw_max, p_raw_min):
     # "1-bit" = -110.1 dBm = -110.1 dB V  = 0.99E-7 V "  ==> "20-bit": 1.03 Vpp
     # "HF input"  +9dB(AMP)  -3dB(50-ohm) = "+6dB"       ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
     # ******************************************************
-    if unit_mode == 1:
+    cf = 0.0                                # Conversion Factor: RAW
+
+    if   unit_mode == 1:
         cf = -104.1                         # dBm @ ADC 
     elif unit_mode == 2:
         cf = -104.1 - 10.00 - 15.0          # V(amplitude) @ HF -- in EM2-1: HF-gain +15dB, ADC: 2Vpp  ==> EM2-3 & later: same [-6dB + 6dB]
     elif unit_mode == 3:
         cf = -104.1 - 13.01 - 15.0          # V^2 @ HF (EM2-0 case)
     elif unit_mode == 4:
-        cf = -104.1 - 13.01 - 15.0 - 5.0    # V^2 @ RWIin -- temporary
+        cf = -104.1 - 13.01 - 15.0 - 5.0    # V^2 @ RWIin
 
     # *** Max / Min in plots ***
     p_max = p_raw_max + cf/10

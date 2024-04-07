@@ -1,5 +1,5 @@
 """
-    JUICE SPICE LIB -- 2024/2/27
+    JUICE SPICE LIB -- 2024/3/4
 """
 import numpy as np
 import math
@@ -7,33 +7,24 @@ import spiceypy as spice
 import datetime
 from planetary_coverage import MetaKernel
 
-
 # ---------------------------------------------------------
 # Load NAIF SPICE kernels for S/C
 # ---------------------------------------------------------
+
+
 def spice_ini(source_dir):
 
     # load spice kernel files
-    spice.furnsh(source_dir + 'spk/juice_crema_5_1_150lb_23_1_v01.bsp')
-    #
-    spice.furnsh(source_dir + 'spk/jup365_19900101_20500101.bsp')
-    spice.furnsh(source_dir + 'spk/de432s.bsp')
-    spice.furnsh(source_dir + 'lsk/naif0012.tls')
-    spice.furnsh(source_dir + 'pck/pck00011.tpc')
-    return
-
-def spice_predict_ini(source_dir):
-
-    # load spice kernel files
     # spice.furnsh(source_dir + "mk/juice_ops.tm")
-    # spice.furnsh(source_dir + "mk/juice_plan.tm")
     spice.furnsh(MetaKernel(source_dir + "mk/juice_plan.tm", kernels=source_dir))
-    #
-    spice.furnsh(source_dir + "ck/juice_sc_crema_5_1_150lb_default_v01.bc")
+    # spice.furnsh(source_dir + "mk/juice_plan.tm")
+    spice.furnsh(source_dir + "ck/juice_sc_crema_5_1_150lb_23_1_default_v01.bc")
+    # spice.furnsh(source_dir + "ck/juice_sc_crema_5_1_150lb_default_v01.bc")
     spice.furnsh(source_dir + "spk/jup365_19900101_20500101.bsp")
     spice.furnsh(source_dir + "spk/de432s.bsp")
     spice.furnsh(source_dir + "lsk/naif0012.tls")
-    spice.furnsh(source_dir + "pck/pck00010.tpc")
+    spice.furnsh(source_dir + "pck/pck00011.tpc")
+    # spice.furnsh(source_dir + "pck/pck00010.tpc")
 
     return
 
@@ -46,7 +37,11 @@ def spice_predict_ini(source_dir):
 #   origin: org
 #   light time correction: corr
 # ---------------------------------------------------------
-def get_pos_xref(et, ref="IAU_SUN", tar="JUICE", org="SUN", x_ref="JUPITER", corr="LT+S"):
+
+
+def get_pos_xref(
+    et, ref="IAU_SUN", tar="JUICE", org="SUN", x_ref="JUPITER", corr="LT+S"
+):
     """_return JUICE orbit from Sun_
 
     Args:
@@ -104,6 +99,7 @@ def get_pos_xref(et, ref="IAU_SUN", tar="JUICE", org="SUN", x_ref="JUPITER", cor
 
     return [x, y, z, r, lat, lon]
 
+
 # ---------------------------------------------------------
 #   Calculate JUICE orbit
 #   reference frame: IAU_SUN
@@ -111,6 +107,8 @@ def get_pos_xref(et, ref="IAU_SUN", tar="JUICE", org="SUN", x_ref="JUPITER", cor
 #   origin: SUN
 #   refernce target on the x-axis: x_ref
 # ---------------------------------------------------------
+
+
 def get_juice_pos_sun(et, x_ref="JUPITER"):
 
     x, y, z, r, lat, lon = get_pos_xref(
@@ -119,6 +117,7 @@ def get_juice_pos_sun(et, x_ref="JUPITER"):
 
     return [x, y, z, r, lat, lon]
 
+
 # ---------------------------------------------------------
 #   Calculate JUICE orbit
 #   reference frame: IAU_JUPITER
@@ -126,6 +125,8 @@ def get_juice_pos_sun(et, x_ref="JUPITER"):
 #   origin: JUPITER
 #   refernce target on the x-axis: x_ref
 # ---------------------------------------------------------
+
+
 def get_juice_pos_jup(et, x_ref="GANYMEDE"):
 
     x, y, z, r, lat, lon = get_pos_xref(
@@ -134,6 +135,7 @@ def get_juice_pos_jup(et, x_ref="GANYMEDE"):
 
     return [x, y, z, r, lat, lon]
 
+
 # ---------------------------------------------------------
 #   Calculate JUICE orbit
 #   reference frame: IAU_EARTH
@@ -141,6 +143,8 @@ def get_juice_pos_jup(et, x_ref="GANYMEDE"):
 #   origin: EARTH
 #   refernce target on the x-axis: x_ref
 # ---------------------------------------------------------
+
+
 def get_juice_pos_earth(et, x_ref="SUN"):
 
     x, y, z, r, lat, lon = get_pos_xref(
@@ -149,6 +153,7 @@ def get_juice_pos_earth(et, x_ref="SUN"):
 
     return [x, y, z, r, lat, lon]
 
+
 # ---------------------------------------------------------
 #   Calculate Moon orbit
 #   reference frame: IAU_EARTH
@@ -156,6 +161,8 @@ def get_juice_pos_earth(et, x_ref="SUN"):
 #   origin: EARTH
 #   refernce target on the x-axis: x_ref
 # ---------------------------------------------------------
+
+
 def get_moon_pos_earth(et, x_ref="SUN"):
 
     x, y, z, r, lat, lon = get_pos_xref(
@@ -182,6 +189,25 @@ def get_juice_pos_moon(et, x_ref="SUN"):
 
     return [x, y, z, r, lat, lon]
 
+
+# ---------------------------------------------------------
+#   Calculate EARTH orbit
+#   reference frame: IAU_MOON
+#   target: EARTH
+#   origin: MOON
+#   refernce target on the x-axis: x_ref
+# ---------------------------------------------------------
+
+
+def get_earth_pos_moon(et, x_ref="SUN"):
+
+    x, y, z, r, lat, lon = get_pos_xref(
+        et, ref="IAU_MOON", tar="EARTH", org="MOON", x_ref=x_ref, corr="LT+S"
+    )
+
+    return [x, y, z, r, lat, lon]
+
+
 # ---------------------------------------------------------
 #   Calculate JUICE orbit
 #   reference frame: IAU_VENUS
@@ -189,6 +215,8 @@ def get_juice_pos_moon(et, x_ref="SUN"):
 #   origin: VENUS
 #   refernce target on the x-axis: x_ref
 # ---------------------------------------------------------
+
+
 def get_juice_pos_venus(et, x_ref="SUN"):
 
     x, y, z, r, lat, lon = get_pos_xref(
@@ -197,12 +225,7 @@ def get_juice_pos_venus(et, x_ref="SUN"):
 
     return [x, y, z, r, lat, lon]
 
-# ---------------------------------------------------------
-#   Calculate orbit
-#   reference frame: ref
-#   origin: org
-#   target: tar
-# ---------------------------------------------------------
+
 def get_pos(et, ref="IAU_SUN", tar="JUICE", org="SUN"):
 
     # light time correction
@@ -245,6 +268,8 @@ def get_pos(et, ref="IAU_SUN", tar="JUICE", org="SUN"):
 #   x : vector from the origin to the reference target
 #   y : vector of the orbital direction of the reference target
 # ---------------------------------------------------------
+
+
 def get_pos_ref(
     et, ref="IAU_JUPITER", tar="JUICE", org="JUPITER", tar_ref="GANYMEDE", corr="LT+S"
 ):

@@ -2,7 +2,7 @@
 
 import glob
 import spacepy.pycdf
-# import numpy as np
+import numpy as np
 
 class struct:
     pass
@@ -37,6 +37,21 @@ def juice_gethk_hf(data):
     hk.temp_rwi_ch1 = data['LWT03337_CALIBRATED'][...]
     hk.temp_rwi_ch2 = data['LWT03339_CALIBRATED'][...]
     hk.temp_hf_fpga = data['LWT0333B_CALIBRATED'][...]
+
+    hk.temp_rwi_ch1_raw = np.float32(data['LWT03337'][...])
+    hk.temp_rwi_ch2_raw = np.float32(data['LWT03339'][...])
+    hk.temp_hf_fpga_raw = np.float32(data['LWT0333B'][...])
+    # ICD
+    hk.temp_rwi_ch1_rev = -2.322450E+02 + 1.337700E-03 * hk.temp_rwi_ch1_raw + 1.050860E-04 * (hk.temp_rwi_ch1_raw)**2 -5.410590E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.580980E-11* (hk.temp_rwi_ch1_raw)**4
+    hk.temp_rwi_ch2_rev = -2.322450E+02 + 1.337700E-03 * hk.temp_rwi_ch2_raw + 1.050860E-04 * (hk.temp_rwi_ch2_raw)**2 -5.410590E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.580980E-11* (hk.temp_rwi_ch2_raw)**4
+    hk.temp_hf_fpga_rev = -2.302250E+02 + 1.343320E-03 * hk.temp_hf_fpga_raw + 1.053010E-04 * (hk.temp_hf_fpga_raw)**2 -5.422890E-08 * (hk.temp_hf_fpga_raw)**3 + 1.583520E-11* (hk.temp_hf_fpga_raw)**4
+    # Current code
+    hk.temp_rwi_ch1_rev2 = -2.754000E+02 + 6.979000E-02 * hk.temp_rwi_ch1_raw + 7.553000E-05 * (hk.temp_rwi_ch1_raw)**2 -5.196000E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.643000E-11* (hk.temp_rwi_ch1_raw)**4
+    hk.temp_rwi_ch2_rev2 = -2.743000E+02 + 6.838000E-02 * hk.temp_rwi_ch2_raw + 7.865000E-05 * (hk.temp_rwi_ch2_raw)**2 -5.466000E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.707000E-11* (hk.temp_rwi_ch2_raw)**4
+    hk.temp_hf_fpga_rev2 = -2.288629E+02 - 4.686928E-02 * hk.temp_hf_fpga_raw + 1.584843E-04 * (hk.temp_hf_fpga_raw)**2 -8.207110E-08 * (hk.temp_hf_fpga_raw)**3 + 2.189507E-11* (hk.temp_hf_fpga_raw)**4
+
+
+
 
     """
     hk.deploy_pri_x=data['LWT0332E']

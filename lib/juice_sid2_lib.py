@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2024/2/21
+    JUICE RPWI HF SID2 (RAW): L1a QL -- 2024/3/31
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -313,11 +313,15 @@ def hf_sid2_getspec(data, cal_mode):
     spec.EwEw = np.zeros(n_time * n_freq * n_samp)
     spec.EE = np.zeros(n_time * n_freq * n_samp)
     spec.freq = np.zeros(n_time * n_freq * n_samp)
+    spec.freq_cen = np.zeros(n_time * n_freq * n_samp)
+    spec.freq_num = np.zeros(n_time * n_freq * n_samp)
     spec.EuEu = spec.EuEu.reshape(n_time, n_freq, n_samp)
     spec.EvEv = spec.EvEv.reshape(n_time, n_freq, n_samp)
     spec.EwEw = spec.EwEw.reshape(n_time, n_freq, n_samp)
     spec.EE = spec.EE.reshape(n_time, n_freq, n_samp)
     spec.freq = spec.freq.reshape(n_time, n_freq, n_samp)
+    spec.freq_cen = spec.freq_cen.reshape(n_time, n_freq, n_samp)
+    spec.freq_num = spec.freq_num.reshape(n_time, n_freq, n_samp)
 
     # Frequency
     dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
@@ -325,6 +329,8 @@ def hf_sid2_getspec(data, cal_mode):
     for i in range(n_time):
         for j in range(n_freq):
             spec.freq[i][j] = data.frequency[i][j] + freq
+            spec.freq_cen[i][j] = data.frequency[i][j]
+            spec.freq_num[i][j] = j
 
     # FFT
     window = np.hanning(n_samp)
@@ -355,6 +361,8 @@ def hf_sid2_getspec(data, cal_mode):
     spec.EwEw = spec.EwEw[:, :, samp1:samp2]
     spec.EE = spec.EE[:, :, samp1:samp2]
     spec.freq = spec.freq[:, :, samp1:samp2]
+    spec.freq_cen = spec.freq_cen[:, :, samp1:samp2]
+    spec.freq_num = spec.freq_num[:, :, samp1:samp2]
     n_samp = samp2 - samp1
 
     # Reshape
@@ -363,6 +371,8 @@ def hf_sid2_getspec(data, cal_mode):
     spec.EE = np.array(spec.EE).reshape(n_time, n_freq * n_samp)
     spec.EuEu = np.array(spec.EuEu).reshape(n_time, n_freq * n_samp)
     spec.freq = np.array(spec.freq).reshape(n_time, n_freq * n_samp)
+    spec.freq_cen = np.array(spec.freq_cen).reshape(n_time, n_freq * n_samp)
+    spec.freq_num = np.array(spec.freq_num).reshape(n_time, n_freq * n_samp)
 
     # Median formation
     if cal_mode < 2:
@@ -372,6 +382,8 @@ def hf_sid2_getspec(data, cal_mode):
         spec.EwEw = spec.EwEw[index[0]]
         spec.EE = spec.EE[index[0]]
         spec.freq = spec.freq[index[0]]
+        spec.freq_cen = spec.freq_cen[index[0]]
+        spec.freq_num = spec.freq_num[index[0]]
         spec.epoch = data.epoch[index[0]]
     else:
         spec.epoch = data.epoch[:]
