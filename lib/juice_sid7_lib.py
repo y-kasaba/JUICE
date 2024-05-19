@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2023/11/18
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2024/05/19
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
