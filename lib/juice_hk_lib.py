@@ -1,5 +1,5 @@
 #---------------------------------------------------------------------
-# JUICE RPWI HF HK -- 2024/6/27
+# JUICE RPWI HF HK -- 2024/6/30
 #---------------------------------------------------------------------
 import glob
 import spacepy.pycdf
@@ -20,6 +20,9 @@ def juice_readhk(date_str, label, ver_str="01", base_dir="/db/JUICE/juice/datase
     if yr_format=='20':
         search_path = base_dir+yr_str+'/'+mn_str+'/'+dy_str + \
             '/JUICE_LU_RPWI-PPTD-'+label+'_'+date_str+'T??????_V'+ver_str+'.cdf'
+    elif yr_format=='HK':
+        search_path = base_dir + date_str + \
+            '/JUICE_LU_RPWI-*'+label+'_*V'+ver_str+'*.cdf'
     else:
         search_path = base_dir + date_str + \
             '/JUICE_LU_RPWI-*'+label+'_V'+ver_str+'*.cdf'
@@ -67,22 +70,19 @@ def juice_gethk_hf(data, mode):
         hk.temp_rwi_ch2_raw = np.float32(data['LWT04334'][...])
         hk.temp_hf_fpga_raw = np.float32(data['LWT04335'][...])
 
-        hk.temp_rwi_ch1 = -2.322450E+02 + 1.337700E-03 * hk.temp_rwi_ch1_raw + 1.050860E-04 * (hk.temp_rwi_ch1_raw)**2 -5.410590E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.580980E-11* (hk.temp_rwi_ch1_raw)**4
-        hk.temp_rwi_ch2 = -2.322450E+02 + 1.337700E-03 * hk.temp_rwi_ch2_raw + 1.050860E-04 * (hk.temp_rwi_ch2_raw)**2 -5.410590E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.580980E-11* (hk.temp_rwi_ch2_raw)**4
-        hk.temp_hf_fpga = -2.302250E+02 + 1.343320E-03 * hk.temp_hf_fpga_raw + 1.053010E-04 * (hk.temp_hf_fpga_raw)**2 -5.422890E-08 * (hk.temp_hf_fpga_raw)**3 + 1.583520E-11* (hk.temp_hf_fpga_raw)**4  
+        hk.temp_rwi_ch1 = -2.754000E+02 + 6.979000E-02 * hk.temp_rwi_ch1_raw + 7.553000E-05 * (hk.temp_rwi_ch1_raw)**2 -5.196000E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.643000E-11* (hk.temp_rwi_ch1_raw)**4
+        hk.temp_rwi_ch2 = -2.743000E+02 + 6.838000E-02 * hk.temp_rwi_ch2_raw + 7.865000E-05 * (hk.temp_rwi_ch2_raw)**2 -5.466000E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.707000E-11* (hk.temp_rwi_ch2_raw)**4
+        hk.temp_hf_fpga = -2.288629E+02 - 4.686928E-02 * hk.temp_hf_fpga_raw + 1.584843E-04 * (hk.temp_hf_fpga_raw)**2 -8.207110E-08 * (hk.temp_hf_fpga_raw)**3 + 2.189507E-11* (hk.temp_hf_fpga_raw)**4
+
+    # ASW3
+    hk.temp_rwi_ch1_rev = -2.29287E+02 - 4.54293E-03 * hk.temp_rwi_ch1_raw + 1.12892E-04 * (hk.temp_rwi_ch1_raw)**2 -5.79267E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.64358E-11 * (hk.temp_rwi_ch1_raw)**4
+    hk.temp_rwi_ch2_rev = -2.28787E+02 - 4.54293E-03 * hk.temp_rwi_ch2_raw + 1.12892E-04 * (hk.temp_rwi_ch2_raw)**2 -5.79267E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.64358E-11 * (hk.temp_rwi_ch2_raw)**4
+    hk.temp_hf_fpga_rev = -2.47787E+02 + 4.54293E-03 * hk.temp_hf_fpga_raw + 1.12892E-04 * (hk.temp_hf_fpga_raw)**2 -5.79267E-08 * (hk.temp_hf_fpga_raw)**3 + 1.64358E-11 * (hk.temp_hf_fpga_raw)**4
 
     # ICD - modified
-    hk.temp_rwi_ch1_rev = -2.28245E+02 + 1.33770E-03 * hk.temp_rwi_ch1_raw + 1.05086E-04 * (hk.temp_rwi_ch1_raw)**2 -5.41059E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.58098E-11* (hk.temp_rwi_ch1_raw)**4
-    hk.temp_rwi_ch2_rev = -2.28245E+02 + 1.33770E-03 * hk.temp_rwi_ch1_raw + 1.05086E-04 * (hk.temp_rwi_ch1_raw)**2 -5.41059E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.58098E-11* (hk.temp_rwi_ch1_raw)**4
-    hk.temp_hf_fpga_rev = -2.49225E+02 + 1.04332E-02 * hk.temp_hf_fpga_raw + 1.05301E-04 * (hk.temp_hf_fpga_raw)**2 -5.42289E-08 * (hk.temp_hf_fpga_raw)**3 + 1.58352E-11* (hk.temp_hf_fpga_raw)**4
-    # ICD
-    # hk.temp_rwi_ch1_rev = -2.322450E+02 + 1.337700E-03 * hk.temp_rwi_ch1_raw + 1.050860E-04 * (hk.temp_rwi_ch1_raw)**2 -5.410590E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.580980E-11* (hk.temp_rwi_ch1_raw)**4
-    # hk.temp_rwi_ch2_rev = -2.322450E+02 + 1.337700E-03 * hk.temp_rwi_ch2_raw + 1.050860E-04 * (hk.temp_rwi_ch2_raw)**2 -5.410590E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.580980E-11* (hk.temp_rwi_ch2_raw)**4
-    # hk.temp_hf_fpga_rev = -2.302250E+02 + 1.343320E-03 * hk.temp_hf_fpga_raw + 1.053010E-04 * (hk.temp_hf_fpga_raw)**2 -5.422890E-08 * (hk.temp_hf_fpga_raw)**3 + 1.583520E-11* (hk.temp_hf_fpga_raw)**4
-    # Current code
-    hk.temp_rwi_ch1_rev2 = -2.754000E+02 + 6.979000E-02 * hk.temp_rwi_ch1_raw + 7.553000E-05 * (hk.temp_rwi_ch1_raw)**2 -5.196000E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.643000E-11* (hk.temp_rwi_ch1_raw)**4
-    hk.temp_rwi_ch2_rev2 = -2.743000E+02 + 6.838000E-02 * hk.temp_rwi_ch2_raw + 7.865000E-05 * (hk.temp_rwi_ch2_raw)**2 -5.466000E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.707000E-11* (hk.temp_rwi_ch2_raw)**4
-    hk.temp_hf_fpga_rev2 = -2.288629E+02 - 4.686928E-02 * hk.temp_hf_fpga_raw + 1.584843E-04 * (hk.temp_hf_fpga_raw)**2 -8.207110E-08 * (hk.temp_hf_fpga_raw)**3 + 2.189507E-11* (hk.temp_hf_fpga_raw)**4
+    hk.temp_rwi_ch1_rev2 = -2.28245E+02 + 1.33770E-03 * hk.temp_rwi_ch1_raw + 1.05086E-04 * (hk.temp_rwi_ch1_raw)**2 -5.41059E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.58098E-11* (hk.temp_rwi_ch1_raw)**4
+    hk.temp_rwi_ch2_rev2 = -2.28245E+02 + 1.33770E-03 * hk.temp_rwi_ch2_raw + 1.05086E-04 * (hk.temp_rwi_ch2_raw)**2 -5.41059E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.58098E-11* (hk.temp_rwi_ch2_raw)**4
+    hk.temp_hf_fpga_rev2 = -2.49225E+02 + 1.04332E-02 * hk.temp_hf_fpga_raw + 1.05301E-04 * (hk.temp_hf_fpga_raw)**2 -5.42289E-08 * (hk.temp_hf_fpga_raw)**3 + 1.58352E-11* (hk.temp_hf_fpga_raw)**4
 
     return hk
 
