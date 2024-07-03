@@ -1,9 +1,9 @@
 """
-    JUICE RPWI HF math -- 2023/11/28
+    JUICE RPWI HF math -- 2024/7/4
 """
 import math
 import numpy as np
-# from scipy.signal import medfilt
+from scipy.signal import medfilt
 
 
 # ---------------------------------------------------------------------
