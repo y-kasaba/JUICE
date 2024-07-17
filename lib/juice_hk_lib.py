@@ -1,5 +1,5 @@
 #---------------------------------------------------------------------
-# JUICE RPWI HF HK -- 2024/6/30
+# JUICE RPWI HF HK -- 2024/7/17
 #---------------------------------------------------------------------
 import glob
 import spacepy.pycdf
@@ -48,8 +48,9 @@ def juice_gethk_hf(data, mode):
     hk.epoch = data['Epoch'][...]
     
     if mode == 0:
-        # LWYHK00032
-        hk.pol = data['LWT03313']
+        # LWYHK00032        https://www.space.irfu.se/juice/mib_database/TM/S3_25/LWY_HK_00032.html
+        hk.v1_8 = data['LWT03316']
+        # hk.pol = data['LWT03313']
         hk.heater_ena = data['LWT03314']
         hk.calsig_ena = data['LWT0332C']
 
@@ -61,8 +62,9 @@ def juice_gethk_hf(data, mode):
         hk.temp_rwi_ch2 = data['LWT03339_CALIBRATED'][...]
         hk.temp_hf_fpga = data['LWT0333B_CALIBRATED'][...]
     else:
-        # LWYHK10033
-        hk.pol = data['LWT04331']
+        # LWYHK10033        https://www.space.irfu.se/juice/mib_database/TM/S3_25/LWY_HK_10033.html
+        hk.v1_8 = data['LWT04320']
+        # hk.pol = data['LWT04331']
         hk.heater_ena = data['LWT04332']
         # hk.calsig_ena = none?
 

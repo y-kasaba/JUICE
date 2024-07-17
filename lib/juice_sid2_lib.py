@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a QL -- 2024/3/31
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/7/17
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -15,7 +15,7 @@ class struct:
 # ---------------------------------------------------------------------
 def hf_sid2_read(cdf):
     """
-    input:  CDF, cf:conversion factor
+    input:  CDF
     return: data
     """
     data = struct()
@@ -83,12 +83,12 @@ def hf_sid2_read(cdf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    data.Eu_i = cdf['Eu_i'][...] # * 10**(cf/20)
-    data.Eu_q = cdf['Eu_q'][...] # * 10**(cf/20)
-    data.Ev_i = cdf['Ev_i'][...] # * 10**(cf/20)
-    data.Ev_q = cdf['Ev_q'][...] # * 10**(cf/20)
-    data.Ew_i = cdf['Ew_i'][...] # * 10**(cf/20)
-    data.Ew_q = cdf['Ew_q'][...] # * 10**(cf/20)
+    data.Eu_i = cdf['Eu_i'][...]
+    data.Eu_q = cdf['Eu_q'][...]
+    data.Ev_i = cdf['Ev_i'][...]
+    data.Ev_q = cdf['Ev_q'][...]
+    data.Ew_i = cdf['Ew_i'][...]
+    data.Ew_q = cdf['Ew_q'][...]
     data.pps_count = cdf['pps_count'][...]
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]
@@ -198,33 +198,35 @@ def hf_sid2_add(data, data1):
     return data
 
 
-def hf_sid2_proc(data):
+def hf_sid2_shaping(data):
     """
     input:  data
     return: data
     """
 
-    # CUT & Reshape
+    # Size
     n_time = data.Eu_i.shape[0]
     n_freq = data.N_step[n_time//2]
     n_samp = data.N_samp[n_time//2]
     n_num = n_freq * n_samp
     print("  org:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
+
+    # CUT & Shaping: less packet length
     if n_num < data.Eu_i.shape[1]:
         data.Eu_i = data.Eu_i[:, 0:n_num];  data.Eu_q = data.Eu_q[:, 0:n_num]
         data.Ev_i = data.Ev_i[:, 0:n_num];  data.Ev_q = data.Ev_q[:, 0:n_num]
         data.Ew_i = data.Ew_i[:, 0:n_num];  data.Ew_q = data.Ew_q[:, 0:n_num]
-        data.frequency = data.frequency[:, 0:n_num]
-        data.freq_step = data.freq_step[:, 0:n_num]
-        data.freq_width = data.freq_width[:, 0:n_num]
-        data.time = data.time[:, 0:n_num]
-        data.pps_count = data.pps_count[:, 0:n_num]
+        data.pps_count   = data.pps_count[:, 0:n_num]
         data.sweep_start = data.sweep_start[:, 0:n_num]
-        data.reduction = data.reduction[:, 0:n_num]
-        data.overflow = data.overflow[:, 0:n_num]
+        data.reduction   = data.reduction[:, 0:n_num]
+        data.overflow    = data.overflow[:, 0:n_num]
+        data.time        = data.time[:, 0:n_num]
+        data.frequency   = data.frequency[:, 0:n_num]
+        data.freq_step   = data.freq_step[:, 0:n_num]
+        data.freq_width  = data.freq_width[:, 0:n_num]
         print(" cut1:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
 
-    # Merge & CUT
+    # Merge & CUT: separated packets
     n_freq0 = n_freq
     if n_time > 1:
         if data.frequency[0][0] < data.frequency[1][0]:
@@ -237,45 +239,43 @@ def hf_sid2_proc(data):
             n_time = n_time // i
             n_freq = n_freq * i
             print(" cut2:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
-            data.epoch = np.array(data.epoch).reshape(n_time, i)
-            # print(data.epoch.shape)
-            print(data.epoch)
-            data.epoch = data.epoch[:, 0]
-            print(data.epoch.shape, data.epoch)
-    # Reshape
-    data.Eu_i = np.array(data.Eu_i).reshape(n_time, n_freq, n_samp)
-    data.Eu_q = np.array(data.Eu_q).reshape(n_time, n_freq, n_samp)
-    data.Ev_i = np.array(data.Ev_i).reshape(n_time, n_freq, n_samp)
-    data.Ev_q = np.array(data.Ev_q).reshape(n_time, n_freq, n_samp)
-    data.Ew_i = np.array(data.Ew_i).reshape(n_time, n_freq, n_samp)
-    data.Ew_q = np.array(data.Ew_q).reshape(n_time, n_freq, n_samp)
-    data.frequency   = np.array(data.frequency).reshape(n_time, n_freq, n_samp)
-    data.freq_step   = np.array(data.freq_step).reshape(n_time, n_freq, n_samp)
-    data.freq_width  = np.array(data.freq_width).reshape(n_time, n_freq, n_samp)
-    data.time        = np.array(data.time).reshape(n_time, n_freq, n_samp)
+            data.epoch = np.array(data.epoch).reshape(n_time, i);   print(data.epoch)
+            data.epoch = data.epoch[:, 0];                          print(data.epoch.shape, data.epoch)
+
+    # Reshape from "2D: n_time * (n_freq * n_samp)" to "3D: n_time * n_freq * n_samp"
+    data.Eu_i        = np.array(data.Eu_i).reshape(n_time, n_freq, n_samp)
+    data.Eu_q        = np.array(data.Eu_q).reshape(n_time, n_freq, n_samp)
+    data.Ev_i        = np.array(data.Ev_i).reshape(n_time, n_freq, n_samp)
+    data.Ev_q        = np.array(data.Ev_q).reshape(n_time, n_freq, n_samp)
+    data.Ew_i        = np.array(data.Ew_i).reshape(n_time, n_freq, n_samp)
+    data.Ew_q        = np.array(data.Ew_q).reshape(n_time, n_freq, n_samp)
     data.pps_count   = np.array(data.pps_count).reshape(n_time, n_freq, n_samp)
     data.sweep_start = np.array(data.sweep_start).reshape(n_time, n_freq, n_samp)
     data.reduction   = np.array(data.reduction).reshape(n_time, n_freq, n_samp)
     data.overflow    = np.array(data.overflow).reshape(n_time, n_freq, n_samp)
-
-    # CUT & Reshape
+    data.time        = np.array(data.time).reshape(n_time, n_freq, n_samp)
+    data.frequency   = np.array(data.frequency).reshape(n_time, n_freq, n_samp)
+    data.freq_step   = np.array(data.freq_step).reshape(n_time, n_freq, n_samp)
+    data.freq_width  = np.array(data.freq_width).reshape(n_time, n_freq, n_samp)
     print(" sort:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
+
+    # CUT & Reshape for separated packets with a short end
     if n_freq > n_freq0:
         n_freq = n_freq0
-        data.Eu_i = data.Eu_i[:, 0:n_freq]
-        data.Eu_q = data.Eu_q[:, 0:n_freq]
-        data.Ev_i = data.Ev_i[:, 0:n_freq]
-        data.Ev_q = data.Ev_q[:, 0:n_freq]
-        data.Ew_i = data.Ew_i[:, 0:n_freq]
-        data.Ew_q = data.Ew_q[:, 0:n_freq]
-        data.frequency = data.frequency[:, 0:n_freq]
-        data.freq_step = data.freq_step[:, 0:n_freq]
-        data.freq_width = data.freq_width[:, 0:n_freq]
-        data.time = data.time[:, 0:n_freq]
-        data.pps_count = data.pps_count[:, 0:n_freq]
+        data.Eu_i        = data.Eu_i[:, 0:n_freq]
+        data.Eu_q        = data.Eu_q[:, 0:n_freq]
+        data.Ev_i        = data.Ev_i[:, 0:n_freq]
+        data.Ev_q        = data.Ev_q[:, 0:n_freq]
+        data.Ew_i        = data.Ew_i[:, 0:n_freq]
+        data.Ew_q        = data.Ew_q[:, 0:n_freq]
+        data.pps_count   = data.pps_count[:, 0:n_freq]
         data.sweep_start = data.sweep_start[:, 0:n_freq]
-        data.reduction = data.reduction[:, 0:n_freq]
-        data.overflow = data.overflow[:, 0:n_freq]
+        data.reduction   = data.reduction[:, 0:n_freq]
+        data.overflow    = data.overflow[:, 0:n_freq]
+        data.time        = data.time[:, 0:n_freq]
+        data.frequency   = data.frequency[:, 0:n_freq]
+        data.freq_step   = data.freq_step[:, 0:n_freq]
+        data.freq_width   = data.freq_width[:, 0:n_freq]
         print(" cut3:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp)
 
     # ### ASW1: data shift -16
@@ -285,7 +285,7 @@ def hf_sid2_proc(data):
         data.Ev_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ev_q[:, -1, n_samp//2:n_samp] = 0.
         data.Ew_i[:, -1, n_samp//2:n_samp] = 0.;  data.Ew_q[:, -1, n_samp//2:n_samp] = 0.
 
-    # ### ASW1: CAL
+    # ### ASW1: CAL flag
     if data.cal_signal[0] == 255:
         power = data.Eu_i[:,-1]**2 + data.Eu_q[:,-1]**2 + data.Ev_i[:,-1]**2 + data.Ev_q[:,-1]**2 + data.Ew_i[:,-1]**2 + data.Ew_q[:,-1]**2
         power = np.mean(power, axis=1)
@@ -296,12 +296,12 @@ def hf_sid2_proc(data):
     return data
 
 
+"""
 # ---------------------------------------------------------------------
 def hf_sid2_getspec(data, cal_mode):
-    """
-    input:  data, cal_mode
-    return: spec
-    """
+    # input:  data, cal_mode
+    # return: spec
+
     # Spec formation
     spec = struct()
 
@@ -391,10 +391,9 @@ def hf_sid2_getspec(data, cal_mode):
 
 
 def hf_sid2_speccal_unit(spec, unit_mode):
-    """
-    input:  data, unit_mode
-    return: data
-    """
+    # input:  data, unit_mode
+    # return: data
+
     # CUT & Reshape
     n_time = spec.EE.shape[0]
     n_freq = spec.EE.shape[1]
@@ -402,7 +401,8 @@ def hf_sid2_speccal_unit(spec, unit_mode):
     print(" speccal_org:", spec.EE.shape, n_time, "x", n_freq,)
     print(freq_1d.shape, freq_1d)
     
-    """
+"""
+"""
     cal_unit = juice_cdf.cal_unit(unit_mode, freq_1d)
 
     # unit_mode       0: raw    1: dBm＠ADC  2: V@HF   3:V2@HF   4:V2@RWI
@@ -432,16 +432,16 @@ def hf_sid2_speccal_unit(spec, unit_mode):
     p_min = p_raw_min + cf/10
 
     return cf, p_max, p_min
-    """
+"""
+"""
     return spec
 
 
 # ---------------------------------------------------------------------
 def hf_sid2_getauto(data):
-    """
-    input:  data
-    return: auto
-    """
+    # input:  data
+    # return: auto
+
     # AutoCorr formation
     auto = struct()
     auto.EuEu = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)
@@ -490,3 +490,4 @@ def hf_sid2_getauto(data):
             auto.EwEw[i][j][1] = 0
             auto.EE[i][j][1] = 0
     return auto
+"""
