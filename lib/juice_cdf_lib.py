@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2024/3/31
+# JUICE RPWI HF CDF lib -- 2024/7/17
 
 import glob
 import spacepy.pycdf
@@ -231,37 +231,34 @@ def _frequency_sid2_to_data(freq, f_step, freq_sid2):
 # power label
 def power_label(band_mode, unit_mode):
     """
-    Input:  cal_mode, unit_mode
+    Input:  cal_mode
+            unit_mode      0: raw     1: V＠ADC     2: V@HF    3: V@RWI
     Outout: str
     """
     if band_mode == 0:
         if unit_mode == 0:
-            str = 'Power [RAW^2 @ADC]'
+            str = 'Power [dB RAW]'
         elif unit_mode == 1:
-            str = 'Power [dBm @ADC]'
+            str = 'Power [dB V @ADC]'
         elif unit_mode == 2:
-            str = 'Power [V^2peak @HF]'
+            str = 'Power [dB V @HF]'
         elif unit_mode == 3:
-            str = 'Power [V^2 @HF]'
-        elif unit_mode == 4:
-            str = 'Power [V^2 @RWI]'
+            str = 'Power [dB V @RWI]'
     else:
         if unit_mode == 0:
-            str = 'Power [RAW^2/Hz @ADC]'
+            str = 'Power [dB RAW/Hz]'
         elif unit_mode == 1:
-            str = 'Power [dBm/Hz @ADC]'
+            str = 'Power [dB V/Hz @ADC]'
         elif unit_mode == 2:
-            str = 'Power [V^2peak/Hz @HF]'
+            str = 'Power [dB V/Hz @HF]'
         elif unit_mode == 3:
-            str = 'Power [V^2/Hz @HF]'
-        elif unit_mode == 4:
-            str = 'Power [V^2/Hz @RWI]'
+            str = 'Power [dB V/Hz @RWI]'
     return str
 
 
 def cal_factors(unit_mode, p_raw_max, p_raw_min):
     """
-    Input:  unit_mode   0: raw   1: dBm＠ADC   2: V@HF   3:V2@HF   4:V2@RWI
+    Input:  unit_mode      0: raw     1: V＠ADC     2: V@HF    3: V@RWI
     Output: cf, p_max, p_min
     """
     # ******************************************************
@@ -273,19 +270,18 @@ def cal_factors(unit_mode, p_raw_max, p_raw_min):
     # "1-bit" = -110.1 dBm = -110.1 dB V  = 0.99E-7 V "  ==> "20-bit": 1.03 Vpp
     # "HF input"  +9dB(AMP)  -3dB(50-ohm) = "+6dB"       ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
     # ******************************************************
-    cf = 0.0                                # Conversion Factor: RAW
-
-    if   unit_mode == 1:
-        cf = -104.1                         # dBm @ ADC 
+    cf = 0.0;          str = '[RAW]'
+    
+    if  unit_mode == 1:
+        # cf = -104.1
+        cf = -120.4;   str = '[V @ADC]'
     elif unit_mode == 2:
-        cf = -104.1 - 10.00 - 15.0          # V(amplitude) @ HF -- in EM2-1: HF-gain +15dB, ADC: 2Vpp  ==> EM2-3 & later: same [-6dB + 6dB]
+        cf = -128.3;   str = '[V @HF]'
     elif unit_mode == 3:
-        cf = -104.1 - 13.01 - 15.0          # V^2 @ HF (EM2-0 case)
-    elif unit_mode == 4:
-        cf = -104.1 - 13.01 - 15.0 - 5.0    # V^2 @ RWIin
+        cf = -138.3;   str = '[V @RWI]'     # TMP
 
     # *** Max / Min in plots ***
     p_max = p_raw_max + cf/10
     p_min = p_raw_min + cf/10
 
-    return cf, p_max, p_min
+    return cf, p_max, p_min, str

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF math -- 2024/7/4
+    JUICE RPWI HF math -- 2024/7/20
 """
 import math
 import numpy as np
@@ -174,3 +174,56 @@ def get_pol_3D(I, Q, U, Vu, Vv, Vw):
                 k_lat[j][i] = math.atan2(Vw[j][i], (Vu[j][i]*Vu[j][i] + Vv[j][i]*Vv[j][i])**0.5) * 180./math.pi
                 k_lon[j][i] = math.atan2(Vv[j][i], Vu[j][i]) * 180.0/math.pi
     return dop, dol, doc, ang, k_lon, k_lat
+
+
+"""
+# ---------------------------------------------------------------------
+# --- Stokes parameter tests ------------------------------------------
+# ---------------------------------------------------------------------
+def get_stokes2(p1, p2, re, im):
+    # Input:  EuEu, EvEv, EuEv_re, EuEv_im
+    # Output: I, Q, U, V: Stokes parameters [Any]
+
+    m = p1.shape[0]
+    I = np.zeros(m)
+    Q = np.zeros(m)
+    U = np.zeros(m)
+    V = np.zeros(m)
+    if p1[0] > 0:
+        I = p1 + p2     # total
+        Q = p1 - p2     # 0deg -  90deg
+        U = re * 2.0    # 45deg - 135deg
+        V = im * 2.0    # Right -  Left  (minus?)
+    return I, Q, U, V
+
+
+# ---------------------------------------------------------------------
+def get_pol2(I, Q, U, V):
+    # Input:  I, Q, U, V: Stokes parameters [Any]
+    # Output: DoP, DoL, DoC, Ang
+
+    m = I.shape[0]
+    dop = np.zeros(m)
+    dol = ang = np.zeros(m)
+    doc = np.zeros(m)
+    ang = np.zeros(m)
+    if I[0] > 0:
+        dop = (Q*Q + U*U + V*V)**0.5 / I   # Degree of Total Polarization
+        dol = (Q*Q + U*U)**0.5 / I         # Degree of Linear Polarization
+        doc = V / I                        # Degree of Circular Polarization
+
+        # Linear Polarization Angle (deg)
+        for j in range(m):
+            if U[j] >= 0.0 and Q[j] > 0.0:    # 0-90
+                ang[j] = 0.5*math.atan(U[j]/Q[j])*180./math.pi
+            elif U[j] <= 0.0 and Q[j] > 0.0:  # 270-360
+                ang[j] = 0.5*math.atan(U[j]/Q[j])*180./math.pi + 180.
+            elif Q[j] < 0.0:                  # 90-270
+                ang[j] = 0.5*math.atan(U[j]/Q[j])*180./math.pi + 90.
+            else:
+                if U[j] >= 0.0:
+                    ang[j] = 45.
+                else:
+                    ang[j] = 135.
+    return dop, dol, doc, ang
+"""

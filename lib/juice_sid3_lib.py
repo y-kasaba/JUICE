@@ -98,18 +98,13 @@ def hf_sid3_read(cdf, cf):
         data.EuEv_im = cdf['EuEv_im'][...] * 10**(cf/10)
         data.EvEw_im = cdf['EvEw_im'][...] * 10**(cf/10)
         data.EwEu_im = cdf['EwEu_im'][...] * 10**(cf/10)
-        data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
-            juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
-        data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = \
-            juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
-        data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu = \
-            juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
-        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = \
-            juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
-        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = \
-            juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
-        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = \
-            juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
+
+        data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
+        data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
+        data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu = juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
+        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
+        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
+        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
     #
     if data.complex[0] == 2:    # Matrix - N/R/L-separated
         # *** NC
