@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID20 (Burst rich): L1a QL -- 2024/2/7
+    JUICE RPWI HF SID20 (Burst rich): L1a QL -- 2024/7/20
 """
 import numpy as np
 import juice_math_lib as juice_math
@@ -12,7 +12,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID20 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid20_read(cdf, cf):
+def hf_sid20_read(cdf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -87,17 +87,17 @@ def hf_sid20_read(cdf, cf):
     data.scet = cdf['SCET'][...]
 
     if data.complex[0] < 2:     # Power
-        data.EuEu = cdf['EuEu'][...] * 10**(cf/10)
-        data.EvEv = cdf['EvEv'][...] * 10**(cf/10)
-        data.EwEw = cdf['EwEw'][...] * 10**(cf/10)
+        data.EuEu = cdf['EuEu'][...]
+        data.EvEv = cdf['EvEv'][...]
+        data.EwEw = cdf['EwEw'][...]
     #
     if data.complex[0] == 1:    # Matrix
-        data.EuEv_re = cdf['EuEv_re'][...] * 10**(cf/10)
-        data.EvEw_re = cdf['EvEw_re'][...] * 10**(cf/10)
-        data.EwEu_re = cdf['EwEu_re'][...] * 10**(cf/10)
-        data.EuEv_im = cdf['EuEv_im'][...] * 10**(cf/10)
-        data.EvEw_im = cdf['EvEw_im'][...] * 10**(cf/10)
-        data.EwEu_im = cdf['EwEu_im'][...] * 10**(cf/10)
+        data.EuEv_re = cdf['EuEv_re'][...]
+        data.EvEw_re = cdf['EvEw_re'][...]
+        data.EwEu_re = cdf['EwEu_re'][...]
+        data.EuEv_im = cdf['EuEv_im'][...]
+        data.EvEw_im = cdf['EvEw_im'][...]
+        data.EwEu_im = cdf['EwEu_im'][...]
         data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
             juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
         data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = \
@@ -115,57 +115,51 @@ def hf_sid20_read(cdf, cf):
         print("[Read] **** In SID-20, no complex 2 mode ****")
     #
     if data.complex[0] == 3:    # 3D-matrix
-        data.EuiEui = cdf['EuiEui'][...] * 10**(cf/10)
-        data.EuqEuq = cdf['EuqEuq'][...] * 10**(cf/10)
-        data.EviEvi = cdf['EviEvi'][...] * 10**(cf/10)
-        data.EvqEvq = cdf['EvqEvq'][...] * 10**(cf/10)
-        data.EwiEwi = cdf['EwiEwi'][...] * 10**(cf/10)
-        data.EwqEwq = cdf['EwqEwq'][...] * 10**(cf/10)
+        data.EuiEui = cdf['EuiEui'][...]
+        data.EuqEuq = cdf['EuqEuq'][...]
+        data.EviEvi = cdf['EviEvi'][...]
+        data.EvqEvq = cdf['EvqEvq'][...]
+        data.EwiEwi = cdf['EwiEwi'][...]
+        data.EwqEwq = cdf['EwqEwq'][...]
         #
-        data.EuiEvi = cdf['EuiEvi'][...] * 10**(cf/10)
-        data.EviEwi = cdf['EviEwi'][...] * 10**(cf/10)
-        data.EwiEui = cdf['EwiEui'][...] * 10**(cf/10)
-        data.EuqEvq = cdf['EuqEvq'][...] * 10**(cf/10)
-        data.EvqEwq = cdf['EvqEwq'][...] * 10**(cf/10)
-        data.EwqEuq = cdf['EwqEuq'][...] * 10**(cf/10)
+        data.EuiEvi = cdf['EuiEvi'][...]
+        data.EviEwi = cdf['EviEwi'][...]
+        data.EwiEui = cdf['EwiEui'][...]
+        data.EuqEvq = cdf['EuqEvq'][...]
+        data.EvqEwq = cdf['EvqEwq'][...]
+        data.EwqEuq = cdf['EwqEuq'][...]
         #
-        data.EuiEvq = cdf['EuiEvq'][...] * 10**(cf/10)
-        data.EuqEvi = cdf['EuqEvi'][...] * 10**(cf/10)
-        data.EviEwq = cdf['EviEwq'][...] * 10**(cf/10)
-        data.EvqEwi = cdf['EvqEwi'][...] * 10**(cf/10)
-        data.EwiEuq = cdf['EwiEuq'][...] * 10**(cf/10)
-        data.EwqEui = cdf['EwqEui'][...] * 10**(cf/10)
+        data.EuiEvq = cdf['EuiEvq'][...]
+        data.EuqEvi = cdf['EuqEvi'][...]
+        data.EviEwq = cdf['EviEwq'][...]
+        data.EvqEwi = cdf['EvqEwi'][...]
+        data.EwiEuq = cdf['EwiEuq'][...]
+        data.EwqEui = cdf['EwqEui'][...]
         #
-        data.EuiEuq = cdf['EuiEuq'][...] * 10**(cf/10)
-        data.EviEvq = cdf['EviEvq'][...] * 10**(cf/10)
-        data.EwiEwq = cdf['EwiEwq'][...] * 10**(cf/10)
+        data.EuiEuq = cdf['EuiEuq'][...]
+        data.EviEvq = cdf['EviEvq'][...]
+        data.EwiEwq = cdf['EwiEwq'][...]
         #
-        data.EuEu = data.EuiEui + data.EuqEuq
-        data.EvEv = data.EviEvi + data.EvqEvq
-        data.EwEw = data.EwiEwi + data.EwqEwq
-        data.EuEv_re = data.EuiEvi + data.EuqEvq
-        data.EvEw_re = data.EviEwi + data.EvqEwq
-        data.EwEu_re = data.EwiEui + data.EwqEuq
+        data.EuEu    =  data.EuiEui + data.EuqEuq
+        data.EvEv    =  data.EviEvi + data.EvqEvq
+        data.EwEw    =  data.EwiEwi + data.EwqEwq
+        data.EuEv_re =  data.EuiEvi + data.EuqEvq
+        data.EvEw_re =  data.EviEwi + data.EvqEwq
+        data.EwEu_re =  data.EwiEui + data.EwqEuq
         data.EuEv_im = -data.EuiEvq + data.EuqEvi
         data.EvEw_im = -data.EviEwq + data.EviEvq
         data.EwEu_im = -data.EwiEuq + data.EwqEui
         #
-        data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
-            juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
-        data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = \
-            juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
-        data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu = \
-            juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
-        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = \
-            juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
-        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = \
-            juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
-        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = \
-            juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
+        data.E_Iuv,   data.E_Quv,   data.E_Uuv,   data.E_Vuv   = juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
+        data.E_Ivw,   data.E_Qvw,   data.E_Uvw,   data.E_Vvw   = juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
+        data.E_Iwu,   data.E_Qwu,   data.E_Uwu,   data.E_Vwu   = juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
+        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
+        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
+        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
         #
-        data.E_I_3d = data.EuEu + data.EvEv + data.EwEw
-        data.E_Q_3d = data.EuiEvi - data.EuqEuq + data.EviEvi - data.EvqEvq + data.EwiEwi - data.EwqEwq
-        data.E_U_3d = 2. * (data.EuiEuq + data.EviEvq + data.EwiEwq)
+        data.E_I_3d  = data.EuEu + data.EvEv + data.EwEw
+        data.E_Q_3d  = data.EuiEvi - data.EuqEuq + data.EviEvi - data.EvqEvq + data.EwiEwi - data.EwqEwq
+        data.E_U_3d  = 2. * (data.EuiEuq + data.EviEvq + data.EwiEwq)
         data.E_Vu_3d = -2. * (data.EviEwq - data.EvqEwi)
         data.E_Vv_3d = -2. * (data.EwiEuq - data.EwqEui)
         data.E_Vw_3d = -2. * (data.EuiEvq - data.EuqEvi)

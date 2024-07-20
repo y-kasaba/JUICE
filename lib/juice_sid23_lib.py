@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2023/12/24
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2024/7/20
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -13,7 +13,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID23 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid23(cdf, cf):
+def juice_getdata_hf_sid23(cdf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -42,12 +42,12 @@ def juice_getdata_hf_sid23(cdf, cf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    data.Eu_i = cdf['Eu_i'][...] * 10**(cf/20)
-    data.Eu_q = cdf['Eu_q'][...] * 10**(cf/20)
-    data.Ev_i = cdf['Ev_i'][...] * 10**(cf/20)
-    data.Ev_q = cdf['Ev_q'][...] * 10**(cf/20)
-    data.Ew_i = cdf['Ew_i'][...] * 10**(cf/20)
-    data.Ew_q = cdf['Ew_q'][...] * 10**(cf/20)
+    data.Eu_i = cdf['Eu_i'][...]
+    data.Eu_q = cdf['Eu_q'][...]
+    data.Ev_i = cdf['Ev_i'][...]
+    data.Ev_q = cdf['Ev_q'][...]
+    data.Ew_i = cdf['Ew_i'][...]
+    data.Ew_q = cdf['Ew_q'][...]
     data.pps_count = cdf['pps_count'][...]
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2023/11/16
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2024/7/20
 """
 import juice_math_lib as juice_math
 
@@ -11,7 +11,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID21 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid21(cdf, cf):
+def juice_getdata_hf_sid21(cdf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -61,28 +61,22 @@ def juice_getdata_hf_sid21(cdf, cf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    data.EuEu = cdf['EuEu'][...] * 10**(cf/10)
-    data.EvEv = cdf['EvEv'][...] * 10**(cf/10)
-    data.EwEw = cdf['EwEw'][...] * 10**(cf/10)
+    data.EuEu = cdf['EuEu'][...]
+    data.EvEv = cdf['EvEv'][...]
+    data.EwEw = cdf['EwEw'][...]
     if data.complex[0] > 0:    # Matrix
-        data.EuEv_re = cdf['EuEv_re'][...] * 10**(cf/10)
-        data.EuEv_im = cdf['EuEv_im'][...] * 10**(cf/10)
-        data.EvEw_re = cdf['EvEw_re'][...] * 10**(cf/10)
-        data.EvEw_im = cdf['EvEw_im'][...] * 10**(cf/10)
-        data.EwEu_re = cdf['EwEu_re'][...] * 10**(cf/10)
-        data.EwEu_im = cdf['EwEu_im'][...] * 10**(cf/10)
-        data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
-            juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
-        data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = \
-            juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
-        data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu = \
-            juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
-        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = \
-            juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
-        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = \
-            juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
-        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = \
-            juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
+        data.EuEv_re = cdf['EuEv_re'][...]
+        data.EuEv_im = cdf['EuEv_im'][...]
+        data.EvEw_re = cdf['EvEw_re'][...]
+        data.EvEw_im = cdf['EvEw_im'][...]
+        data.EwEu_re = cdf['EwEu_re'][...]
+        data.EwEu_im = cdf['EwEu_im'][...]
+        data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
+        data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
+        data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu = juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
+        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
+        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
+        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
 
     # CUT
     n_num = data.B0_step[0] * data.B0_subdiv[0]

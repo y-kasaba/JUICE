@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2024/05/19
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2024/7/21
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -12,9 +12,9 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID7 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid7(cdf, cf):
+def juice_getdata_hf_sid7(cdf):
     """
-    input:  CDF, cf:conversion factor
+    input:  CDF
     return: data
     """
     data = struct()
@@ -44,7 +44,7 @@ def juice_getdata_hf_sid7(cdf, cf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    data.auto_corr = cdf['auto_corr'][...] * 10**(cf/10)
+    data.auto_corr = cdf['auto_corr'][...]
  
     # CUT & Reshape
     data.n_time = data.auto_corr.shape[0]

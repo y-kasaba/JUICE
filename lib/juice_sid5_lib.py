@@ -11,7 +11,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID21 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def juice_getdata_hf_sid5(cdf, cf):
+def juice_getdata_hf_sid5(cdf):
     """
     Input:  cdf
     Output: data
@@ -55,7 +55,7 @@ def juice_getdata_hf_sid5(cdf, cf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    data.EE = cdf['EE'][...] * 10**(cf/10)
+    data.EE = cdf['EE'][...]
 
     # CUT
     n_num = np.int16(data.B0_step[0] * data.B0_subdiv[0] / data.subdiv_reduction[0])

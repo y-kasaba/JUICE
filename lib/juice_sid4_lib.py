@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 (Burst surv): L1a QL -- 2024/2/7
+    JUICE RPWI HF SID4 (Burst surv): L1a QL -- 2024/7/20
 """
 import numpy as np
 import juice_math_lib as juice_math
@@ -12,7 +12,7 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID4 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid4_read(cdf, cf):
+def hf_sid4_read(cdf):
     """
     input:  CDF, cf:conversion factor
     return: data
@@ -67,17 +67,17 @@ def hf_sid4_read(cdf, cf):
     data.scet = cdf['SCET'][...]
 
     if data.complex[0] < 2:     # Power
-        data.EuEu = cdf['EuEu'][...] * 10**(cf/10)
-        data.EvEv = cdf['EvEv'][...] * 10**(cf/10)
-        data.EwEw = cdf['EwEw'][...] * 10**(cf/10)
+        data.EuEu = cdf['EuEu'][...]
+        data.EvEv = cdf['EvEv'][...]
+        data.EwEw = cdf['EwEw'][...]
     #
     if data.complex[0] == 1:    # Matrix
-        data.EuEv_re = cdf['EuEv_re'][...] * 10**(cf/10)
-        data.EvEw_re = cdf['EvEw_re'][...] * 10**(cf/10)
-        data.EwEu_re = cdf['EwEu_re'][...] * 10**(cf/10)
-        data.EuEv_im = cdf['EuEv_im'][...] * 10**(cf/10)
-        data.EvEw_im = cdf['EvEw_im'][...] * 10**(cf/10)
-        data.EwEu_im = cdf['EwEu_im'][...] * 10**(cf/10)
+        data.EuEv_re = cdf['EuEv_re'][...]
+        data.EvEw_re = cdf['EvEw_re'][...]
+        data.EwEu_re = cdf['EwEu_re'][...]
+        data.EuEv_im = cdf['EuEv_im'][...]
+        data.EvEw_im = cdf['EvEw_im'][...]
+        data.EwEu_im = cdf['EwEu_im'][...]
         data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
             juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
         data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = \
