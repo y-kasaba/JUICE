@@ -115,7 +115,6 @@ def hf_sid2_add(data, data1):
     input:  data, data1
     return: data
     """
-
     # AUX
     data.U_selected = np.r_["0", data.U_selected, data1.U_selected]
     data.V_selected = np.r_["0", data.V_selected, data1.V_selected]
@@ -203,7 +202,6 @@ def hf_sid2_shaping(data):
     input:  data
     return: data
     """
-
     # Size
     n_time = data.Eu_i.shape[0]
     n_freq = data.N_step[n_time//2]
