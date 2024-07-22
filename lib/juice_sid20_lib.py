@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID20 (Burst rich): L1a QL -- 2024/7/20
+    JUICE RPWI HF SID20 (Burst rich): L1a QL -- 2024/7/22
 """
 import numpy as np
 import juice_math_lib as juice_math
@@ -86,89 +86,44 @@ def hf_sid20_read(cdf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
 
-    if data.complex[0] < 2:     # Power
-        data.EuEu = cdf['EuEu'][...]
-        data.EvEv = cdf['EvEv'][...]
-        data.EwEw = cdf['EwEw'][...]
+    # complex < 2:     # Power
+    data.EuEu = cdf['EuEu'][...]
+    data.EvEv = cdf['EvEv'][...]
+    data.EwEw = cdf['EwEw'][...]
     #
-    if data.complex[0] == 1:    # Matrix
-        data.EuEv_re = cdf['EuEv_re'][...]
-        data.EvEw_re = cdf['EvEw_re'][...]
-        data.EwEu_re = cdf['EwEu_re'][...]
-        data.EuEv_im = cdf['EuEv_im'][...]
-        data.EvEw_im = cdf['EvEw_im'][...]
-        data.EwEu_im = cdf['EwEu_im'][...]
-        data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv = \
-            juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
-        data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw = \
-            juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
-        data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu = \
-            juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
-        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = \
-            juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
-        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = \
-            juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
-        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = \
-            juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
+    # complex == 1:    # Matrix
+    data.EuEv_re = cdf['EuEv_re'][...]
+    data.EvEw_re = cdf['EvEw_re'][...]
+    data.EwEu_re = cdf['EwEu_re'][...]
+    data.EuEv_im = cdf['EuEv_im'][...]
+    data.EvEw_im = cdf['EvEw_im'][...]
+    data.EwEu_im = cdf['EwEu_im'][...]
     #
-    if data.complex[0] == 2:    # Matrix - N/R/L-separated
-        print("[Read] **** In SID-20, no complex 2 mode ****")
+    # complex[0] == 3:    # 3D-matrix
+    data.EuiEui = cdf['EuiEui'][...]
+    data.EuqEuq = cdf['EuqEuq'][...]
+    data.EviEvi = cdf['EviEvi'][...]
+    data.EvqEvq = cdf['EvqEvq'][...]
+    data.EwiEwi = cdf['EwiEwi'][...]
+    data.EwqEwq = cdf['EwqEwq'][...]
     #
-    if data.complex[0] == 3:    # 3D-matrix
-        data.EuiEui = cdf['EuiEui'][...]
-        data.EuqEuq = cdf['EuqEuq'][...]
-        data.EviEvi = cdf['EviEvi'][...]
-        data.EvqEvq = cdf['EvqEvq'][...]
-        data.EwiEwi = cdf['EwiEwi'][...]
-        data.EwqEwq = cdf['EwqEwq'][...]
-        #
-        data.EuiEvi = cdf['EuiEvi'][...]
-        data.EviEwi = cdf['EviEwi'][...]
-        data.EwiEui = cdf['EwiEui'][...]
-        data.EuqEvq = cdf['EuqEvq'][...]
-        data.EvqEwq = cdf['EvqEwq'][...]
-        data.EwqEuq = cdf['EwqEuq'][...]
-        #
-        data.EuiEvq = cdf['EuiEvq'][...]
-        data.EuqEvi = cdf['EuqEvi'][...]
-        data.EviEwq = cdf['EviEwq'][...]
-        data.EvqEwi = cdf['EvqEwi'][...]
-        data.EwiEuq = cdf['EwiEuq'][...]
-        data.EwqEui = cdf['EwqEui'][...]
-        #
-        data.EuiEuq = cdf['EuiEuq'][...]
-        data.EviEvq = cdf['EviEvq'][...]
-        data.EwiEwq = cdf['EwiEwq'][...]
-        #
-        data.EuEu    =  data.EuiEui + data.EuqEuq
-        data.EvEv    =  data.EviEvi + data.EvqEvq
-        data.EwEw    =  data.EwiEwi + data.EwqEwq
-        data.EuEv_re =  data.EuiEvi + data.EuqEvq
-        data.EvEw_re =  data.EviEwi + data.EvqEwq
-        data.EwEu_re =  data.EwiEui + data.EwqEuq
-        data.EuEv_im = -data.EuiEvq + data.EuqEvi
-        data.EvEw_im = -data.EviEwq + data.EviEvq
-        data.EwEu_im = -data.EwiEuq + data.EwqEui
-        #
-        data.E_Iuv,   data.E_Quv,   data.E_Uuv,   data.E_Vuv   = juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
-        data.E_Ivw,   data.E_Qvw,   data.E_Uvw,   data.E_Vvw   = juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
-        data.E_Iwu,   data.E_Qwu,   data.E_Uwu,   data.E_Vwu   = juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
-        data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
-        data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
-        data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
-        #
-        data.E_I_3d  = data.EuEu + data.EvEv + data.EwEw
-        data.E_Q_3d  = data.EuiEvi - data.EuqEuq + data.EviEvi - data.EvqEvq + data.EwiEwi - data.EwqEwq
-        data.E_U_3d  = 2. * (data.EuiEuq + data.EviEvq + data.EwiEwq)
-        data.E_Vu_3d = -2. * (data.EviEwq - data.EvqEwi)
-        data.E_Vv_3d = -2. * (data.EwiEuq - data.EwqEui)
-        data.E_Vw_3d = -2. * (data.EuiEvq - data.EuqEvi)
-        data.E_DoP_3d, data.E_DoL_3d, data.E_DoC_3d, data.E_ANG_3d, data.E_k_lon, data.E_k_lat = \
-            juice_math.get_pol_3D(data.E_I_3d, data.E_Q_3d, data.E_U_3d, data.E_Vu_3d, data.E_Vv_3d, data.E_Vw_3d)
-
-    # CUT
-    if data.EuEu.shape[1] != 360:
-        print("Mode: **** error ****")
+    data.EuiEvi = cdf['EuiEvi'][...]
+    data.EviEwi = cdf['EviEwi'][...]
+    data.EwiEui = cdf['EwiEui'][...]
+    data.EuqEvq = cdf['EuqEvq'][...]
+    data.EvqEwq = cdf['EvqEwq'][...]
+    data.EwqEuq = cdf['EwqEuq'][...]
+    #
+    data.EuiEvq = cdf['EuiEvq'][...]
+    data.EuqEvi = cdf['EuqEvi'][...]
+    data.EviEwq = cdf['EviEwq'][...]
+    data.EvqEwi = cdf['EvqEwi'][...]
+    data.EwiEuq = cdf['EwiEuq'][...]
+    data.EwqEui = cdf['EwqEui'][...]
+    #
+    data.EuiEuq = cdf['EuiEuq'][...]
+    data.EviEvq = cdf['EviEvq'][...]
+    data.EwiEwq = cdf['EwiEwq'][...]
 
     return data
 
@@ -250,81 +205,83 @@ def hf_sid20_add(data, data1):
     data.EvEv = np.r_["0", data.EvEv, data1.EvEv]
     data.EwEw = np.r_["0", data.EwEw, data1.EwEw]
     #
-    if data.complex[0] > 0:     # Power
-        data.EuEv_re = np.r_["0", data.EuEv_re, data1.EuEv_re]
-        data.EvEw_re = np.r_["0", data.EvEw_re, data1.EvEw_re]
-        data.EwEu_re = np.r_["0", data.EwEu_re, data1.EwEu_re]
-        data.EuEv_im = np.r_["0", data.EuEv_im, data1.EuEv_im]
-        data.EvEw_im = np.r_["0", data.EvEw_im, data1.EvEw_im]
-        data.EwEu_im = np.r_["0", data.EwEu_im, data1.EwEu_im]
-        #
-        data.E_Iuv = np.r_["0", data.E_Iuv, data1.E_Iuv]
-        data.E_Quv = np.r_["0", data.E_Quv, data1.E_Quv]
-        data.E_Uuv = np.r_["0", data.E_Uuv, data1.E_Uuv]
-        data.E_Vuv = np.r_["0", data.E_Vuv, data1.E_Vuv]
-        data.E_Ivw = np.r_["0", data.E_Ivw, data1.E_Ivw]
-        data.E_Qvw = np.r_["0", data.E_Qvw, data1.E_Qvw]
-        data.E_Uvw = np.r_["0", data.E_Uvw, data1.E_Uvw]
-        data.E_Vvw = np.r_["0", data.E_Vvw, data1.E_Vvw]
-        data.E_Iwu = np.r_["0", data.E_Iwu, data1.E_Iwu]
-        data.E_Qwu = np.r_["0", data.E_Qwu, data1.E_Qwu]
-        data.E_Uwu = np.r_["0", data.E_Uwu, data1.E_Uwu]
-        data.E_Vwu = np.r_["0", data.E_Vwu, data1.E_Vwu]
-        #
-        data.E_DoPuv = np.r_["0", data.E_DoPuv, data1.E_DoPuv]
-        data.E_DoLuv = np.r_["0", data.E_DoLuv, data1.E_DoLuv]
-        data.E_DoCuv = np.r_["0", data.E_DoCuv, data1.E_DoCuv]
-        data.E_ANGuv = np.r_["0", data.E_ANGuv, data1.E_ANGuv]
-        data.E_DoPvw = np.r_["0", data.E_DoPvw, data1.E_DoPvw]
-        data.E_DoLvw = np.r_["0", data.E_DoLvw, data1.E_DoLvw]
-        data.E_DoCvw = np.r_["0", data.E_DoCvw, data1.E_DoCvw]
-        data.E_ANGvw = np.r_["0", data.E_ANGvw, data1.E_ANGvw]
-        data.E_DoPwu = np.r_["0", data.E_DoPwu, data1.E_DoPwu]
-        data.E_DoLwu = np.r_["0", data.E_DoLwu, data1.E_DoLwu]
-        data.E_DoCwu = np.r_["0", data.E_DoCwu, data1.E_DoCwu]
-        data.E_ANGwu = np.r_["0", data.E_ANGwu, data1.E_ANGwu]
+    # data.complex > 0:     # Power
+    data.EuEv_re = np.r_["0", data.EuEv_re, data1.EuEv_re]
+    data.EvEw_re = np.r_["0", data.EvEw_re, data1.EvEw_re]
+    data.EwEu_re = np.r_["0", data.EwEu_re, data1.EwEu_re]
+    data.EuEv_im = np.r_["0", data.EuEv_im, data1.EuEv_im]
+    data.EvEw_im = np.r_["0", data.EvEw_im, data1.EvEw_im]
+    data.EwEu_im = np.r_["0", data.EwEu_im, data1.EwEu_im]
     #
-    if data.complex[0] == 2:    # Matrix - N/R/L-separated
-        print("[Add] **** In SID-20, no complex 2 mode ****")
+    # complex == 3:    # 3D-matrix
+    data.EuiEui = np.r_["0", data.EuiEui, data1.EuiEui]
+    data.EuqEuq = np.r_["0", data.EuqEuq, data1.EuqEuq]
+    data.EviEvi = np.r_["0", data.EviEvi, data1.EviEvi]
+    data.EvqEvq = np.r_["0", data.EvqEvq, data1.EvqEvq]
+    data.EwiEwi = np.r_["0", data.EwiEwi, data1.EwiEwi]
+    data.EwqEwq = np.r_["0", data.EwqEwq, data1.EwqEwq]
     #
-    if data.complex[0] == 3:    # 3D-matrix
-        data.EuiEui = np.r_["0", data.EuiEui, data1.EuiEui]
-        data.EuqEuq = np.r_["0", data.EuqEuq, data1.EuqEuq]
-        data.EviEvi = np.r_["0", data.EviEvi, data1.EviEvi]
-        data.EvqEvq = np.r_["0", data.EvqEvq, data1.EvqEvq]
-        data.EwiEwi = np.r_["0", data.EwiEwi, data1.EwiEwi]
-        data.EwqEwq = np.r_["0", data.EwqEwq, data1.EwqEwq]
-        #
-        data.EuiEvi = np.r_["0", data.EuiEvi, data1.EuiEvi]
-        data.EviEwi = np.r_["0", data.EviEwi, data1.EviEwi]
-        data.EwiEui = np.r_["0", data.EwiEui, data1.EwiEui]
-        data.EuqEvq = np.r_["0", data.EuqEvq, data1.EuqEvq]
-        data.EvqEwq = np.r_["0", data.EvqEwq, data1.EvqEwq]
-        data.EwqEuq = np.r_["0", data.EwqEuq, data1.EwqEuq]
-        #
-        data.EuiEvq = np.r_["0", data.EuiEvq, data1.EuiEvq]
-        data.EuqEvi = np.r_["0", data.EuqEvi, data1.EuqEvi]
-        data.EviEwq = np.r_["0", data.EviEwq, data1.EviEwq]
-        data.EvqEwi = np.r_["0", data.EvqEwi, data1.EvqEwi]
-        data.EwiEuq = np.r_["0", data.EwiEuq, data1.EwiEuq]
-        data.EwqEui = np.r_["0", data.EwqEui, data1.EwqEui]
-        #
-        data.EuiEuq = np.r_["0", data.EuiEuq, data1.EuiEuq]
-        data.EviEvq = np.r_["0", data.EviEvq, data1.EviEvq]
-        data.EwiEwq = np.r_["0", data.EwiEwq, data1.EwiEwq]
-        #
-        data.E_I_3d = np.r_["0", data.E_I_3d, data1.E_I_3d]
-        data.E_Q_3d = np.r_["0", data.E_Q_3d, data1.E_Q_3d]
-        data.E_U_3d = np.r_["0", data.E_U_3d, data1.E_U_3d]
-        data.E_Vu_3d = np.r_["0", data.E_Vu_3d, data1.E_Vu_3d]
-        data.E_Vv_3d = np.r_["0", data.E_Vv_3d, data1.E_Vv_3d]
-        data.E_Vw_3d = np.r_["0", data.E_Vw_3d, data1.E_Vw_3d]
-        #
-        data.E_DoP_3d = np.r_["0", data.E_DoP_3d, data1.E_DoP_3d]
-        data.E_DoL_3d = np.r_["0", data.E_DoL_3d, data1.E_DoL_3d]
-        data.E_DoC_3d = np.r_["0", data.E_DoC_3d, data1.E_DoC_3d]
-        data.E_ANG_3d = np.r_["0", data.E_ANG_3d, data1.E_ANG_3d]
-        data.E_k_lon = np.r_["0", data.E_k_lon, data1.E_k_lon]
-        data.E_k_lat = np.r_["0", data.E_k_lat, data1.E_k_lat]
+    data.EuiEvi = np.r_["0", data.EuiEvi, data1.EuiEvi]
+    data.EviEwi = np.r_["0", data.EviEwi, data1.EviEwi]
+    data.EwiEui = np.r_["0", data.EwiEui, data1.EwiEui]
+    data.EuqEvq = np.r_["0", data.EuqEvq, data1.EuqEvq]
+    data.EvqEwq = np.r_["0", data.EvqEwq, data1.EvqEwq]
+    data.EwqEuq = np.r_["0", data.EwqEuq, data1.EwqEuq]
+    #
+    data.EuiEvq = np.r_["0", data.EuiEvq, data1.EuiEvq]
+    data.EuqEvi = np.r_["0", data.EuqEvi, data1.EuqEvi]
+    data.EviEwq = np.r_["0", data.EviEwq, data1.EviEwq]
+    data.EvqEwi = np.r_["0", data.EvqEwi, data1.EvqEwi]
+    data.EwiEuq = np.r_["0", data.EwiEuq, data1.EwiEuq]
+    data.EwqEui = np.r_["0", data.EwqEui, data1.EwqEui]
+    #
+    data.EuiEuq = np.r_["0", data.EuiEuq, data1.EuiEuq]
+    data.EviEvq = np.r_["0", data.EviEvq, data1.EviEvq]
+    data.EwiEwq = np.r_["0", data.EwiEwq, data1.EwiEwq]
         
+    return data
+
+
+def hf_sid20_shaping(data):
+    """
+    input:  data
+    return: data
+    """
+    # CUT
+    if data.EuEu.shape[1] != 360:
+        print("Mode: **** error ****")
+
+    # *** TMP: complex-2&3 data ==> complex-1 data ***
+    n_time0 = data.EuEu.shape[0]
+    for i in range(n_time0):
+        if data.complex[i] == 3:    # Matrix - N/R/L-separated
+            data.EuEu[i]    =  data.EuiEui[i] + data.EuqEuq[i]
+            data.EvEv[i]    =  data.EviEvi[i] + data.EvqEvq[i]
+            data.EwEw[i]    =  data.EwiEwi[i] + data.EwqEwq[i]
+            data.EuEv_re[i] =  data.EuiEvi[i] + data.EuqEvq[i]
+            data.EvEw_re[i] =  data.EviEwi[i] + data.EvqEwq[i]
+            data.EwEu_re[i] =  data.EwiEui[i] + data.EwqEuq[i]
+            data.EuEv_im[i] = -data.EuiEvq[i] + data.EuqEvi[i]
+            data.EvEw_im[i] = -data.EviEwq[i] + data.EviEvq[i]
+            data.EwEu_im[i] = -data.EwiEuq[i] + data.EwqEui[i]
+
+    # STOKES
+    # *** all
+    data.E_Iuv,   data.E_Quv,   data.E_Uuv,   data.E_Vuv   = juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
+    data.E_Ivw,   data.E_Qvw,   data.E_Uvw,   data.E_Vvw   = juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
+    data.E_Iwu,   data.E_Qwu,   data.E_Uwu,   data.E_Vwu   = juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
+    data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
+    data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
+    data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
+
+    # *** 3D
+    data.E_I_3d = data.EuiEui + data.EuqEuq + data.EviEvi + data.EvqEvq + data.EwiEwi + data.EwqEwq
+    data.E_Q_3d = data.EuiEvi - data.EuqEuq + data.EviEvi - data.EvqEvq + data.EwiEwi - data.EwqEwq
+    data.E_U_3d = 2. * (data.EuiEuq + data.EviEvq + data.EwiEwq)
+    data.E_Vu_3d = -2. * (data.EviEwq - data.EvqEwi)
+    data.E_Vv_3d = -2. * (data.EwiEuq - data.EwqEui)
+    data.E_Vw_3d = -2. * (data.EuiEvq - data.EuqEvi)
+    data.E_DoP_3d, data.E_DoL_3d, data.E_DoC_3d, data.E_ANG_3d, data.E_k_lon, data.E_k_lat = \
+        juice_math.get_pol_3D(data.E_I_3d, data.E_Q_3d, data.E_U_3d, data.E_Vu_3d, data.E_Vv_3d, data.E_Vw_3d)
+
     return data
