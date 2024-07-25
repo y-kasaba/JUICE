@@ -1,13 +1,12 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/7/22
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/7/23
 """
 import numpy as np
+import math
 import juice_math_lib as juice_math
-
 
 class struct:
     pass
-
 
 # ---------------------------------------------------------------------
 # --- HID3 ------------------------------------------------------------
@@ -330,18 +329,65 @@ def hf_sid3_shaping(data):
     # CUT -- Ver.1
     n_num = data.B0_step[0]
     if n_num == 255:
-        data.EuEu = data.EuEu[:, 0:n_num]
-        data.EvEv = data.EvEv[:, 0:n_num]
-        data.EwEw = data.EwEw[:, 0:n_num]
+        data.EuEu = data.EuEu[:, 0:n_num];  data.EvEv = data.EvEv[:, 0:n_num];  data.EwEw = data.EwEw[:, 0:n_num]
         data.frequency = data.frequency[:, 0:n_num]
         data.freq_step = data.freq_step[:, 0:n_num]
         data.freq_width = data.freq_width[:, 0:n_num]
         print("Mode: Ver.1")
+    n_time0 = data.EuEu.shape[0];  n_freq0 = data.EuEu.shape[1]
+
+    """
+    # *** TMP: fill NaN
+    for i in range(n_time0):
+        if data.EuEu[i][0]    < -1e20: 
+            data.EuEu[i]    = math.nan;  data.EuEv_re[i]    = math.nan;  data.EuEv_im[i]    = math.nan;  data.EwEu_re[i]    = math.nan;  data.EwEu_im[i]    = math.nan
+        if data.EvEv[i][0]    < -1e20: 
+            data.EvEv[i]    = math.nan;  data.EuEv_re[i]    = math.nan;  data.EuEv_im[i]    = math.nan;  data.EvEw_re[i]    = math.nan;  data.EvEw_im[i]    = math.nan
+        if data.EwEw[i][0]    < -1e20:
+            data.EwEw[i]    = math.nan;  data.EvEw_re[i]    = math.nan;  data.EvEw_im[i]    = math.nan;  data.EwEu_re[i]    = math.nan;  data.EwEu_im[i]    = math.nan
+        if data.EuEu_NC[i][0] < -1e20: 
+            data.EuEu_NC[i] = math.nan;  data.EuEv_re_NC[i] = math.nan;  data.EuEv_im_NC[i] = math.nan;  data.EwEu_re_NC[i] = math.nan;  data.EwEu_im_NC[i] = math.nan
+        if data.EvEv_NC[i][0] < -1e20: 
+            data.EvEv_NC[i] = math.nan;  data.EuEv_re_NC[i] = math.nan;  data.EuEv_im_NC[i] = math.nan;  data.EvEw_re_NC[i] = math.nan;  data.EvEw_im_NC[i] = math.nan
+        if data.EwEw_NC[i][0] < -1e20:
+            data.EwEw_NC[i] = math.nan;  data.EvEw_re_NC[i] = math.nan;  data.EvEw_im_NC[i] = math.nan;  data.EwEu_re_NC[i] = math.nan;  data.EwEu_im_NC[i] = math.nan
+        if data.EuEu_RC[i][0] < -1e20: 
+            data.EuEu_RC[i] = math.nan;  data.EuEv_re_RC[i] = math.nan;  data.EuEv_im_RC[i] = math.nan;  data.EwEu_re_RC[i] = math.nan;  data.EwEu_im_RC[i] = math.nan
+        if data.EvEv_RC[i][0] < -1e20: 
+            data.EvEv_RC[i] = math.nan;  data.EuEv_re_RC[i] = math.nan;  data.EuEv_im_RC[i] = math.nan;  data.EvEw_re_RC[i] = math.nan;  data.EvEw_im_RC[i] = math.nan
+        if data.EwEw_RC[i][0] < -1e20:
+            data.EwEw_RC[i] = math.nan;  data.EvEw_re_RC[i] = math.nan;  data.EvEw_im_RC[i] = math.nan;  data.EwEu_re_RC[i] = math.nan;  data.EwEu_im_RC[i] = math.nan
+        if data.EuEu_LC[i][0] < -1e20: 
+            data.EuEu_LC[i] = math.nan;  data.EuEv_re_LC[i] = math.nan;  data.EuEv_im_LC[i] = math.nan;  data.EwEu_re_LC[i] = math.nan;  data.EwEu_im_LC[i] = math.nan
+        if data.EvEv_LC[i][0] < -1e20: 
+            data.EvEv_LC[i] = math.nan;  data.EuEv_re_LC[i] = math.nan;  data.EuEv_im_LC[i] = math.nan;  data.EvEw_re_LC[i] = math.nan;  data.EvEw_im_LC[i] = math.nan
+        if data.EwEw_LC[i][0] < -1e20:
+            data.EwEw_LC[i] = math.nan;  data.EvEw_re_LC[i] = math.nan;  data.EvEw_im_LC[i] = math.nan;  data.EwEu_re_LC[i] = math.nan;  data.EwEu_im_LC[i] = math.nan
+    """
 
     # *** TMP: complex-2&3 data ==> complex-1 data ***
-    n_time0 = data.EuEu.shape[0]
     for i in range(n_time0):
         if data.complex[i] == 2:    # Matrix - N/R/L-separated
+            for j in range(n_freq0):
+                if data.Pol_sep_SW[i] == 0:
+                    flux_NC = data.EuEu_NC[i][j] + data.EvEv_NC[i][j];  flux_RC = data.EuEu_RC[i][j] + data.EvEv_RC[i][j];  flux_LC = data.EuEu_LC[i][j] + data.EvEv_LC[i][j]
+                elif data.Pol_sep_SW[i] == 1:
+                    flux_NC = data.EvEv_NC[i][j] + data.EwEw_NC[i][j];  flux_RC = data.EvEv_RC[i][j] + data.EwEw_RC[i][j];  flux_LC = data.EvEv_LC[i][j] + data.EwEw_LC[i][j]
+                else:
+                    flux_NC = data.EwEw_NC[i][j] + data.EuEu_NC[i][j];  flux_RC = data.EwEw_RC[i][j] + data.EuEu_RC[i][j];  flux_LC = data.EwEw_LC[i][j] + data.EuEu_LC[i][j]
+                if flux_NC >= flux_RC:
+                    data.EuEu[i][j]    = data.EuEu_NC[i][j];     data.EvEv[i][j]    = data.EvEv_NC[i][j];     data.EwEw[i][j]    = data.EwEw_NC[i][j]
+                    data.EuEv_re[i][j] = data.EuEv_re_NC[i][j];  data.EvEw_re[i][j] = data.EvEw_re_NC[i][j];  data.EwEu_re[i][j] = data.EwEu_re_NC[i][j]
+                    data.EuEv_im[i][j] = data.EuEv_im_NC[i][j];  data.EvEw_im[i][j] = data.EvEw_im_NC[i][j];  data.EwEu_im[i][j] = data.EwEu_im_NC[i][j]
+                elif flux_RC >= flux_LC:
+                    data.EuEu[i][j]    = data.EuEu_RC[i][j];     data.EvEv[i][j]    = data.EvEv_RC[i][j];     data.EwEw[i][j]    = data.EwEw_RC[i][j]
+                    data.EuEv_re[i][j] = data.EuEv_re_RC[i][j];  data.EvEw_re[i][j] = data.EvEw_re_RC[i][j];  data.EwEu_re[i][j] = data.EwEu_re_RC[i][j]
+                    data.EuEv_im[i][j] = data.EuEv_im_RC[i][j];  data.EvEw_im[i][j] = data.EvEw_im_RC[i][j];  data.EwEu_im[i][j] = data.EwEu_im_RC[i][j]
+                else:
+                    data.EuEu[i][j]    = data.EuEu_LC[i][j];     data.EvEv[i][j]    = data.EvEv_LC[i][j];     data.EwEw[i][j]    = data.EwEw_LC[i][j]
+                    data.EuEv_re[i][j] = data.EuEv_re_LC[i][j];  data.EvEw_re[i][j] = data.EvEw_re_LC[i][j];  data.EwEu_re[i][j] = data.EwEu_re_LC[i][j]
+                    data.EuEv_im[i][j] = data.EuEv_im_LC[i][j];  data.EvEw_im[i][j] = data.EvEw_im_LC[i][j];  data.EwEu_im[i][j] = data.EwEu_im_LC[i][j]
+            """
             data.EuEu[i]    = (data.EuEu_NC[i]    * data.num_NC[i] + data.EuEu_RC[i]    * data.num_RC[i] + data.EuEu_LC[i]    * data.num_LC[i]) / (data.num_NC[i] + data.num_RC[i] + data.num_LC[i])
             data.EvEv[i]    = (data.EvEv_NC[i]    * data.num_NC[i] + data.EvEv_RC[i]    * data.num_RC[i] + data.EvEv_LC[i]    * data.num_LC[i]) / (data.num_NC[i] + data.num_RC[i] + data.num_LC[i])
             data.EwEw[i]    = (data.EwEw_NC[i]    * data.num_NC[i] + data.EwEw_RC[i]    * data.num_RC[i] + data.EwEw_LC[i]    * data.num_LC[i]) / (data.num_NC[i] + data.num_RC[i] + data.num_LC[i])
@@ -351,16 +397,22 @@ def hf_sid3_shaping(data):
             data.EuEv_im[i] = (data.EuEv_im_NC[i] * data.num_NC[i] + data.EuEv_im_RC[i] * data.num_RC[i] + data.EuEv_im_LC[i] * data.num_LC[i]) / (data.num_NC[i] + data.num_RC[i] + data.num_LC[i])
             data.EvEw_im[i] = (data.EvEw_im_NC[i] * data.num_NC[i] + data.EvEw_im_RC[i] * data.num_RC[i] + data.EvEw_im_LC[i] * data.num_LC[i]) / (data.num_NC[i] + data.num_RC[i] + data.num_LC[i])
             data.EwEu_im[i] = (data.EwEu_im_NC[i] * data.num_NC[i] + data.EwEu_im_RC[i] * data.num_RC[i] + data.EwEu_im_LC[i] * data.num_LC[i]) / (data.num_NC[i] + data.num_RC[i] + data.num_LC[i])
+            """
+            """
+            data.EuEu[i]    = data.EuEu_NC[i]    + data.EuEu_RC[i] + data.EuEu_LC[i]
+            data.EvEv[i]    = data.EvEv_NC[i]    + data.EvEv_RC[i] + data.EvEv_LC[i]
+            data.EwEw[i]    = data.EwEw_NC[i]    + data.EwEw_RC[i] + data.EwEw_LC[i]
+            data.EuEv_re[i] = data.EuEv_re_NC[i] + data.EuEv_re_RC[i] + data.EuEv_re_LC[i]
+            data.EvEw_re[i] = data.EvEw_re_NC[i] + data.EvEw_re_RC[i] + data.EvEw_re_LC[i]
+            data.EwEu_re[i] = data.EwEu_re_NC[i] + data.EwEu_re_RC[i] + data.EwEu_re_LC[i]
+            data.EuEv_im[i] = data.EuEv_im_NC[i] + data.EuEv_im_RC[i] + data.EuEv_im_LC[i]
+            data.EvEw_im[i] = data.EvEw_im_NC[i] + data.EvEw_im_RC[i] + data.EvEw_im_LC[i]
+            data.EwEu_im[i] = data.EwEu_im_NC[i] + data.EwEu_im_RC[i] + data.EwEu_im_LC[i]
+            """
         if data.complex[i] == 3:    # Matrix - N/R/L-separated
-            data.EuEu[i]    =  data.EuiEui[i] + data.EuqEuq[i]
-            data.EvEv[i]    =  data.EviEvi[i] + data.EvqEvq[i]
-            data.EwEw[i]    =  data.EwiEwi[i] + data.EwqEwq[i]
-            data.EuEv_re[i] =  data.EuiEvi[i] + data.EuqEvq[i]
-            data.EvEw_re[i] =  data.EviEwi[i] + data.EvqEwq[i]
-            data.EwEu_re[i] =  data.EwiEui[i] + data.EwqEuq[i]
-            data.EuEv_im[i] = -data.EuiEvq[i] + data.EuqEvi[i]
-            data.EvEw_im[i] = -data.EviEwq[i] + data.EviEvq[i]
-            data.EwEu_im[i] = -data.EwiEuq[i] + data.EwqEui[i]
+            data.EuEu[i]    =  data.EuiEui[i] + data.EuqEuq[i];  data.EvEv[i]    =  data.EviEvi[i] + data.EvqEvq[i];  data.EwEw[i]    =  data.EwiEwi[i] + data.EwqEwq[i]
+            data.EuEv_re[i] =  data.EuiEvi[i] + data.EuqEvq[i];  data.EvEw_re[i] =  data.EviEwi[i] + data.EvqEwq[i];  data.EwEu_re[i] =  data.EwiEui[i] + data.EwqEuq[i]
+            data.EuEv_im[i] = -data.EuiEvq[i] + data.EuqEvi[i];  data.EvEw_im[i] = -data.EviEwq[i] + data.EviEvq[i];  data.EwEu_im[i] = -data.EwiEuq[i] + data.EwqEui[i]
 
     # STOKES
     # *** all

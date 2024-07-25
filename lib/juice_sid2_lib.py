@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/7/17
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/7/24
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -83,12 +83,12 @@ def hf_sid2_read(cdf):
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
     #
-    data.Eu_i = cdf['Eu_i'][...]
-    data.Eu_q = cdf['Eu_q'][...]
-    data.Ev_i = cdf['Ev_i'][...]
-    data.Ev_q = cdf['Ev_q'][...]
-    data.Ew_i = cdf['Ew_i'][...]
-    data.Ew_q = cdf['Ew_q'][...]
+    data.Eu_i = np.float64(cdf['Eu_i'][...])
+    data.Eu_q = np.float64(cdf['Eu_q'][...])
+    data.Ev_i = np.float64(cdf['Ev_i'][...])
+    data.Ev_q = np.float64(cdf['Ev_q'][...])
+    data.Ew_i = np.float64(cdf['Ew_i'][...])
+    data.Ew_q = np.float64(cdf['Ew_q'][...])
     data.pps_count = cdf['pps_count'][...]
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]

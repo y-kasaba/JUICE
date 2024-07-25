@@ -1,8 +1,8 @@
 """
-    JUICE RPWI HF math -- 2024/7/20
+    JUICE RPWI HF math -- 2024/7/23
 """
-import math
 import numpy as np
+import math
 from scipy.signal import medfilt
 
 
@@ -107,19 +107,17 @@ def get_pol(I, Q, U, V):
     Input:  I, Q, U, V: Stokes parameters [Any]
     Output: DoP, DoL, DoC, Ang
     """
-    m = I.shape[0]
-    n = I.shape[1]
+    m = I.shape[0];  n = I.shape[1]
     dop = np.zeros((m, n))
     dol = ang = np.zeros((m, n))
     doc = np.zeros((m, n))
     ang = np.zeros((m, n))
-    if I[0][0] > 0:
-        dop = (Q*Q + U*U + V*V)**0.5 / I   # Degree of Total Polarization
-        dol = (Q*Q + U*U)**0.5 / I         # Degree of Linear Polarization
-        doc = V / I                        # Degree of Circular Polarization
+    for j in range(m):
+        if I[j][0] > 0 and Q[j][0] > -1e30 and U[j][0] > -1e30 and V[j][0] > -1e30:
+            dop[j] = (Q[j]*Q[j] + U[j]*U[j] + V[j]*V[j])**0.5 / I[j]   # Degree of Total Polarization
+            dol[j] = (Q[j]*Q[j] + U[j]*U[j])**0.5 / I[j]               # Degree of Linear Polarization
+            doc[j] = V[j] / I[j]                                       # Degree of Circular Polarization
 
-        # Linear Polarization Angle (deg)
-        for j in range(m):
             for i in range(n):
                 if U[j][i] >= 0.0 and Q[j][i] > 0.0:    # 0-90
                     ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi

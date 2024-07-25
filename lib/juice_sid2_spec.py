@@ -6,7 +6,6 @@ import scipy.stats as stats
 import juice_cdf_lib as juice_cdf
 import juice_math_lib as juice_math
 
-
 class struct:
     pass
 
@@ -31,45 +30,6 @@ def hf_sid2_getspec(data, cal_mode):
     spec.freq_w   = np.zeros(n_time * n_freq * n_samp);  spec.freq_w   = spec.freq_w.reshape(n_time, n_freq, n_samp)
     # spec.freq_cen = np.zeros(n_time * n_freq * n_samp);  spec.freq_cen = spec.freq_cen.reshape(n_time, n_freq, n_samp)
     # spec.freq_num = np.zeros(n_time * n_freq * n_samp);  spec.freq_num = spec.freq_num.reshape(n_time, n_freq, n_samp)
-    #
-    """
-    spec.EE       = np.zeros(n_time * n_freq * n_samp);  spec.EE       = spec.EE.reshape(n_time, n_freq, n_samp)
-    spec.EuEu     = np.zeros(n_time * n_freq * n_samp);  spec.EuEu     = spec.EuEu.reshape(n_time, n_freq, n_samp)
-    spec.EvEv     = np.zeros(n_time * n_freq * n_samp);  spec.EvEv     = spec.EvEv.reshape(n_time, n_freq, n_samp)
-    spec.EwEw     = np.zeros(n_time * n_freq * n_samp);  spec.EwEw     = spec.EwEw.reshape(n_time, n_freq, n_samp)
-    spec.EuEv_re  = np.zeros(n_time * n_freq * n_samp);  spec.EuEv_re  = spec.EuEv_re.reshape(n_time, n_freq, n_samp)
-    spec.EvEw_re  = np.zeros(n_time * n_freq * n_samp);  spec.EvEw_re  = spec.EvEw_re.reshape(n_time, n_freq, n_samp)
-    spec.EwEu_re  = np.zeros(n_time * n_freq * n_samp);  spec.EwEu_re  = spec.EwEu_re.reshape(n_time, n_freq, n_samp)
-    spec.EuEv_im  = np.zeros(n_time * n_freq * n_samp);  spec.EuEv_im  = spec.EuEv_re.reshape(n_time, n_freq, n_samp)
-    spec.EvEw_im  = np.zeros(n_time * n_freq * n_samp);  spec.EvEw_im  = spec.EvEw_re.reshape(n_time, n_freq, n_samp)
-    spec.EwEu_im  = np.zeros(n_time * n_freq * n_samp);  spec.EwEu_im  = spec.EwEu_re.reshape(n_time, n_freq, n_samp)
-    #
-    spec.E_Iuv    = np.zeros(n_time * n_freq * n_samp);  spec.E_Iuv    = spec.E_Iuv.reshape(n_time, n_freq, n_samp) 
-    spec.E_Quv    = np.zeros(n_time * n_freq * n_samp);  spec.E_Quv    = spec.E_Quv.reshape(n_time, n_freq, n_samp) 
-    spec.E_Uuv    = np.zeros(n_time * n_freq * n_samp);  spec.E_Uuv    = spec.E_Uuv.reshape(n_time, n_freq, n_samp)
-    spec.E_Vuv    = np.zeros(n_time * n_freq * n_samp);  spec.E_Vuv    = spec.E_Vuv.reshape(n_time, n_freq, n_samp)
-    spec.E_Ivw    = np.zeros(n_time * n_freq * n_samp);  spec.E_Ivw    = spec.E_Ivw.reshape(n_time, n_freq, n_samp) 
-    spec.E_Qvw    = np.zeros(n_time * n_freq * n_samp);  spec.E_Qvw    = spec.E_Qvw.reshape(n_time, n_freq, n_samp) 
-    spec.E_Uvw    = np.zeros(n_time * n_freq * n_samp);  spec.E_Uvw    = spec.E_Uvw.reshape(n_time, n_freq, n_samp)
-    spec.E_Vvw    = np.zeros(n_time * n_freq * n_samp);  spec.E_Vvw    = spec.E_Vvw.reshape(n_time, n_freq, n_samp)
-    spec.E_Iwu    = np.zeros(n_time * n_freq * n_samp);  spec.E_Iwu    = spec.E_Iwu.reshape(n_time, n_freq, n_samp) 
-    spec.E_Qwu    = np.zeros(n_time * n_freq * n_samp);  spec.E_Qwu    = spec.E_Qwu.reshape(n_time, n_freq, n_samp) 
-    spec.E_Uwu    = np.zeros(n_time * n_freq * n_samp);  spec.E_Uwu    = spec.E_Uwu.reshape(n_time, n_freq, n_samp)
-    spec.E_Vwu    = np.zeros(n_time * n_freq * n_samp);  spec.E_Vwu    = spec.E_Vwu.reshape(n_time, n_freq, n_samp)
-    #
-    spec.E_DoPuv  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoPuv  = spec.E_DoPuv.reshape(n_time, n_freq, n_samp)
-    spec.E_DoLuv  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoLuv  = spec.E_DoLuv.reshape(n_time, n_freq, n_samp)
-    spec.E_DoCuv  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoCuv  = spec.E_DoCuv.reshape(n_time, n_freq, n_samp)
-    spec.E_ANGuv  = np.zeros(n_time * n_freq * n_samp);  spec.E_ANGuv  = spec.E_ANGuv.reshape(n_time, n_freq, n_samp)
-    spec.E_DoPvw  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoPvw  = spec.E_DoPvw.reshape(n_time, n_freq, n_samp)
-    spec.E_DoLvw  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoLvw  = spec.E_DoLvw.reshape(n_time, n_freq, n_samp)
-    spec.E_DoCvw  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoCvw  = spec.E_DoCvw.reshape(n_time, n_freq, n_samp)
-    spec.E_ANGvw  = np.zeros(n_time * n_freq * n_samp);  spec.E_ANGvw  = spec.E_ANGvw.reshape(n_time, n_freq, n_samp)
-    spec.E_DoPwu  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoPwu  = spec.E_DoPwu.reshape(n_time, n_freq, n_samp)
-    spec.E_DoLwu  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoLwu  = spec.E_DoLwu.reshape(n_time, n_freq, n_samp)
-    spec.E_DoCwu  = np.zeros(n_time * n_freq * n_samp);  spec.E_DoCwu  = spec.E_DoCwu.reshape(n_time, n_freq, n_samp)
-    spec.E_ANGwu  = np.zeros(n_time * n_freq * n_samp);  spec.E_ANGwu  = spec.E_ANGwu.reshape(n_time, n_freq, n_samp)
-    """
 
     # Frequency
     dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
