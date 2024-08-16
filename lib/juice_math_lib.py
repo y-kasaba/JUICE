@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF math -- 2024/7/23
+    JUICE RPWI HF math -- 2024/7/27
 """
 import numpy as np
 import math

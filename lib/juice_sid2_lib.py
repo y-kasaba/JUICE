@@ -1,10 +1,7 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/7/24
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/8/16
 """
 import numpy as np
-import juice_cdf_lib as juice_cdf
-import scipy.stats as stats
-
 
 class struct:
     pass
@@ -26,7 +23,6 @@ def hf_sid2_read(cdf):
     data.W_selected = cdf['W_selected'][...]
     data.cal_signal = cdf['cal_signal'][...]
     data.sweep_table = cdf['sweep_table'][...]   # (fixed: not defined in V.2)
-    #
     data.onboard_cal = cdf['onboard_cal'][...]   # (not used)
     data.complex = cdf['complex'][...]
     data.BG_subtract = cdf['BG_subtract'][...]
@@ -47,7 +43,6 @@ def hf_sid2_read(cdf):
     data.T_RWI_CH1 = cdf['T_RWI_CH1'][...]
     data.T_RWI_CH2 = cdf['T_RWI_CH2'][...]
     data.T_HF_FPGA = cdf['T_HF_FPGA'][...]
-
     # Header
     data.N_samp = cdf['N_samp'][...]
     data.N_step = cdf['N_step'][...]
@@ -78,11 +73,9 @@ def hf_sid2_read(cdf):
     data.B4_step = cdf['B4_step'][...]
     data.B4_repeat = cdf['B4_repeat'][...]
     data.B4_subdiv = cdf['B4_subdiv'][...]
-
     # Data
     data.epoch = cdf['Epoch'][...]
     data.scet = cdf['SCET'][...]
-    #
     data.Eu_i = np.float64(cdf['Eu_i'][...])
     data.Eu_q = np.float64(cdf['Eu_q'][...])
     data.Ev_i = np.float64(cdf['Ev_i'][...])
@@ -93,7 +86,6 @@ def hf_sid2_read(cdf):
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction = cdf['reduction'][...]
     data.overflow = cdf['overflow'][...]
-    #
     data.time = cdf['time'][...]
     data.frequency = cdf['frequency'][...]
     data.freq_step = cdf['freq_step'][...]
@@ -142,7 +134,6 @@ def hf_sid2_add(data, data1):
     data.T_RWI_CH1 = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
     data.T_RWI_CH2 = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
     data.T_HF_FPGA = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
-
     # Header
     data.N_samp = np.r_["0", data.N_samp, data1.N_samp]
     data.N_step = np.r_["0", data.N_step, data1.N_step]
@@ -173,7 +164,6 @@ def hf_sid2_add(data, data1):
     data.B4_step = np.r_["0", data.B4_step, data1.B4_step]
     data.B4_repeat = np.r_["0", data.B4_repeat, data1.B4_repeat]
     data.B4_subdiv = np.r_["0", data.B4_subdiv, data1.B4_subdiv]
-
     # Data
     data.epoch = np.r_["0", data.epoch, data1.epoch]
     data.scet = np.r_["0", data.scet, data1.scet]
@@ -197,16 +187,13 @@ def hf_sid2_add(data, data1):
     return data
 
 
-def hf_sid2_shaping(data):
+def hf_sid2_shaping(data, cal_mode):
     """
-    input:  data
+    input:  data, cal_mode
     return: data
     """
     # Size
-    n_time = data.Eu_i.shape[0]
-    n_freq = data.N_step[n_time//2]
-    n_samp = data.N_samp[n_time//2]
-    n_num = n_freq * n_samp
+    n_time = data.Eu_i.shape[0];  n_freq = data.N_step[n_time//2];  n_samp = data.N_samp[n_time//2];  n_num = n_freq * n_samp
     print("  org:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
 
     # CUT & Shaping: less packet length
@@ -290,5 +277,89 @@ def hf_sid2_shaping(data):
         index = np.where(power > 1e4)
         data.cal_signal[:] = 0
         data.cal_signal[index[0]]=1
+
+    # Background / CAL only
+    if cal_mode < 2:
+        index = np.where(data.cal_signal == cal_mode)
+        # AUX
+        data.U_selected  = data.U_selected[index[0]]
+        data.V_selected  = data.V_selected[index[0]]
+        data.W_selected  = data.W_selected[index[0]]
+        data.cal_signal  = data.cal_signal[index[0]]
+        data.sweep_table = data.sweep_table[index[0]]
+        #
+        data.onboard_cal = data.onboard_cal[index[0]]
+        data.complex     = data.complex[index[0]]
+        data.BG_subtract = data.BG_subtract[index[0]]
+        data.BG_select   = data.BG_select[index[0]]
+        data.FFT_window  = data.FFT_window[index[0]]
+        data.RFI_rejection = data.RFI_rejection[index[0]]
+        data.Pol_sep_thres = data.Pol_sep_thres[index[0]]
+        data.Pol_sep_SW  = data.Pol_sep_SW[index[0]]
+        data.overflow_U  = data.overflow_U[index[0]]
+        data.overflow_V  = data.overflow_V[index[0]]
+        data.overflow_W  = data.overflow_W[index[0]]
+        data.proc_param0 = data.proc_param0[index[0]]
+        data.proc_param1 = data.proc_param1[index[0]]
+        data.proc_param2 = data.proc_param2[index[0]]
+        data.proc_param3 = data.proc_param3[index[0]]
+        data.BG_downlink = data.BG_downlink[index[0]]
+        data.N_block     = data.N_block[index[0]]
+        data.T_RWI_CH1   = data.T_RWI_CH1[index[0]]
+        data.T_RWI_CH2   = data.T_RWI_CH2[index[0]]
+        data.T_HF_FPGA   = data.T_HF_FPGA[index[0]]
+        # Header
+        data.N_samp      = data.N_samp[index[0]]
+        data.N_step      = data.N_step[index[0]]
+        data.decimation  = data.decimation[index[0]]
+        data.pol         = data.pol[index[0]]
+        data.B0_startf   = data.B0_startf[index[0]]
+        data.B0_stopf    = data.B0_stopf[index[0]]
+        data.B0_step     = data.B0_step[index[0]]
+        data.B0_repeat   = data.B0_repeat[index[0]]
+        data.B0_subdiv   = data.B0_subdiv[index[0]]
+        data.B1_startf   = data.B1_startf[index[0]]
+        data.B1_stopf    = data.B1_stopf[index[0]]
+        data.B1_step     = data.B1_step[index[0]]
+        data.B1_repeat   = data.B1_repeat[index[0]]
+        data.B1_subdiv   = data.B1_subdiv[index[0]]
+        data.B2_startf   = data.B2_startf[index[0]]
+        data.B2_stopf    = data.B2_stopf[index[0]]
+        data.B2_step     = data.B2_step[index[0]]
+        data.B2_repeat   = data.B2_repeat[index[0]]
+        data.B2_subdiv   = data.B2_subdiv[index[0]]
+        data.B3_startf   = data.B3_startf[index[0]]
+        data.B3_stopf    = data.B3_stopf[index[0]]
+        data.B3_step     = data.B3_step[index[0]]
+        data.B3_repeat   = data.B3_repeat[index[0]]
+        data.B3_subdiv   = data.B3_subdiv[index[0]]
+        data.B4_startf   = data.B4_startf[index[0]]
+        data.B4_stopf    = data.B4_stopf[index[0]]
+        data.B4_step     = data.B4_step[index[0]]
+        data.B4_repeat   = data.B4_repeat[index[0]]
+        data.B4_subdiv   =  data.B4_subdiv[index[0]]
+        # Data
+        data.epoch       = data.epoch[index[0]]
+        data.scet        = data.scet[index[0]]
+        data.Eu_i        = data.Eu_i[index[0]]
+        data.Eu_q        = data.Eu_q[index[0]]
+        data.Ev_i        = data.Ev_i[index[0]]
+        data.Ev_q        = data.Ev_q[index[0]]
+        data.Ew_i        = data.Ew_i[index[0]]
+        data.Ew_q        = data.Ew_q[index[0]]
+        data.pps_count   = data.pps_count[index[0]]
+        data.sweep_start = data.sweep_start[index[0]]
+        data.reduction   = data.reduction[index[0]]
+        data.overflow    = data.overflow[index[0]]
+        data.time        = data.time[index[0]]
+        data.frequency   = data.frequency[index[0]]
+        data.freq_step   = data.freq_step[index[0]]
+        data.freq_width  = data.freq_width[index[0]]
+
+        n_time = data.Eu_i.shape[0]
+        if cal_mode == 0:
+            print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only BG>")
+        else:
+            print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only CAL>")
 
     return data
