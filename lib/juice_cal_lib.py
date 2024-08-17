@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/8/16
+# JUICE RPWI HF CAL lib -- 2024/8/17
 
 import csv
 import math
@@ -9,7 +9,7 @@ class struct:
 
 
 # power label
-def power_label(band_mode, unit_mode):
+def power_label(unit_mode, band_mode):
     """
     Input:  unit_mode       0: raw     1: V＠ADC     2: V@HF    3: V@RWI
             band_mode       0: sum     1: /Hz
@@ -17,22 +17,22 @@ def power_label(band_mode, unit_mode):
     """
     if band_mode == 0:
         if   unit_mode == 0:
-            str = '[RAW]'
+            str = '[RAW2]'
         elif unit_mode == 1:
-            str = '[V @ ADC]'
+            str = '[V2 @ADC]'
         elif unit_mode == 2:
-            str = '[V @ HF]'
+            str = '[V2 @HF]'
         elif unit_mode == 3:
-            str = '[V @ RWI]'
+            str = '[V2 @RWI]'
     else:
         if  unit_mode == 0:
-            str = '[RAW/Hz]'
+            str = '[RAW2/Hz]'
         elif unit_mode == 1:
-            str = '[V2/Hz @ ADC]'
+            str = '[V2/Hz @ADC]'
         elif unit_mode == 2:
-            str = '[V2/Hz @ HF]'
+            str = '[V2/Hz @HF]'
         elif unit_mode == 3:
-            str = '[V2/Hz @ RWI]'
+            str = '[V2/Hz @RWI]'
     return str
 
 
@@ -53,23 +53,20 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     # "1-bit" = -110.1 dBm = -110.1 dB V  = 9.9E-7 V "   ==> "20-bit": 1.03 Vpp
     # "HF input"  +9dB(AMP)  -3dB(50-ohm) = "+6dB"       ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
     # ******************************************************
-    str     = '[RAW]';      cf = 0.0        # RAW
-
-    if unit_mode > 0:                       # V @ ADC   gain: 120.4 dB          1.0 Vpp @ 20-bit    9.5E-7 V/bit = -120.4 dB V/bit
-        str = '[V @ ADC]';  cf = -120.4
-
+    str     = '[RAW]';     cf = 0.0         # RAW
+    if unit_mode == 1:                      # V @ ADC   gain: 120.4 dB          1.0 Vpp @ 20-bit    9.5E-7 V/bit = -120.4 dB V/bit
+        str = '[V @ADC]';  cf = -120.4
     if unit_mode == 2:                      # V @ HF    gain: 128.3 dB @ RT      8.2dB (-25degC)     7.9dB (25degC)      7.6dB (+75degC)       
-        str = '[V @ HF]';   cf = cf - 7.9 + 0.3*(T_HF-25.)/50.
-
+        str = '[V @HF]';   cf = -120.4 - 7.9 + 0.3*(T_HF-25.)/50.
     if unit_mode == 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
-        str = '[V @ RWI]';  cf = cf - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
+        str = '[V @RWI]';  cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
 
     wave_cal = struct()
     wave_cal.Eu_i = data.Eu_i * 10**(cf/20.);   wave_cal.Eu_q = data.Eu_q * 10**(cf/20.)
     wave_cal.Ev_i = data.Ev_i * 10**(cf/20.);   wave_cal.Ev_q = data.Ev_q * 10**(cf/20.)
     wave_cal.Ew_i = data.Ew_i * 10**(cf/20.);   wave_cal.Ew_q = data.Ew_q * 10**(cf/20.)
-    wave_cal.cf   = cf;     wave_cal.str  = str
-    
+    wave_cal.cf   = cf      # dB
+    wave_cal.str  = str     # unit for wave
     return wave_cal
 
 
@@ -80,21 +77,19 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
             unit_mode       0: raw     1: V@ADC     2: V@HF(tmp)   3: V@RWI(tmp)
             band_mode       0: sum     1: /Hz
             T_HF & T_RWI    HF & RWI T (degC)
-    Output: spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, cf, str
+    Output: spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, cf (dB)
     """
     n_time = spec.EuEu.shape[0];  freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
     # Spectral CAL parameters from Ground + Onboard Test
-    CAL_f_gain, CAL_f_phase, str = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
-
-    # init
-    CAL_gain_u = np.zeros(n_freq);  CAL_phase_u = np.zeros(n_freq);  CAL_UV_re = np.zeros(n_freq);  CAL_UV_im = np.zeros(n_freq)
-    CAL_gain_v = np.zeros(n_freq);  CAL_phase_v = np.zeros(n_freq);  CAL_VW_re = np.zeros(n_freq);  CAL_VW_im = np.zeros(n_freq)
-    CAL_gain_w = np.zeros(n_freq);  CAL_phase_w = np.zeros(n_freq);  CAL_WU_re = np.zeros(n_freq);  CAL_WU_im = np.zeros(n_freq)
-
-    # dB -> gain in amplitude
+    CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
+    if band_mode > 0:
+        CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
     CAL_gain_u   = CAL_f_gain[0] * 1;               CAL_gain_v   = CAL_f_gain[1] * 1;               CAL_gain_w   = CAL_f_gain[2] * 1
     CAL_phase_uv = CAL_f_phase[1] - CAL_f_phase[0]; CAL_phase_vw = CAL_f_phase[2] - CAL_f_phase[1]; CAL_phase_uw = CAL_f_phase[2] - CAL_f_phase[0]
+    CAL_UV_re = np.zeros(n_freq); CAL_UV_im = np.zeros(n_freq)
+    CAL_VW_re = np.zeros(n_freq); CAL_VW_im = np.zeros(n_freq)
+    CAL_WU_re = np.zeros(n_freq); CAL_WU_im = np.zeros(n_freq)
     for j in range(n_freq):                # frequency
         CAL_UV_re[j] =  math.cos(math.pi * CAL_phase_uv[j]/180) * CAL_gain_u[j] * CAL_gain_v[j]
         CAL_UV_im[j] =  math.sin(math.pi * CAL_phase_uv[j]/180) * CAL_gain_u[j] * CAL_gain_v[j]
@@ -118,9 +113,10 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     spec.EuEv_im = spec_cal.EuEv_im;  spec.EvEw_im = spec_cal.EvEw_im;  spec.EwEu_im = spec_cal.EwEu_im 
 
     for j in range(n_freq):
-        while 1000 < freq[j]:
+        if 1000 < freq[j]:
             break
-    spec.cf  = CAL_gain_u[j];         spec.str     = str
+    spec.cf  = 20*np.log10(CAL_gain_u[j])
+    spec.str = power_label(unit_mode, band_mode)
     return spec
 
 
@@ -134,22 +130,19 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
             CAL_phase[3]    Phase cal parameters    ("0.0" at the moment)
             str                     
     """
-    n_freq    = freq.shape[0]
-    CAL_gain  = np.zeros((3, n_freq));   CAL_phase = np.zeros((3, n_freq))
+    n_freq = freq.shape[0];  CAL_gain = np.zeros((3, n_freq));  CAL_phase = np.zeros((3, n_freq))
+    cf = -120.4     # dB V of 1-bit
 
     if unit_mode == 0:                      # RAW
-        str = '[RAW]';          cf = 0.0    
         CAL_gain  = CAL_gain  + 1.0
         # CAL_phase = CAL_phase + 0.0
 
     if unit_mode == 1:                      # V @ ADC   gain: 120.4 dB          1.0 Vpp @ 20-bit    9.5E-7 V/bit = -120.4 dB V/bit
-        str = '[V2rms @ ADC]';  cf = -120.4
         for i in range(3):
             CAL_gain [i] = CAL_gain [i] + 10**(cf/20.)
             # CAL_phase[i] = CAL_phase[i] + 0.0
 
     if unit_mode == 2:                      # V @ HF    gain: 128.3 dB @ RT      8.2dB (-25degC)     7.9dB (25degC)      7.6dB (+75degC)  
-        str = '[V2rms @ HF]';   cf = -120.4   # cf = cf - 7.9 + 0.3*(T_HF-25.)/50.
         # 20kHz - 35.5MHz
         g0_l = +7.87438532E+00;  g1_l = +9.72891774E-03;  g2_l = -5.01061375E-03;  g3_l = +1.08353478E-03;  g4_l = -1.19769590E-04
         g5_l = +7.30311031E-06;  g6_l = -2.47328435E-07;  g7_l = +4.33831673E-09;  g8_l = -3.06837976E-11
@@ -172,7 +165,6 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
         CAL_gain = 10**( (cf - CAL_gain + 0.3*(T_HF-25.)/50.)/20 )
 
     if unit_mode == 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
-        str = '[V2rms @ RWI]';   cf = -120.4
         # RWI temperature (degC) 
         g_tmp0 = [ 15.70226060, -2.044197E-02, -7.640780E-05, -1.562152E-06, -6.620953E-09 ]
         g_tmp1 = [ -1.22544328, -2.428311E-04,  3.869358E-05,  5.149496E-07,  1.726930E-09 ]
@@ -225,8 +217,7 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
         CAL_gain2, CAL_phase2 = spec_gain_phase2(freq)
         CAL_gain  = CAL_gain  * CAL_gain2
         CAL_phase = CAL_phase + CAL_phase2
-
-    return CAL_gain, CAL_phase, str
+    return CAL_gain, CAL_phase
 
 
 def spec_gain_phase2(freq):
@@ -259,8 +250,6 @@ def spec_gain_phase2(freq):
             CAL_gain_v[i] = row[10];  CAL_phase_v[i] = row[11]      # gain & phase of V from U
             CAL_gain_w[i] = row[12];  CAL_phase_w[i] = row[13]      # gain & phase of W from U
             i = i+1
-    # print("CAL table read: ", i)
-
     k = 0
     for j in range(n_freq):
         while CAL_freq[k] < freq[j]:
