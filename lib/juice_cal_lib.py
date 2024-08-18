@@ -79,10 +79,16 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
             T_HF & T_RWI    HF & RWI T (degC)
     Output: spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, cf (dB)
     """
-    n_time = spec.EuEu.shape[0];  freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
+    if sid==5:
+        n_time = spec.EE.shape[0];  
+    else:
+        n_time = spec.EuEu.shape[0];  
+    
+    freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
     # Spectral CAL parameters from Ground + Onboard Test
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
+
     if band_mode > 0:
         CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
     CAL_gain_u   = CAL_f_gain[0] * 1;               CAL_gain_v   = CAL_f_gain[1] * 1;               CAL_gain_w   = CAL_f_gain[2] * 1
@@ -99,18 +105,22 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
         CAL_WU_im[j] = -math.sin(math.pi * CAL_phase_uw[j]/180) * CAL_gain_u[j] * CAL_gain_w[j]
 
     spec_cal = struct()
-    spec_cal.EuEu    = spec.EuEu    * CAL_gain_u**2
-    spec_cal.EvEv    = spec.EvEv    * CAL_gain_v**2
-    spec_cal.EwEw    = spec.EwEw    * CAL_gain_w**2
-    spec_cal.EuEv_re = spec.EuEv_re * CAL_UV_re + spec.EuEv_im * CAL_UV_im
-    spec_cal.EuEv_im = spec.EuEv_im * CAL_UV_re - spec.EuEv_re * CAL_UV_im
-    spec_cal.EvEw_re = spec.EvEw_re * CAL_VW_re + spec.EvEw_im * CAL_VW_im
-    spec_cal.EvEw_im = spec.EvEw_im * CAL_VW_re - spec.EvEw_re * CAL_VW_im
-    spec_cal.EwEu_re = spec.EwEu_re * CAL_WU_re + spec.EwEu_im * CAL_WU_im
-    spec_cal.EwEu_im = spec.EwEu_im * CAL_WU_re - spec.EwEu_re * CAL_WU_im
-    spec.EuEu    = spec_cal.EuEu;     spec.EvEv    = spec_cal.EvEv;     spec.EwEw    = spec_cal.EwEw
-    spec.EuEv_re = spec_cal.EuEv_re;  spec.EvEw_re = spec_cal.EvEw_re;  spec.EwEu_re = spec_cal.EwEu_re
-    spec.EuEv_im = spec_cal.EuEv_im;  spec.EvEw_im = spec_cal.EvEw_im;  spec.EwEu_im = spec_cal.EwEu_im 
+    if sid==5:
+        spec_cal.EE      = spec.EE      * CAL_gain_u**2
+    else:
+        spec_cal.EuEu    = spec.EuEu    * CAL_gain_u**2
+        spec_cal.EvEv    = spec.EvEv    * CAL_gain_v**2
+        spec_cal.EwEw    = spec.EwEw    * CAL_gain_w**2
+        spec_cal.EuEv_re = spec.EuEv_re * CAL_UV_re + spec.EuEv_im * CAL_UV_im
+        spec_cal.EuEv_im = spec.EuEv_im * CAL_UV_re - spec.EuEv_re * CAL_UV_im
+        spec_cal.EvEw_re = spec.EvEw_re * CAL_VW_re + spec.EvEw_im * CAL_VW_im
+        spec_cal.EvEw_im = spec.EvEw_im * CAL_VW_re - spec.EvEw_re * CAL_VW_im
+        spec_cal.EwEu_re = spec.EwEu_re * CAL_WU_re + spec.EwEu_im * CAL_WU_im
+        spec_cal.EwEu_im = spec.EwEu_im * CAL_WU_re - spec.EwEu_re * CAL_WU_im
+        #
+        spec.EuEu    = spec_cal.EuEu;     spec.EvEv    = spec_cal.EvEv;     spec.EwEw    = spec_cal.EwEw
+        spec.EuEv_re = spec_cal.EuEv_re;  spec.EvEw_re = spec_cal.EvEw_re;  spec.EwEu_re = spec_cal.EwEu_re
+        spec.EuEv_im = spec_cal.EuEv_im;  spec.EvEw_im = spec_cal.EvEw_im;  spec.EwEu_im = spec_cal.EwEu_im 
 
     for j in range(n_freq):
         if 1000 < freq[j]:

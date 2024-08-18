@@ -1,9 +1,8 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/7/23
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/8/19
 """
 import numpy as np
-import math
-import juice_math_lib as juice_math
+import juice_spec_lib as juice_spec
 
 class struct:
     pass
@@ -416,33 +415,33 @@ def hf_sid3_shaping(data):
 
     # STOKES
     # *** all
-    data.E_Iuv,   data.E_Quv,   data.E_Uuv,   data.E_Vuv   = juice_math.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
-    data.E_Ivw,   data.E_Qvw,   data.E_Uvw,   data.E_Vvw   = juice_math.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
-    data.E_Iwu,   data.E_Qwu,   data.E_Uwu,   data.E_Vwu   = juice_math.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
-    data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = juice_math.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
-    data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = juice_math.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
-    data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = juice_math.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
+    data.E_Iuv,   data.E_Quv,   data.E_Uuv,   data.E_Vuv   = juice_spec.get_stokes(data.EuEu, data.EvEv, data.EuEv_re, data.EuEv_im)
+    data.E_Ivw,   data.E_Qvw,   data.E_Uvw,   data.E_Vvw   = juice_spec.get_stokes(data.EvEv, data.EwEw, data.EvEw_re, data.EvEw_im)
+    data.E_Iwu,   data.E_Qwu,   data.E_Uwu,   data.E_Vwu   = juice_spec.get_stokes(data.EwEw, data.EuEu, data.EwEu_re, data.EwEu_im)
+    data.E_DoPuv, data.E_DoLuv, data.E_DoCuv, data.E_ANGuv = juice_spec.get_pol(data.E_Iuv, data.E_Quv, data.E_Uuv, data.E_Vuv)
+    data.E_DoPvw, data.E_DoLvw, data.E_DoCvw, data.E_ANGvw = juice_spec.get_pol(data.E_Ivw, data.E_Qvw, data.E_Uvw, data.E_Vvw)
+    data.E_DoPwu, data.E_DoLwu, data.E_DoCwu, data.E_ANGwu = juice_spec.get_pol(data.E_Iwu, data.E_Qwu, data.E_Uwu, data.E_Vwu)
     # *** NC
-    data.E_Iuv_NC,   data.E_Quv_NC,   data.E_Uuv_NC,   data.E_Vuv_NC   = juice_math.get_stokes(data.EuEu_NC, data.EvEv_NC, data.EuEv_re_NC, data.EuEv_im_NC)
-    data.E_Ivw_NC,   data.E_Qvw_NC,   data.E_Uvw_NC,   data.E_Vvw_NC   = juice_math.get_stokes(data.EvEv_NC, data.EwEw_NC, data.EvEw_re_NC, data.EvEw_im_NC)
-    data.E_Iwu_NC,   data.E_Qwu_NC,   data.E_Uwu_NC,   data.E_Vwu_NC   = juice_math.get_stokes(data.EwEw_NC, data.EuEu_NC, data.EwEu_re_NC, data.EwEu_im_NC)
-    data.E_DoPuv_NC, data.E_DoLuv_NC, data.E_DoCuv_NC, data.E_ANGuv_NC = juice_math.get_pol(data.E_Iuv_NC, data.E_Quv_NC, data.E_Uuv_NC, data.E_Vuv_NC)
-    data.E_DoPvw_NC, data.E_DoLvw_NC, data.E_DoCvw_NC, data.E_ANGvw_NC = juice_math.get_pol(data.E_Ivw_NC, data.E_Qvw_NC, data.E_Uvw_NC, data.E_Vvw_NC)
-    data.E_DoPwu_NC, data.E_DoLwu_NC, data.E_DoCwu_NC, data.E_ANGwu_NC = juice_math.get_pol(data.E_Iwu_NC, data.E_Qwu_NC, data.E_Uwu_NC, data.E_Vwu_NC)
+    data.E_Iuv_NC,   data.E_Quv_NC,   data.E_Uuv_NC,   data.E_Vuv_NC   = juice_spec.get_stokes(data.EuEu_NC, data.EvEv_NC, data.EuEv_re_NC, data.EuEv_im_NC)
+    data.E_Ivw_NC,   data.E_Qvw_NC,   data.E_Uvw_NC,   data.E_Vvw_NC   = juice_spec.get_stokes(data.EvEv_NC, data.EwEw_NC, data.EvEw_re_NC, data.EvEw_im_NC)
+    data.E_Iwu_NC,   data.E_Qwu_NC,   data.E_Uwu_NC,   data.E_Vwu_NC   = juice_spec.get_stokes(data.EwEw_NC, data.EuEu_NC, data.EwEu_re_NC, data.EwEu_im_NC)
+    data.E_DoPuv_NC, data.E_DoLuv_NC, data.E_DoCuv_NC, data.E_ANGuv_NC = juice_spec.get_pol(data.E_Iuv_NC, data.E_Quv_NC, data.E_Uuv_NC, data.E_Vuv_NC)
+    data.E_DoPvw_NC, data.E_DoLvw_NC, data.E_DoCvw_NC, data.E_ANGvw_NC = juice_spec.get_pol(data.E_Ivw_NC, data.E_Qvw_NC, data.E_Uvw_NC, data.E_Vvw_NC)
+    data.E_DoPwu_NC, data.E_DoLwu_NC, data.E_DoCwu_NC, data.E_ANGwu_NC = juice_spec.get_pol(data.E_Iwu_NC, data.E_Qwu_NC, data.E_Uwu_NC, data.E_Vwu_NC)
     # *** RC
-    data.E_Iuv_RC,   data.E_Quv_RC,   data.E_Uuv_RC,   data.E_Vuv_RC   = juice_math.get_stokes(data.EuEu_RC, data.EvEv_RC, data.EuEv_re_RC, data.EuEv_im_RC)
-    data.E_Ivw_RC,   data.E_Qvw_RC,   data.E_Uvw_RC,   data.E_Vvw_RC   = juice_math.get_stokes(data.EvEv_RC, data.EwEw_RC, data.EvEw_re_RC, data.EvEw_im_RC)
-    data.E_Iwu_RC,   data.E_Qwu_RC,   data.E_Uwu_RC,   data.E_Vwu_RC   = juice_math.get_stokes(data.EwEw_RC, data.EuEu_RC, data.EwEu_re_RC, data.EwEu_im_RC)
-    data.E_DoPuv_RC, data.E_DoLuv_RC, data.E_DoCuv_RC, data.E_ANGuv_RC = juice_math.get_pol(data.E_Iuv_RC, data.E_Quv_RC, data.E_Uuv_RC, data.E_Vuv_RC)
-    data.E_DoPvw_RC, data.E_DoLvw_RC, data.E_DoCvw_RC, data.E_ANGvw_RC = juice_math.get_pol(data.E_Ivw_RC, data.E_Qvw_RC, data.E_Uvw_RC, data.E_Vvw_RC)
-    data.E_DoPwu_RC, data.E_DoLwu_RC, data.E_DoCwu_RC, data.E_ANGwu_RC = juice_math.get_pol(data.E_Iwu_RC, data.E_Qwu_RC, data.E_Uwu_RC, data.E_Vwu_RC)
+    data.E_Iuv_RC,   data.E_Quv_RC,   data.E_Uuv_RC,   data.E_Vuv_RC   = juice_spec.get_stokes(data.EuEu_RC, data.EvEv_RC, data.EuEv_re_RC, data.EuEv_im_RC)
+    data.E_Ivw_RC,   data.E_Qvw_RC,   data.E_Uvw_RC,   data.E_Vvw_RC   = juice_spec.get_stokes(data.EvEv_RC, data.EwEw_RC, data.EvEw_re_RC, data.EvEw_im_RC)
+    data.E_Iwu_RC,   data.E_Qwu_RC,   data.E_Uwu_RC,   data.E_Vwu_RC   = juice_spec.get_stokes(data.EwEw_RC, data.EuEu_RC, data.EwEu_re_RC, data.EwEu_im_RC)
+    data.E_DoPuv_RC, data.E_DoLuv_RC, data.E_DoCuv_RC, data.E_ANGuv_RC = juice_spec.get_pol(data.E_Iuv_RC, data.E_Quv_RC, data.E_Uuv_RC, data.E_Vuv_RC)
+    data.E_DoPvw_RC, data.E_DoLvw_RC, data.E_DoCvw_RC, data.E_ANGvw_RC = juice_spec.get_pol(data.E_Ivw_RC, data.E_Qvw_RC, data.E_Uvw_RC, data.E_Vvw_RC)
+    data.E_DoPwu_RC, data.E_DoLwu_RC, data.E_DoCwu_RC, data.E_ANGwu_RC = juice_spec.get_pol(data.E_Iwu_RC, data.E_Qwu_RC, data.E_Uwu_RC, data.E_Vwu_RC)
     # *** LC
-    data.E_Iuv_LC,   data.E_Quv_LC,   data.E_Uuv_LC,   data.E_Vuv_LC   = juice_math.get_stokes(data.EuEu_LC, data.EvEv_LC, data.EuEv_re_LC, data.EuEv_im_LC)
-    data.E_Ivw_LC,   data.E_Qvw_LC,   data.E_Uvw_LC,   data.E_Vvw_LC   = juice_math.get_stokes(data.EvEv_LC, data.EwEw_LC, data.EvEw_re_LC, data.EvEw_im_LC)
-    data.E_Iwu_LC,   data.E_Qwu_LC,   data.E_Uwu_LC,   data.E_Vwu_LC   = juice_math.get_stokes(data.EwEw_LC, data.EuEu_LC, data.EwEu_re_LC, data.EwEu_im_LC)
-    data.E_DoPuv_LC, data.E_DoLuv_LC, data.E_DoCuv_LC, data.E_ANGuv_LC = juice_math.get_pol(data.E_Iuv_LC, data.E_Quv_LC, data.E_Uuv_LC, data.E_Vuv_LC)
-    data.E_DoPvw_LC, data.E_DoLvw_LC, data.E_DoCvw_LC, data.E_ANGvw_LC = juice_math.get_pol(data.E_Ivw_LC, data.E_Qvw_LC, data.E_Uvw_LC, data.E_Vvw_LC)
-    data.E_DoPwu_LC, data.E_DoLwu_LC, data.E_DoCwu_LC, data.E_ANGwu_LC = juice_math.get_pol(data.E_Iwu_LC, data.E_Qwu_LC, data.E_Uwu_LC, data.E_Vwu_LC)
+    data.E_Iuv_LC,   data.E_Quv_LC,   data.E_Uuv_LC,   data.E_Vuv_LC   = juice_spec.get_stokes(data.EuEu_LC, data.EvEv_LC, data.EuEv_re_LC, data.EuEv_im_LC)
+    data.E_Ivw_LC,   data.E_Qvw_LC,   data.E_Uvw_LC,   data.E_Vvw_LC   = juice_spec.get_stokes(data.EvEv_LC, data.EwEw_LC, data.EvEw_re_LC, data.EvEw_im_LC)
+    data.E_Iwu_LC,   data.E_Qwu_LC,   data.E_Uwu_LC,   data.E_Vwu_LC   = juice_spec.get_stokes(data.EwEw_LC, data.EuEu_LC, data.EwEu_re_LC, data.EwEu_im_LC)
+    data.E_DoPuv_LC, data.E_DoLuv_LC, data.E_DoCuv_LC, data.E_ANGuv_LC = juice_spec.get_pol(data.E_Iuv_LC, data.E_Quv_LC, data.E_Uuv_LC, data.E_Vuv_LC)
+    data.E_DoPvw_LC, data.E_DoLvw_LC, data.E_DoCvw_LC, data.E_ANGvw_LC = juice_spec.get_pol(data.E_Ivw_LC, data.E_Qvw_LC, data.E_Uvw_LC, data.E_Vvw_LC)
+    data.E_DoPwu_LC, data.E_DoLwu_LC, data.E_DoCwu_LC, data.E_ANGwu_LC = juice_spec.get_pol(data.E_Iwu_LC, data.E_Qwu_LC, data.E_Uwu_LC, data.E_Vwu_LC)
     # *** 3D
     data.E_I_3d = data.EuiEui + data.EuqEuq + data.EviEvi + data.EvqEvq + data.EwiEwi + data.EwqEwq
     data.E_Q_3d = data.EuiEvi - data.EuqEuq + data.EviEvi - data.EvqEvq + data.EwiEwi - data.EwqEwq
@@ -451,6 +450,9 @@ def hf_sid3_shaping(data):
     data.E_Vv_3d = -2. * (data.EwiEuq - data.EwqEui)
     data.E_Vw_3d = -2. * (data.EuiEvq - data.EuqEvi)
     data.E_DoP_3d, data.E_DoL_3d, data.E_DoC_3d, data.E_ANG_3d, data.E_k_lon, data.E_k_lat = \
-        juice_math.get_pol_3D(data.E_I_3d, data.E_Q_3d, data.E_U_3d, data.E_Vu_3d, data.E_Vv_3d, data.E_Vw_3d)
+        juice_spec.get_pol_3D(data.E_I_3d, data.E_Q_3d, data.E_U_3d, data.E_Vu_3d, data.E_Vv_3d, data.E_Vw_3d)
+
+    data.freq   = data.frequency
+    data.freq_w = data.freq_width
 
     return data

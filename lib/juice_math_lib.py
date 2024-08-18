@@ -2,7 +2,6 @@
     JUICE RPWI HF math -- 2024/7/27
 """
 import numpy as np
-import math
 from scipy.signal import medfilt
 
 
@@ -79,99 +78,6 @@ def clean_rfi(power, kernel_size=5):
     return clean_power
 
 
-# ---------------------------------------------------------------------
-# --- Stokes parameters --------------------------------------------------
-# ---------------------------------------------------------------------
-def get_stokes(p1, p2, re, im):
-    """
-    Input:  EuEu, EvEv, EuEv_re, EuEv_im
-    Output: I, Q, U, V: Stokes parameters [Any]
-    """
-    m = p1.shape[0]
-    n = p1.shape[1]
-    I = np.zeros((m, n))
-    Q = np.zeros((m, n))
-    U = np.zeros((m, n))
-    V = np.zeros((m, n))
-    if p1[0][0] > 0:
-        I = p1 + p2     # total
-        Q = p1 - p2     # 0deg -  90deg
-        U = re * 2.0    # 45deg - 135deg
-        V = im * 2.0    # Right -  Left  (minus?)
-    return I, Q, U, V
-
-
-# ---------------------------------------------------------------------
-def get_pol(I, Q, U, V):
-    """
-    Input:  I, Q, U, V: Stokes parameters [Any]
-    Output: DoP, DoL, DoC, Ang
-    """
-    m = I.shape[0];  n = I.shape[1]
-    dop = np.zeros((m, n))
-    dol = ang = np.zeros((m, n))
-    doc = np.zeros((m, n))
-    ang = np.zeros((m, n))
-    for j in range(m):
-        if I[j][0] > 0 and Q[j][0] > -1e30 and U[j][0] > -1e30 and V[j][0] > -1e30:
-            dop[j] = (Q[j]*Q[j] + U[j]*U[j] + V[j]*V[j])**0.5 / I[j]   # Degree of Total Polarization
-            dol[j] = (Q[j]*Q[j] + U[j]*U[j])**0.5 / I[j]               # Degree of Linear Polarization
-            doc[j] = V[j] / I[j]                                       # Degree of Circular Polarization
-
-            for i in range(n):
-                if U[j][i] >= 0.0 and Q[j][i] > 0.0:    # 0-90
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi
-                elif U[j][i] <= 0.0 and Q[j][i] > 0.0:  # 270-360
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 180.
-                elif Q[j][i] < 0.0:                     # 90-270
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 90.
-                else:
-                    if U[j][i] >= 0.0:
-                        ang[j][i] = 45.
-                    else:
-                        ang[j][i] = 135.
-    return dop, dol, doc, ang
-
-
-# ---------------------------------------------------------------------
-def get_pol_3D(I, Q, U, Vu, Vv, Vw):
-    """
-    Input:  I, Q, U, V: Stokes parameters [Any]
-    Output: DoP, DoL, DoC, Ang, k_lon, k_lat
-    """
-    m = I.shape[0]
-    n = I.shape[1]
-    dop = np.zeros((m, n))
-    dol = np.zeros((m, n))
-    doc = np.zeros((m, n))
-    ang = np.zeros((m, n))
-    k_lon = np.zeros((m, n))
-    k_lat = np.zeros((m, n))
-    if I[0][0] > 0:
-        V_mag = (Vu*Vu + Vv*Vv + Vw*Vw)**0.5
-        dop = (Q*Q + U*U + V_mag*V_mag)**0.5 / I  # Degree of Total Polari.
-        dol = (Q*Q + U*U)**0.5 / I                # Degree of Linear Polari.
-        doc = V_mag / I                           # Degree of Circular Polari.
-
-        # Linear Polarization Angle (deg)
-        for j in range(m):
-            for i in range(n):
-                if U[j][i] >= 0.0 and Q[j][i] > 0.0:    # 0-90
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi
-                elif U[j][i] <= 0.0 and Q[j][i] > 0.0:  # 270-360
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 180.
-                elif Q[j][i] < 0.0:                     # 90-270
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 90.
-                else:
-                    if U[j][i] >= 0.0:
-                        ang[j][i] = 45.
-                    else:
-                        ang[j][i] = 135.
-
-                #k_lat[j][i] = math.asin(Vw[j][i]/(Vu[j][i]*Vu[j][i] + Vv[j][i]*Vv[j][i])**0.5) * 180./math.pi
-                k_lat[j][i] = math.atan2(Vw[j][i], (Vu[j][i]*Vu[j][i] + Vv[j][i]*Vv[j][i])**0.5) * 180./math.pi
-                k_lon[j][i] = math.atan2(Vv[j][i], Vu[j][i]) * 180.0/math.pi
-    return dop, dol, doc, ang, k_lon, k_lat
 
 
 """
