@@ -18,12 +18,10 @@ def hf_sid2_read(cdf):
     data = struct()
 
     # AUX
-    data.U_selected  = cdf['U_selected'][...]
-    data.V_selected  = cdf['V_selected'][...]
-    data.W_selected  = cdf['W_selected'][...]
+    data.U_selected  = cdf['U_selected'][...];  data.V_selected  = cdf['V_selected'][...];  data.W_selected  = cdf['W_selected'][...]
     data.cal_signal  = cdf['cal_signal'][...]
-    data.sweep_table = cdf['sweep_table'][...]   # (fixed: not defined in V.2)
-    data.onboard_cal = cdf['onboard_cal'][...]   # (not used)
+    data.sweep_table = cdf['sweep_table'][...]  # (fixed: not defined in V.2)
+    data.onboard_cal = cdf['onboard_cal'][...]  # (not used)
     data.complex     = cdf['complex'][...]
     data.BG_subtract = cdf['BG_subtract'][...]
     data.BG_select   = cdf['BG_select'][...]
@@ -31,50 +29,37 @@ def hf_sid2_read(cdf):
     data.RFI_rejection = cdf['RFI_rejection'][...]
     data.Pol_sep_thres = cdf['Pol_sep_thres'][...]
     data.Pol_sep_SW  = cdf['Pol_sep_SW'][...]
-    data.overflow_U  = cdf['overflow_U'][...]     # (fixed: not defined in V.2)
-    data.overflow_V  = cdf['overflow_V'][...]     # (fixed: not defined in V.2)
-    data.overflow_W  = cdf['overflow_W'][...]     # (fixed: not defined in V.2)
-    data.proc_param0 = cdf['proc_param0'][...]
-    data.proc_param1 = cdf['proc_param1'][...]
-    data.proc_param2 = cdf['proc_param2'][...]
-    data.proc_param3 = cdf['proc_param3'][...]
+    data.overflow_U  = cdf['overflow_U'][...]   # (fixed: not defined in V.2)
+    data.overflow_V  = cdf['overflow_V'][...]   # (fixed: not defined in V.2)
+    data.overflow_W  = cdf['overflow_W'][...]   # (fixed: not defined in V.2)
+    data.proc_param0 = cdf['proc_param0'][...];  data.proc_param1 = cdf['proc_param1'][...]
+    data.proc_param2 = cdf['proc_param2'][...];  data.proc_param3 = cdf['proc_param3'][...]
     data.BG_downlink = cdf['BG_downlink'][...]
     data.N_block     = cdf['N_block'][...]
-    data.T_RWI_CH1   = cdf['T_RWI_CH1'][...]
-    data.T_RWI_CH2   = cdf['T_RWI_CH2'][...]
-    data.T_HF_FPGA   = cdf['T_HF_FPGA'][...]
+    data.T_RWI_CH1   = np.float16(cdf['T_RWI_CH1'][...])    
+    data.T_RWI_CH2   = np.float16(cdf['T_RWI_CH2'][...])  
+    data.T_HF_FPGA   = np.float16(cdf['T_HF_FPGA'][...])
     # Header
     data.N_samp      = cdf['N_samp'][...]
     data.N_step      = cdf['N_step'][...]
     data.decimation  = cdf['decimation'][...]
     data.pol         = cdf['pol'][...]
-    data.B0_startf   = cdf['B0_startf'][...]
-    data.B0_stopf    = cdf['B0_stopf'][...]
-    data.B0_step     = cdf['B0_step'][...]
-    data.B0_repeat   = cdf['B0_repeat'][...]
-    data.B0_subdiv   = cdf['B0_subdiv'][...]
-    data.B1_startf   = cdf['B1_startf'][...]
-    data.B1_stopf    = cdf['B1_stopf'][...]
-    data.B1_step     = cdf['B1_step'][...]
-    data.B1_repeat   = cdf['B1_repeat'][...]
-    data.B1_subdiv   = cdf['B1_subdiv'][...]
-    data.B2_startf   = cdf['B2_startf'][...]
-    data.B2_stopf    = cdf['B2_stopf'][...]
-    data.B2_step     = cdf['B2_step'][...]
-    data.B2_repeat   = cdf['B2_repeat'][...]
-    data.B2_subdiv   = cdf['B2_subdiv'][...]
-    data.B3_startf   = cdf['B3_startf'][...]
-    data.B3_stopf    = cdf['B3_stopf'][...]
-    data.B3_step     = cdf['B3_step'][...]
-    data.B3_repeat   = cdf['B3_repeat'][...]
-    data.B3_subdiv   = cdf['B3_subdiv'][...]
-    data.B4_startf   = cdf['B4_startf'][...]
-    data.B4_stopf    = cdf['B4_stopf'][...]
-    data.B4_step     = cdf['B4_step'][...]
-    data.B4_repeat   = cdf['B4_repeat'][...]
-    data.B4_subdiv   = cdf['B4_subdiv'][...]
+    data.B0_startf   = cdf['B0_startf'][...];  data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...];
+    data.B0_repeat   = cdf['B0_repeat'][...];  data.B0_subdiv = cdf['B0_subdiv'][...]
+    data.B1_startf   = cdf['B1_startf'][...];  data.B1_stopf  = cdf['B1_stopf'][...];  data.B1_step = cdf['B1_step'][...]
+    data.B1_repeat   = cdf['B1_repeat'][...];  data.B1_subdiv = cdf['B1_subdiv'][...]
+    data.B2_startf   = cdf['B2_startf'][...];  data.B2_stopf  = cdf['B2_stopf'][...];  data.B2_step = cdf['B2_step'][...]
+    data.B2_repeat   = cdf['B2_repeat'][...];  data.B2_subdiv = cdf['B2_subdiv'][...]
+    data.B3_startf   = cdf['B3_startf'][...];  data.B3_stopf  = cdf['B3_stopf'][...];  data.B3_step = cdf['B3_step'][...]
+    data.B3_repeat   = cdf['B3_repeat'][...];  data.B3_subdiv = cdf['B3_subdiv'][...]
+    data.B4_startf   = cdf['B4_startf'][...];  data.B4_stopf  = cdf['B4_stopf'][...];  data.B4_step = cdf['B4_step'][...]
+    data.B4_repeat   = cdf['B4_repeat'][...];  data.B4_subdiv = cdf['B4_subdiv'][...]
     # Data
-    data.epoch       = cdf['Epoch'][...]
+    data.time        = cdf['time'][...]
+    data.frequency   = cdf['frequency'][...]
+    data.freq_step   = cdf['freq_step'][...]
+    data.freq_width  = cdf['freq_width'][...]
+    data.epoch       = cdf['Epoch'][...];
     data.scet        = cdf['SCET'][...]
     data.Eu_i        = np.float64(cdf['Eu_i'][...])
     data.Eu_q        = np.float64(cdf['Eu_q'][...])
@@ -86,10 +71,6 @@ def hf_sid2_read(cdf):
     data.sweep_start = cdf['sweep_start'][...]
     data.reduction   = cdf['reduction'][...]
     data.overflow    = cdf['overflow'][...]
-    data.time        = cdf['time'][...]
-    data.frequency   = cdf['frequency'][...]
-    data.freq_step   = cdf['freq_step'][...]
-    data.freq_width  = cdf['freq_width'][...]
 
     # ### ASW1: SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
@@ -200,14 +181,14 @@ def hf_sid2_shaping(data, cal_mode):
         data.Eu_i = data.Eu_i[:, 0:n_num];  data.Eu_q = data.Eu_q[:, 0:n_num]
         data.Ev_i = data.Ev_i[:, 0:n_num];  data.Ev_q = data.Ev_q[:, 0:n_num]
         data.Ew_i = data.Ew_i[:, 0:n_num];  data.Ew_q = data.Ew_q[:, 0:n_num]
-        data.pps_count   = data.pps_count[:, 0:n_num]
+        data.pps_count   = data.pps_count  [:, 0:n_num]
         data.sweep_start = data.sweep_start[:, 0:n_num]
-        data.reduction   = data.reduction[:, 0:n_num]
-        data.overflow    = data.overflow[:, 0:n_num]
-        data.time        = data.time[:, 0:n_num]
-        data.frequency   = data.frequency[:, 0:n_num]
-        data.freq_step   = data.freq_step[:, 0:n_num]
-        data.freq_width  = data.freq_width[:, 0:n_num]
+        data.reduction   = data.reduction  [:, 0:n_num]
+        data.overflow    = data.overflow   [:, 0:n_num]
+        data.time        = data.time       [:, 0:n_num]
+        data.frequency   = data.frequency  [:, 0:n_num]
+        data.freq_step   = data.freq_step  [:, 0:n_num]
+        data.freq_width  = data.freq_width [:, 0:n_num]
         print(" cut1:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "[", n_num, "]")
 
     # Merge & CUT: separated packets
@@ -281,84 +262,176 @@ def hf_sid2_shaping(data, cal_mode):
     if cal_mode < 2:
         index = np.where(data.cal_signal == cal_mode)
         # AUX
-        data.U_selected  = data.U_selected[index[0]]
-        data.V_selected  = data.V_selected[index[0]]
-        data.W_selected  = data.W_selected[index[0]]
-        data.cal_signal  = data.cal_signal[index[0]]
+        data.U_selected  = data.U_selected [index[0]]
+        data.V_selected  = data.V_selected [index[0]]
+        data.W_selected  = data.W_selected [index[0]]
+        data.cal_signal  = data.cal_signal [index[0]]
         data.sweep_table = data.sweep_table[index[0]]
         #
         data.onboard_cal = data.onboard_cal[index[0]]
-        data.complex     = data.complex[index[0]]
+        data.complex     = data.complex    [index[0]]
         data.BG_subtract = data.BG_subtract[index[0]]
-        data.BG_select   = data.BG_select[index[0]]
-        data.FFT_window  = data.FFT_window[index[0]]
+        data.BG_select   = data.BG_select  [index[0]]
+        data.FFT_window  = data.FFT_window [index[0]]
         data.RFI_rejection = data.RFI_rejection[index[0]]
         data.Pol_sep_thres = data.Pol_sep_thres[index[0]]
-        data.Pol_sep_SW  = data.Pol_sep_SW[index[0]]
-        data.overflow_U  = data.overflow_U[index[0]]
-        data.overflow_V  = data.overflow_V[index[0]]
-        data.overflow_W  = data.overflow_W[index[0]]
+        data.Pol_sep_SW  = data.Pol_sep_SW [index[0]]
+        data.overflow_U  = data.overflow_U [index[0]]
+        data.overflow_V  = data.overflow_V [index[0]]
+        data.overflow_W  = data.overflow_W [index[0]]
         data.proc_param0 = data.proc_param0[index[0]]
         data.proc_param1 = data.proc_param1[index[0]]
         data.proc_param2 = data.proc_param2[index[0]]
         data.proc_param3 = data.proc_param3[index[0]]
         data.BG_downlink = data.BG_downlink[index[0]]
-        data.N_block     = data.N_block[index[0]]
-        data.T_RWI_CH1   = data.T_RWI_CH1[index[0]]
-        data.T_RWI_CH2   = data.T_RWI_CH2[index[0]]
-        data.T_HF_FPGA   = data.T_HF_FPGA[index[0]]
+        data.N_block     = data.N_block    [index[0]]
+        data.T_RWI_CH1   = data.T_RWI_CH1  [index[0]]
+        data.T_RWI_CH2   = data.T_RWI_CH2  [index[0]]
+        data.T_HF_FPGA   = data.T_HF_FPGA  [index[0]]
         # Header
-        data.N_samp      = data.N_samp[index[0]]
-        data.N_step      = data.N_step[index[0]]
-        data.decimation  = data.decimation[index[0]]
-        data.pol         = data.pol[index[0]]
-        data.B0_startf   = data.B0_startf[index[0]]
-        data.B0_stopf    = data.B0_stopf[index[0]]
-        data.B0_step     = data.B0_step[index[0]]
-        data.B0_repeat   = data.B0_repeat[index[0]]
-        data.B0_subdiv   = data.B0_subdiv[index[0]]
-        data.B1_startf   = data.B1_startf[index[0]]
-        data.B1_stopf    = data.B1_stopf[index[0]]
-        data.B1_step     = data.B1_step[index[0]]
-        data.B1_repeat   = data.B1_repeat[index[0]]
-        data.B1_subdiv   = data.B1_subdiv[index[0]]
-        data.B2_startf   = data.B2_startf[index[0]]
-        data.B2_stopf    = data.B2_stopf[index[0]]
-        data.B2_step     = data.B2_step[index[0]]
-        data.B2_repeat   = data.B2_repeat[index[0]]
-        data.B2_subdiv   = data.B2_subdiv[index[0]]
-        data.B3_startf   = data.B3_startf[index[0]]
-        data.B3_stopf    = data.B3_stopf[index[0]]
-        data.B3_step     = data.B3_step[index[0]]
-        data.B3_repeat   = data.B3_repeat[index[0]]
-        data.B3_subdiv   = data.B3_subdiv[index[0]]
-        data.B4_startf   = data.B4_startf[index[0]]
-        data.B4_stopf    = data.B4_stopf[index[0]]
-        data.B4_step     = data.B4_step[index[0]]
-        data.B4_repeat   = data.B4_repeat[index[0]]
-        data.B4_subdiv   = data.B4_subdiv[index[0]]
+        data.N_samp      = data.N_samp     [index[0]]
+        data.N_step      = data.N_step     [index[0]]
+        data.decimation  = data.decimation [index[0]]
+        data.pol         = data.pol        [index[0]]
+        data.B0_startf   = data.B0_startf  [index[0]]
+        data.B0_stopf    = data.B0_stopf   [index[0]]
+        data.B0_step     = data.B0_step    [index[0]]
+        data.B0_repeat   = data.B0_repeat  [index[0]]
+        data.B0_subdiv   = data.B0_subdiv  [index[0]]
+        data.B1_startf   = data.B1_startf  [index[0]]
+        data.B1_stopf    = data.B1_stopf   [index[0]]
+        data.B1_step     = data.B1_step    [index[0]]
+        data.B1_repeat   = data.B1_repeat  [index[0]]
+        data.B1_subdiv   = data.B1_subdiv  [index[0]]
+        data.B2_startf   = data.B2_startf  [index[0]]
+        data.B2_stopf    = data.B2_stopf   [index[0]]
+        data.B2_step     = data.B2_step    [index[0]]
+        data.B2_repeat   = data.B2_repeat  [index[0]]
+        data.B2_subdiv   = data.B2_subdiv  [index[0]]
+        data.B3_startf   = data.B3_startf  [index[0]]
+        data.B3_stopf    = data.B3_stopf   [index[0]]
+        data.B3_step     = data.B3_step    [index[0]]
+        data.B3_repeat   = data.B3_repeat  [index[0]]
+        data.B3_subdiv   = data.B3_subdiv  [index[0]]
+        data.B4_startf   = data.B4_startf  [index[0]]
+        data.B4_stopf    = data.B4_stopf   [index[0]]
+        data.B4_step     = data.B4_step    [index[0]]
+        data.B4_repeat   = data.B4_repeat  [index[0]]
+        data.B4_subdiv   = data.B4_subdiv  [index[0]]
         # Data
         data.epoch       = data.epoch[index[0]]
-        data.scet        = data.scet[index[0]]
-        data.Eu_i        = data.Eu_i[index[0]]
-        data.Eu_q        = data.Eu_q[index[0]]
-        data.Ev_i        = data.Ev_i[index[0]]
-        data.Ev_q        = data.Ev_q[index[0]]
-        data.Ew_i        = data.Ew_i[index[0]]
-        data.Ew_q        = data.Ew_q[index[0]]
-        data.pps_count   = data.pps_count[index[0]]
+        data.scet        = data.scet [index[0]]
+        data.Eu_i        = data.Eu_i [index[0]]
+        data.Eu_q        = data.Eu_q [index[0]]
+        data.Ev_i        = data.Ev_i [index[0]]
+        data.Ev_q        = data.Ev_q [index[0]]
+        data.Ew_i        = data.Ew_i [index[0]]
+        data.Ew_q        = data.Ew_q [index[0]]
+        data.pps_count   = data.pps_count  [index[0]]
         data.sweep_start = data.sweep_start[index[0]]
-        data.reduction   = data.reduction[index[0]]
-        data.overflow    = data.overflow[index[0]]
-        data.time        = data.time[index[0]]
-        data.frequency   = data.frequency[index[0]]
-        data.freq_step   = data.freq_step[index[0]]
-        data.freq_width  = data.freq_width[index[0]]
+        data.reduction   = data.reduction  [index[0]]
+        data.overflow    = data.overflow   [index[0]]
+        data.time        = data.time       [index[0]]
+        data.frequency   = data.frequency  [index[0]]
+        data.freq_step   = data.freq_step  [index[0]]
+        data.freq_width  = data.freq_width [index[0]]
 
         n_time = data.Eu_i.shape[0]
         if cal_mode == 0:
             print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only BG>")
         else:
             print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only CAL>")
-
     return data
+
+
+
+# [MEMO: ASW1 data]  *** Flight - Ver.1
+"""
+data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2023/'        # CDF data folder
+# *** 20230419 ***
+data_name_list = ['04/19/SID2_20230419T135849-20230419T141229.cdf',
+                  '04/19/SID2_20230419T141231-20230419T141402.cdf',
+                 ]
+# *** 202305-06 ***
+data_name_list = ['05/30/SID2_20230530T100326-20230530T100925.cdf',     # CAL
+                  '05/30/SID2_20230530T100927-20230530T100937.cdf',
+                  '06/01/SID2_20230601T120759-20230601T120857.cdf',
+                  '06/01/SID2_20230601T121435-20230601T121533.cdf',
+                  '06/01/SID2_20230601T122138-20230601T122236.cdf',
+                  '06/01/SID2_20230601T122707-20230601T122805.cdf',
+                 ]
+# *** 20230712-13 ***
+data_name_list = ['07/12/SID2_20230712T090434-20230712T093848.cdf',
+                  '07/12/SID2_20230712T093942-20230712T101355.cdf',
+                  '07/12/SID2_20230712T101449-20230712T104147.cdf',
+                  '07/12/SID2_20230712T104149-20230712T232406.cdf',
+                  '07/12/SID2_20230712T232408-20230712T235156.cdf',
+                  '07/12/SID2_20230712T235158-20230713T001854.cdf',     # type-III
+                  '07/13/SID2_20230713T001856-20230713T004644.cdf',     # type-III
+                  '07/13/SID2_20230713T004648-20230713T011342.cdf',
+                  '07/13/SID2_20230713T011436-20230713T014134.cdf',
+                  '07/13/SID2_20230713T014136-20230713T020924.cdf',
+                  '07/13/SID2_20230713T020928-20230713T023718.cdf',
+                  '07/13/SID2_20230713T023720-20230713T030416.cdf',
+                  '07/13/SID2_20230713T030510-20230713T033208.cdf',
+                  '07/13/SID2_20230713T033210-20230713T040000.cdf',
+                  '07/13/SID2_20230713T040002-20230713T042751.cdf',
+                  '07/13/SID2_20230713T042753-20230713T045449.cdf',
+                  '07/13/SID2_20230713T045543-20230713T050917.cdf',
+                 ]
+"""
+
+# [MEMO: ASW1 data]  *** Ground Test - Ver.1 ***
+"""
+# *** 202105 ***
+data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202105/'
+data_name_list = ['SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32770.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32774.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32775.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32776.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32777.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32778.cdf',
+                 ]
+data_name_list = ['SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32772.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32773.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32774.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32775.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32776.cdf',
+                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32777.cdf',
+                 ]
+# *** 202106 ***
+data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202106/'
+data_name_list = ['SID2_SCTBTV_Phase11_xid32831.cdf',
+                  'SID2_SCTBTV_Phase11_xid32832.cdf',
+                  'SID2_SCTBTV_Phase11_xid32833.cdf',
+                  'SID2_SCTBTV_Phase11_xid32834.cdf',
+                 ]
+data_name_list = ['SID2_SCTBTV_Phase13_xid32844.cdf',
+                  'SID2_SCTBTV_Phase13_xid32845.cdf',
+                  'SID2_SCTBTV_Phase13_xid32846.cdf',
+                 ]
+# *** 202111 ***
+data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202111/'
+data_name_list = ['SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32770.cdf',
+                  'SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32771.cdf',
+                  'SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32772.cdf',
+                 ]
+data_name_list = ['SID2_SCPFM_RPWI_30c_xid32776.cdf',
+                  'SID2_SCPFM_RPWI_30c_xid32777.cdf',
+                  'SID2_SCPFM_RPWI_30c_xid32778.cdf',
+                  'SID2_SCPFM_RPWI_30c_xid32779.cdf',
+                 ]
+# *** 202207 ***
+data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202207/'
+data_name_list = ['SID2_SCPFM_RPWI_30c_xid32776.cdf',
+                  'SID2_SCPFM_RPWI_30c_xid32777.cdf',
+                  'SID2_SCPFM_RPWI_30c_xid32778.cdf',
+                  'SID2_SCPFM_RPWI_30c_xid32779.cdf',
+                 ]
+# *** 202208 ***
+data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202208/'
+data_name_list = ['SID2_20220824_HF-FFT-rerun_xid32791.cdf',
+                  'SID2_20220824_HF-FFT-rerun_xid32792.cdf',
+                  'SID2_20220824_HF-FFT-rerun_xid32793.cdf',
+                  ]
+"""

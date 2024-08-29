@@ -1,6 +1,7 @@
 """
     JUICE RPWI HF math -- 2024/7/27
 """
+import copy
 import numpy as np
 from scipy.signal import medfilt
 
@@ -9,6 +10,7 @@ from scipy.signal import medfilt
 # --- HID-2 RAW data --------------------------------------------------
 # ---------------------------------------------------------------------
 # FFT frequency [kHz] --- retun "df"
+"""
 def _fft_freq(n_samp, freq_array, frequency, dt):
     freq = np.fft.fftfreq(n_samp, d=dt)/1000. + freq_array
     # frequency.extend( freq[np.int16(n_samp*2/3+1):n_samp] )
@@ -17,10 +19,12 @@ def _fft_freq(n_samp, freq_array, frequency, dt):
     frequency.extend(freq[np.int16(n_samp/2):n_samp])
     frequency.extend(freq[0:np.int16(n_samp/2)])
     return freq[1] - freq[0]
-
+"""
 
 # ---------------------------------------------------------------------
 # FFT power
+"""
+
 def _fft_power(n_samp, E_i, E_q, E_power, df, unit_mode, ave_mode):
     # Hunning
     window = np.hanning(n_samp)
@@ -49,35 +53,51 @@ def _fft_power(n_samp, E_i, E_q, E_power, df, unit_mode, ave_mode):
             + min(power[0:np.int16(n_samp/3-1)])*(n_samp/3-1)
     E_power.append(power0)
     return
+"""
 
 
 # ---------------------------------------------------------------------
 # mean power
 # ---------------------------------------------------------------------
+"""
 def _mean_power(E_i_array, E_q_array, E_power, df, unit_mode):
-    """
-    Input:  E_i_array, E_q_array, "E_power", df, unit_mode
-    Output: E_power
-    """
+    #Input:  E_i_array, E_q_array, "E_power", df, unit_mode
+    #Output: E_power
     power = np.mean(E_i_array**2 + E_q_array**2, axis=1)
     if unit_mode > 0:
         power = power / (df * 1000)
     E_power.extend(power)
-
+"""
 
 # ---------------------------------------------------------------------
-# RFI rejection
+# RFI rejection:  Mode -- 0:median   1:max reject   2:min
 # ---------------------------------------------------------------------
-def clean_rfi(power, kernel_size=5):
+def clean_rfi(power, kernel_size=5, mode=0):
     """
     Input:  power, kernel_size
     Output: clean_power
     """
-    clean_power = medfilt(power, kernel_size)
-    # clean_power = minfilt(power, kernel_size)
+    if    mode == 0:
+        clean_power = medfilt(power, kernel_size)
+    elif  mode == 1:
+        num = power.shape[0]
+        d = int(kernel_size/2)
+        clean_power = copy.copy(power)
+        for i in range (num-d):
+            if i-d>0:
+                s = power[i-d:i+d+1]
+                #s = [power[i-1], power[i], power[i+1]]
+                clean_power[i] = (sum(s) - max(s)) / (d*2)
+    else:
+        num = power.shape[0]
+        d = int(kernel_size/2)
+        clean_power = copy.copy(power)
+        for i in range (num-d):
+            if i-d>0:
+                s = power[i-d:i+d+1]
+                #s = [power[i-1], power[i], power[i+1]]
+                clean_power[i] = min(s) 
     return clean_power
-
-
 
 
 """

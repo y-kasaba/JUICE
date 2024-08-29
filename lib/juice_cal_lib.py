@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/8/17
+# JUICE RPWI HF CAL lib -- 2024/8/25
 
 import csv
 import math
@@ -11,7 +11,7 @@ class struct:
 # power label
 def power_label(unit_mode, band_mode):
     """
-    Input:  unit_mode       0: raw     1: V＠ADC     2: V@HF    3: V@RWI
+    Input:  unit_mode       0: raw     1: V＠ADC     2: V@HF    3: V@RWI    4: V/m@RWI
             band_mode       0: sum     1: /Hz
     Outout: str
     """
@@ -24,6 +24,8 @@ def power_label(unit_mode, band_mode):
             str = '[V2 @HF]'
         elif unit_mode == 3:
             str = '[V2 @RWI]'
+        elif unit_mode == 4:
+            str = '[V2/m2]'
     else:
         if  unit_mode == 0:
             str = '[RAW2/Hz]'
@@ -33,6 +35,8 @@ def power_label(unit_mode, band_mode):
             str = '[V2/Hz @HF]'
         elif unit_mode == 3:
             str = '[V2/Hz @RWI]'
+        elif unit_mode == 4:
+            str = '[V2/m2/Hz]'
     return str
 
 
@@ -60,6 +64,8 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
         str = '[V @HF]';   cf = -120.4 - 7.9 + 0.3*(T_HF-25.)/50.
     if unit_mode == 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
         str = '[V @RWI]';  cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
+    if unit_mode == 4:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
+        str = '[V/m]';     cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
 
     wave_cal = struct()
     wave_cal.Eu_i = data.Eu_i * 10**(cf/20.);   wave_cal.Eu_q = data.Eu_q * 10**(cf/20.)
@@ -67,6 +73,13 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     wave_cal.Ew_i = data.Ew_i * 10**(cf/20.);   wave_cal.Ew_q = data.Ew_q * 10**(cf/20.)
     wave_cal.cf   = cf      # dB
     wave_cal.str  = str     # unit for wave
+
+    if unit_mode == 4:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
+        wave_cal.Eu_i = wave_cal.Eu_i / 0.20;   wave_cal.Eu_q = wave_cal.Eu_q / 0.20    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
+        wave_cal.Ev_i = wave_cal.Ev_i / 0.47;   wave_cal.Ev_q = wave_cal.Ev_q / 0.47    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
+        wave_cal.Ew_i = wave_cal.Ew_i / 0.25;   wave_cal.Ew_q = wave_cal.Ew_q / 0.25    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
+        wave_cal.cf   = cf - 20*np.log10(0.20)
+        
     return wave_cal
 
 
@@ -74,7 +87,7 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     """
     Input:  spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, freq, freq_w
             sid             (n/a at the moment)
-            unit_mode       0: raw     1: V@ADC     2: V@HF(tmp)   3: V@RWI(tmp)
+            unit_mode       0: raw     1: V@ADC     2: V@HF     3: V@RWI    4: V/m@RWI
             band_mode       0: sum     1: /Hz
             T_HF & T_RWI    HF & RWI T (degC)
     Output: spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, cf (dB)
@@ -86,12 +99,17 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     
     freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
+    # cal_factors depending on SID
+    cal_factor = 1.0
+    if sid==4 or sid==20:
+        cal_factor = 1.0
+
     # Spectral CAL parameters from Ground + Onboard Test
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
-
     if band_mode > 0:
         CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
-    CAL_gain_u   = CAL_f_gain[0] * 1;               CAL_gain_v   = CAL_f_gain[1] * 1;               CAL_gain_w   = CAL_f_gain[2] * 1
+
+    CAL_gain_u   = CAL_f_gain[0] * cal_factor;      CAL_gain_v   = CAL_f_gain[1] * cal_factor;      CAL_gain_w   = CAL_f_gain[2] * cal_factor
     CAL_phase_uv = CAL_f_phase[1] - CAL_f_phase[0]; CAL_phase_vw = CAL_f_phase[2] - CAL_f_phase[1]; CAL_phase_uw = CAL_f_phase[2] - CAL_f_phase[0]
     CAL_UV_re = np.zeros(n_freq); CAL_UV_im = np.zeros(n_freq)
     CAL_VW_re = np.zeros(n_freq); CAL_VW_im = np.zeros(n_freq)
@@ -174,7 +192,7 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
                     # CAL_phase[i][j] = p0_h + p1_h * f + p2_h * f**2 + p3_h * f**3 + p4_h * f**4 + p5_h * f**5 + p6_h * f**6 + p7_h * f**7 + p8_h * f**8
         CAL_gain = 10**( (cf - CAL_gain + 0.3*(T_HF-25.)/50.)/20 )
 
-    if unit_mode == 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
+    if unit_mode >= 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
         # RWI temperature (degC) 
         g_tmp0 = [ 15.70226060, -2.044197E-02, -7.640780E-05, -1.562152E-06, -6.620953E-09 ]
         g_tmp1 = [ -1.22544328, -2.428311E-04,  3.869358E-05,  5.149496E-07,  1.726930E-09 ]
@@ -222,6 +240,11 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
             CAL_gain [i] = g0 + g1 * f + g2 * f**2 + g3 * f**3 + g4 * f**4 + g5 * f**5 + g6 * f**6 + g7 * f**7 + g8 * f**8
             # CAL_phase[i] = p0 + p1 * f + p2 * f**2 + p3 * f**3 + p4 * f**4 + p5 * f**5 + p6 * f**6 + p7 * f**7 + p8 * f**8
         CAL_gain = 10**( (cf - CAL_gain + 0.3*(T_HF-25.)/50.)/20 )
+
+    if unit_mode == 4:                      # TMP: Effective length 
+        CAL_gain[0] = CAL_gain[0] / 0.20    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
+        CAL_gain[1] = CAL_gain[1] / 0.47    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
+        CAL_gain[2] = CAL_gain[2] / 0.25    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
 
     if unit_mode > 0:   # U/V/W diff from Onboard CAL
         CAL_gain2, CAL_phase2 = spec_gain_phase2(freq)

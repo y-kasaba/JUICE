@@ -171,8 +171,20 @@ def hf_getspec_sid2(data, cal_mode):
             spec.freq_w[i][j] = freq[1] - freq[0]
 
     # FFT
-    window = np.hanning(n_samp)
-    acf = 1/(sum(window)/n_samp)
+    window = np.hanning(n_samp*1.0)
+    acf = 1.0/(sum(window)/n_samp) # / 1.23
+
+    """
+    # ***DEBUG***
+    Eu = data.Eu_i[0][6]; Eq = data.Eu_q[0][6];  s1 = np.mean(Eu**2.0 + Eq**2.0)
+    s = np.fft.fft((Eu - Eq * 1.0j) * window);  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf 
+    EuEu = np.fft.fftshift(s); s2 = np.sum(EuEu)
+    print(s1, s2, s2/s1, (s2/s1)**.5)
+    s = np.fft.fft((Eu - Eq * 1.0j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = (s_u_re*s_u_re + s_u_im*s_u_im) / n_samp**2.0 * acf**2 
+    EuEu = np.fft.fftshift(s); s2 = np.sum(EuEu)
+    print(s1, s2, s2/s1, (s2/s1)**.5)
+    # ***DEBUG***
+    """
 
     # -- auto
     s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EuEu = np.fft.fftshift(s, axes=(2,))
