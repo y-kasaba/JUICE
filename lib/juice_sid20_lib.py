@@ -18,7 +18,7 @@ def hf_sid20_read(cdf, sid):
     data = struct()
 
     # AUX
-    data.U_selected  = cdf['U_selected'][...];  data.V_selected  = cdf['V_selected'][...];  data.W_selected  = cdf['W_selected'][...]
+    data.U_selected  = cdf['U_selected'][...];  data.V_selected = cdf['V_selected'][...];  data.W_selected = cdf['W_selected'][...]
     data.complex     = cdf['complex'][...]
     data.cal_signal  = cdf['cal_signal'][...]
     data.sweep_table = cdf['sweep_table'][...]  # (fixed: not defined in V.2)
@@ -40,10 +40,8 @@ def hf_sid20_read(cdf, sid):
     data.T_RWI_CH2   = np.float16(cdf['T_RWI_CH2'][...])  
     data.T_HF_FPGA   = np.float16(cdf['T_HF_FPGA'][...])
     # Header
-    data.N_samp      = cdf['N_samp'][...]
-    data.N_step      = cdf['N_step'][...]
-    data.decimation  = cdf['decimation'][...]
-    data.pol         = cdf['pol'][...]
+    data.N_samp      = cdf['N_samp'][...];       data.N_step    = cdf['N_step'][...]
+    data.decimation  = cdf['decimation'][...];   data.pol       = cdf['pol'][...]
     data.B0_startf   = cdf['B0_startf'][...];    data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...]
     data.B0_repeat   = cdf['B0_repeat'][...];    data.B0_subdiv = cdf['B0_subdiv'][...]
     if (sid==20):
@@ -56,17 +54,13 @@ def hf_sid20_read(cdf, sid):
         data.B4_startf = cdf['B4_startf'][...];  data.B4_stopf  = cdf['B4_stopf'][...];  data.B4_step = cdf['B4_step'][...]
         data.B4_repeat = cdf['B4_repeat'][...];  data.B4_subdiv = cdf['B4_subdiv'][...]
     # Data
-    data.frequency   = cdf['frequency'][...]
-    data.freq_step   = cdf['freq_step'][...]
-    data.freq_width  = cdf['freq_width'][...]
-    data.epoch       = cdf['Epoch'][...]
-    data.scet        = cdf['SCET'][...]
+    data.frequency   = cdf['frequency'][...];    data.freq_step = cdf['freq_step'][...]; data.freq_width  = cdf['freq_width'][...]
+    data.epoch       = cdf['Epoch'][...];        data.scet        = cdf['SCET'][...]
     # complex < 2:     # Power
-    data.EuEu        = cdf['EuEu'][...];     data.EvEv    = cdf['EvEv'][...];    data.EwEw   = cdf['EwEw'][...]
+    data.EuEu        = cdf['EuEu'][...];     data.EvEv    = cdf['EvEv'][...];     data.EwEw    = cdf['EwEw'][...]
     # complex == 1:    # Matrix
-    data.EuEv_re     = cdf['EuEv_re'][...];  data.EvEw_re = cdf['EvEw_re'][...]
-    data.EwEu_re     = cdf['EwEu_re'][...];  data.EuEv_im = cdf['EuEv_im'][...]
-    data.EvEw_im     = cdf['EvEw_im'][...];  data.EwEu_im = cdf['EwEu_im'][...]
+    data.EuEv_re     = cdf['EuEv_re'][...];  data.EvEw_re = cdf['EvEw_re'][...];  data.EwEu_re = cdf['EwEu_re'][...]
+    data.EuEv_im     = cdf['EuEv_im'][...];  data.EvEw_im = cdf['EvEw_im'][...];  data.EwEu_im = cdf['EwEu_im'][...]
     # complex == 3:    # 3D-matrix
     data.EuiEui      = cdf['EuiEui'][...];   data.EuqEuq  = cdf['EuqEuq'][...]
     data.EviEvi      = cdf['EviEvi'][...];   data.EvqEvq  = cdf['EvqEvq'][...]
@@ -306,19 +300,12 @@ def hf_sid20_shaping(data, sid, cal_mode, N_ch, comp_mode):
             else:
                     print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
 
-    # *** complex-2&3 data ==> complex-1 data ***
-    n_time0 = data.EuEu.shape[0]
-    for i in range(n_time0):
-        if data.complex[i] == 3:    # Matrix - N/R/L-separated
-            data.EuEu[i]    =  data.EuiEui[i] + data.EuqEuq[i]
-            data.EvEv[i]    =  data.EviEvi[i] + data.EvqEvq[i]
-            data.EwEw[i]    =  data.EwiEwi[i] + data.EwqEwq[i]
-            data.EuEv_re[i] =  data.EuiEvi[i] + data.EuqEvq[i]
-            data.EvEw_re[i] =  data.EviEwi[i] + data.EvqEwq[i]
-            data.EwEu_re[i] =  data.EwiEui[i] + data.EwqEuq[i]
-            data.EuEv_im[i] = -data.EuiEvq[i] + data.EuqEvi[i]
-            data.EvEw_im[i] = -data.EviEwq[i] + data.EviEvq[i]
-            data.EwEu_im[i] = -data.EwiEuq[i] + data.EwqEui[i]
+    # *** complex-3 data ==> complex-1 data ***
+    for i in range(n_time):
+        if data.complex[i] == 3:
+            data.EuEu[i]    =  data.EuiEui[i] + data.EuqEuq[i];  data.EvEv[i]    =  data.EviEvi[i] + data.EvqEvq[i];  data.EwEw[i]    =  data.EwiEwi[i] + data.EwqEwq[i]
+            data.EuEv_re[i] =  data.EuiEvi[i] + data.EuqEvq[i];  data.EvEw_re[i] =  data.EviEwi[i] + data.EvqEwq[i];  data.EwEu_re[i] =  data.EwiEui[i] + data.EwqEuq[i]
+            data.EuEv_im[i] = -data.EuiEvq[i] + data.EuqEvi[i];  data.EvEw_im[i] = -data.EviEwq[i] + data.EviEvq[i];  data.EwEu_im[i] = -data.EwiEuq[i] + data.EwqEui[i]
 
     # *** frequncy & width for spec cal
     data.freq   = data.frequency

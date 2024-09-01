@@ -18,11 +18,11 @@ def hf_sid2_read(cdf):
     data = struct()
 
     # AUX
-    data.U_selected  = cdf['U_selected'][...];  data.V_selected  = cdf['V_selected'][...];  data.W_selected  = cdf['W_selected'][...]
+    data.U_selected  = cdf['U_selected'][...];  data.V_selected = cdf['V_selected'][...];  data.W_selected = cdf['W_selected'][...]
+    data.complex     = cdf['complex'][...]
     data.cal_signal  = cdf['cal_signal'][...]
     data.sweep_table = cdf['sweep_table'][...]  # (fixed: not defined in V.2)
     data.onboard_cal = cdf['onboard_cal'][...]  # (not used)
-    data.complex     = cdf['complex'][...]
     data.BG_subtract = cdf['BG_subtract'][...]
     data.BG_select   = cdf['BG_select'][...]
     data.FFT_window  = cdf['FFT_window'][...]
@@ -40,10 +40,8 @@ def hf_sid2_read(cdf):
     data.T_RWI_CH2   = np.float16(cdf['T_RWI_CH2'][...])  
     data.T_HF_FPGA   = np.float16(cdf['T_HF_FPGA'][...])
     # Header
-    data.N_samp      = cdf['N_samp'][...]
-    data.N_step      = cdf['N_step'][...]
-    data.decimation  = cdf['decimation'][...]
-    data.pol         = cdf['pol'][...]
+    data.N_samp      = cdf['N_samp'][...];     data.N_step    = cdf['N_step'][...]
+    data.decimation  = cdf['decimation'][...]; data.pol       = cdf['pol'][...]
     data.B0_startf   = cdf['B0_startf'][...];  data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...];
     data.B0_repeat   = cdf['B0_repeat'][...];  data.B0_subdiv = cdf['B0_subdiv'][...]
     data.B1_startf   = cdf['B1_startf'][...];  data.B1_stopf  = cdf['B1_stopf'][...];  data.B1_step = cdf['B1_step'][...]
@@ -55,22 +53,13 @@ def hf_sid2_read(cdf):
     data.B4_startf   = cdf['B4_startf'][...];  data.B4_stopf  = cdf['B4_stopf'][...];  data.B4_step = cdf['B4_step'][...]
     data.B4_repeat   = cdf['B4_repeat'][...];  data.B4_subdiv = cdf['B4_subdiv'][...]
     # Data
-    data.time        = cdf['time'][...]
-    data.frequency   = cdf['frequency'][...]
-    data.freq_step   = cdf['freq_step'][...]
-    data.freq_width  = cdf['freq_width'][...]
-    data.epoch       = cdf['Epoch'][...];
-    data.scet        = cdf['SCET'][...]
-    data.Eu_i        = np.float64(cdf['Eu_i'][...])
-    data.Eu_q        = np.float64(cdf['Eu_q'][...])
-    data.Ev_i        = np.float64(cdf['Ev_i'][...])
-    data.Ev_q        = np.float64(cdf['Ev_q'][...])
-    data.Ew_i        = np.float64(cdf['Ew_i'][...])
-    data.Ew_q        = np.float64(cdf['Ew_q'][...])
-    data.pps_count   = cdf['pps_count'][...]
-    data.sweep_start = cdf['sweep_start'][...]
-    data.reduction   = cdf['reduction'][...]
-    data.overflow    = cdf['overflow'][...]
+    data.frequency   = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
+    data.epoch       = cdf['Epoch'][...];      data.scet      = cdf['SCET'][...];      data.time       = cdf['time'][...]
+    data.Eu_i        = np.float64(cdf['Eu_i'][...]);  data.Eu_q = np.float64(cdf['Eu_q'][...])
+    data.Ev_i        = np.float64(cdf['Ev_i'][...]);  data.Ev_q = np.float64(cdf['Ev_q'][...])
+    data.Ew_i        = np.float64(cdf['Ew_i'][...]);  data.Ew_q = np.float64(cdf['Ew_q'][...])
+    data.pps_count   = cdf['pps_count'][...];  data.sweep_start = cdf['sweep_start'][...]
+    data.reduction   = cdf['reduction'][...];  data.overflow    = cdf['overflow'][...]
 
     # ### ASW1: SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')

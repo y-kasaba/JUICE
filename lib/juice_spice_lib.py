@@ -172,8 +172,6 @@ def get_moon_pos_earth(et, x_ref="SUN"):
 #   origin: MOON
 #   refernce target on the x-axis: x_ref
 # ---------------------------------------------------------
-
-
 def get_juice_pos_moon(et, x_ref="SUN"):
 
     x, y, z, r, lat, lon = get_pos_xref(
