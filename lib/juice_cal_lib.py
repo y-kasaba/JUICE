@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/8/25
+# JUICE RPWI HF CAL lib -- 2024/9/2
 
 import csv
 import math
@@ -101,7 +101,7 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
 
     # cal_factors depending on SID
     cal_factor = 1.0
-    if sid==4 or sid==20:
+    if sid==3 or sid==4 or sid==20:
         cal_factor = 1.0
 
     # Spectral CAL parameters from Ground + Onboard Test
@@ -139,6 +139,11 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
         spec.EuEu    = spec_cal.EuEu;     spec.EvEv    = spec_cal.EvEv;     spec.EwEw    = spec_cal.EwEw
         spec.EuEv_re = spec_cal.EuEv_re;  spec.EvEw_re = spec_cal.EvEw_re;  spec.EwEu_re = spec_cal.EwEu_re
         spec.EuEv_im = spec_cal.EuEv_im;  spec.EvEw_im = spec_cal.EvEw_im;  spec.EwEu_im = spec_cal.EwEu_im 
+        #
+        if sid == 3:
+            spec.BG_Eu = spec.BG_Eu * CAL_gain_u**2
+            spec.BG_Ev = spec.BG_Ev * CAL_gain_v**2
+            spec.BG_Ew = spec.BG_Ew * CAL_gain_w**2
 
     for j in range(n_freq):
         if 1000 < freq[j]:
