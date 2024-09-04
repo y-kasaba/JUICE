@@ -245,21 +245,29 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
             if N_ch < 4:
                 if comp_mode < 4:
                     index = np.where( (data.cal_signal == cal_mode) & (N_ch0 == N_ch) & (comp_mode == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch, " comp_mode:", comp_mode)
                 else:
                     index = np.where( (data.cal_signal == cal_mode) & (N_ch0 == N_ch)                               )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch)
             else:
                 if comp_mode < 4:
                     index = np.where( (data.cal_signal == cal_mode) &                   (comp_mode == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
                 else:
                     index = np.where( (data.cal_signal == cal_mode)                                                 )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
         else:
             if N_ch < 4:
                 if comp_mode < 4:
                     index = np.where(                                 (N_ch0 == N_ch) & (comp_mode == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch, " comp_mode:", comp_mode)
                 else:
                     index = np.where(                                 (N_ch0 == N_ch)                               )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch)
             else:
                 index     = np.where(                                                   (comp_mode == data.complex) )
+                print(    "  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
+
         # AUX
         data.U_selected  = data.U_selected[index[0]];  data.V_selected  = data.V_selected[index[0]];  data.W_selected  = data.W_selected[index[0]]
         data.complex     = data.complex[index[0]]
@@ -359,7 +367,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
                 else:
                     print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch)
             else:
-                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
+                print(    "  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
 
     # complex-2&3 data ==> complex-1 data ***
     for i in range(n_time):

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2024/8/17
+    JUICE RPWI HF: L1a spec -- 2024/9/4
 """
 import copy
 import math
@@ -148,9 +148,9 @@ def get_pol_3D(I, Q, U, Vu, Vv, Vw):
 # ---------------------------------------------------------------------
 # --- SID-2
 # ---------------------------------------------------------------------
-def hf_getspec_sid2(data, cal_mode):
+def hf_getspec_sid2(data):
     """
-    input:  data, cal_mode
+    input:  data
     return: spec
     """
     # Spec formation
@@ -230,9 +230,9 @@ def hf_getspec_sid2(data, cal_mode):
 # ---------------------------------------------------------------------
 # --- SID-23
 # ---------------------------------------------------------------------
-def hf_getspec_sid23(data, band_mode):
+def hf_getspec_sid23(data):
     """
-    input:  data, band_mode
+    input:  data
     return: spec
     """
     # Spec formation
@@ -281,6 +281,63 @@ def hf_getspec_sid23(data, band_mode):
     s = s_u_im * s_v_re - s_u_re * s_v_im;  s = s / n_samp / n_samp * acf * acf;  spec.EuEv_im = np.fft.fftshift(s, axes=(2,))
     s = s_v_im * s_w_re - s_v_re * s_w_im;  s = s / n_samp / n_samp * acf * acf;  spec.EvEw_im = np.fft.fftshift(s, axes=(2,))
     s = s_w_im * s_u_re - s_w_re * s_u_im;  s = s / n_samp / n_samp * acf * acf;  spec.EwEu_im = np.fft.fftshift(s, axes=(2,))
+
+    # Stokes Parameters and Polarization
+    spec.E_Iuv   = copy.copy(spec.EE);  spec.E_Quv   = copy.copy(spec.EE);  spec.E_Uuv   = copy.copy(spec.EE);  spec.E_Vuv   = copy.copy(spec.EE) 
+    spec.E_Ivw   = copy.copy(spec.EE);  spec.E_Qvw   = copy.copy(spec.EE);  spec.E_Uvw   = copy.copy(spec.EE);  spec.E_Vvw   = copy.copy(spec.EE) 
+    spec.E_Iwu   = copy.copy(spec.EE);  spec.E_Qwu   = copy.copy(spec.EE);  spec.E_Uwu   = copy.copy(spec.EE);  spec.E_Vwu   = copy.copy(spec.EE) 
+    spec.E_DoPuv = copy.copy(spec.EE);  spec.E_DoLuv = copy.copy(spec.EE);  spec.E_DoCuv = copy.copy(spec.EE);  spec.E_ANGuv = copy.copy(spec.EE) 
+    spec.E_DoPvw = copy.copy(spec.EE);  spec.E_DoLvw = copy.copy(spec.EE);  spec.E_DoCvw = copy.copy(spec.EE);  spec.E_ANGvw = copy.copy(spec.EE) 
+    spec.E_DoPwu = copy.copy(spec.EE);  spec.E_DoLwu = copy.copy(spec.EE);  spec.E_DoCwu = copy.copy(spec.EE);  spec.E_ANGwu = copy.copy(spec.EE) 
+    for i in range(n_time):
+        spec.E_Iuv[i],   spec.E_Quv[i],   spec.E_Uuv[i],   spec.E_Vuv[i]   = get_stokes(spec.EuEu[i],  spec.EvEv[i],  spec.EuEv_re[i], spec.EuEv_im[i])
+        spec.E_Ivw[i],   spec.E_Qvw[i],   spec.E_Uvw[i],   spec.E_Vvw[i]   = get_stokes(spec.EvEv[i],  spec.EwEw[i],  spec.EvEw_re[i], spec.EvEw_im[i])
+        spec.E_Iwu[i],   spec.E_Qwu[i],   spec.E_Uwu[i],   spec.E_Vwu[i]   = get_stokes(spec.EwEw[i],  spec.EuEu[i],  spec.EwEu_re[i], spec.EwEu_im[i])
+        spec.E_DoPuv[i], spec.E_DoLuv[i], spec.E_DoCuv[i], spec.E_ANGuv[i] = get_pol   (spec.E_Iuv[i], spec.E_Quv[i], spec.E_Uuv[i],   spec.E_Vuv[i])
+        spec.E_DoPvw[i], spec.E_DoLvw[i], spec.E_DoCvw[i], spec.E_ANGvw[i] = get_pol   (spec.E_Ivw[i], spec.E_Qvw[i], spec.E_Uvw[i],   spec.E_Vvw[i])
+        spec.E_DoPwu[i], spec.E_DoLwu[i], spec.E_DoCwu[i], spec.E_ANGwu[i] = get_pol   (spec.E_Iwu[i], spec.E_Qwu[i], spec.E_Uwu[i],   spec.E_Vwu[i])
+
+    print("EuEu:", spec.EuEu.shape)
+    return spec
+
+
+# ---------------------------------------------------------------------
+# --- generic
+# ---------------------------------------------------------------------
+def hf_getspec(data):
+    """
+    input:  data    waveform:      Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q   ([n_time, n_samp], For usual waveform, "*_i" can be set as 0.)
+                    sampling rate: sample_rate (/sec)
+    return: spec   
+    """
+    # Spec formation
+    spec = struct()
+
+    n_time = data.Eu_i.shape[0]
+    n_samp = data.Eu_i.shape[1]
+
+    # Frequency
+    dt = 1.0 / data.sample_rate
+    spec.freq    = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt))
+    spec.freq_w  = spec.freq[1] - spec.freq[0]
+    print("freq:", spec.freq[0], spec.freq[-1], spec.freq_w[0])
+
+    # FFT
+    window = np.hanning(n_samp)
+    acf = 1/(sum(window)/n_samp)
+    #
+    # -- auto
+    s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EuEu = np.fft.fftshift(s, axes=(1,))
+    s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EvEv = np.fft.fftshift(s, axes=(1,))
+    s = np.fft.fft((data.Ew_i - data.Ew_q * 1j) * window);  s_w_re = s.real; s_w_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EwEw = np.fft.fftshift(s, axes=(1,))
+    spec.EE   = spec.EuEu + spec.EvEv + spec.EwEw
+    # -- cross
+    s = s_u_re * s_v_re + s_u_im * s_v_im;  s = s / n_samp / n_samp * acf * acf;  spec.EuEv_re = np.fft.fftshift(s, axes=(1,))
+    s = s_v_re * s_w_re + s_v_im * s_w_im;  s = s / n_samp / n_samp * acf * acf;  spec.EvEw_re = np.fft.fftshift(s, axes=(1,))
+    s = s_w_re * s_u_re + s_w_im * s_u_im;  s = s / n_samp / n_samp * acf * acf;  spec.EwEu_re = np.fft.fftshift(s, axes=(1,))
+    s = s_u_im * s_v_re - s_u_re * s_v_im;  s = s / n_samp / n_samp * acf * acf;  spec.EuEv_im = np.fft.fftshift(s, axes=(1,))
+    s = s_v_im * s_w_re - s_v_re * s_w_im;  s = s / n_samp / n_samp * acf * acf;  spec.EvEw_im = np.fft.fftshift(s, axes=(1,))
+    s = s_w_im * s_u_re - s_w_re * s_u_im;  s = s / n_samp / n_samp * acf * acf;  spec.EwEu_im = np.fft.fftshift(s, axes=(1,))
 
     # Stokes Parameters and Polarization
     spec.E_Iuv   = copy.copy(spec.EE);  spec.E_Quv   = copy.copy(spec.EE);  spec.E_Uuv   = copy.copy(spec.EE);  spec.E_Vuv   = copy.copy(spec.EE) 
