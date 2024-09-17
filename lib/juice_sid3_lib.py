@@ -2,7 +2,6 @@
     JUICE RPWI HF SID3 (Full): L1a QL -- 2024/9/2
 """
 import numpy as np
-# import juice_spec_lib as juice_spec
 
 class struct:
     pass

@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/9/4
+# JUICE RPWI HF CAL lib -- 2024/9/17
 
 import csv
 import math
@@ -48,6 +48,11 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
             T_HF & T_RWI    HF & RWI T (degC)
     Output: wave_cal        Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q, cf (dB), str
     """
+    # ******************************************************************************************
+    # ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
+    # ******************************************************************************************
+    print("ASW:", data.RPWI_FSW_version)
+
     # ******************************************************
     # [EM2-0]
     # "1-bit" = -104.1 dBm = -114.1 dB V  = 1.97E-6 V    ==> "20-bit": 2.06 Vpp
@@ -92,9 +97,6 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
 
 def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     """
-    ******************************************************************************************
-    ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
-    ******************************************************************************************
     Input:  spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, freq, freq_w
             sid             (n/a at the moment)
             unit_mode       0: raw     1: V@ADC     2: V@HF     3: V@RWI    4: V/m@RWI
@@ -102,6 +104,12 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
             T_HF & T_RWI    HF & RWI T (degC)
     Output: spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, cf (dB)
     """
+
+    # ******************************************************************************************
+    # ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
+    # ******************************************************************************************
+    print("ASW:", spec.RPWI_FSW_version)
+
     if sid==5:
         n_time = spec.EE.shape[0];  
     else:

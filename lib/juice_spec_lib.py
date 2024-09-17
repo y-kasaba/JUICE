@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2024/9/4
+    JUICE RPWI HF: L1a spec -- 2024/9/17
 """
 import copy
 import math
@@ -155,6 +155,7 @@ def hf_getspec_sid2(data):
     """
     # Spec formation
     spec = struct()
+    spec.RPWI_FSW_version = data.RPWI_FSW_version
 
     n_time = data.Eu_i.shape[0]
     n_freq = data.Eu_i.shape[1]
@@ -237,6 +238,7 @@ def hf_getspec_sid23(data):
     """
     # Spec formation
     spec = struct()
+    spec.RPWI_FSW_version = data.RPWI_FSW_version
 
     n_time  = data.Eu_i.shape[0]
     n_block = data.Eu_i.shape[1]
@@ -304,14 +306,14 @@ def hf_getspec_sid23(data):
 # ---------------------------------------------------------------------
 # --- generic
 # ---------------------------------------------------------------------
+"""
 def hf_getspec(data):
-    """
-    input:  data    waveform:      Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q   ([n_time, n_samp], For usual waveform, "*_i" can be set as 0.)
-                    sampling rate: sample_rate (/sec)
-    return: spec   
-    """
+    # input:  data    waveform:      Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q   ([n_time, n_samp], For usual waveform, "*_i" can be set as 0.)
+    #                 sampling rate: sample_rate (/sec)
+    # return: spec   
     # Spec formation
     spec = struct()
+    spec.RPWI_FSW_version = data.RPWI_FSW_version
 
     n_time = data.Eu_i.shape[0]
     n_samp = data.Eu_i.shape[1]
@@ -356,3 +358,4 @@ def hf_getspec(data):
 
     print("EuEu:", spec.EuEu.shape)
     return spec
+"""
