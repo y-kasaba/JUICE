@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2024/8/18
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2024/9/18
 """
 import numpy as np
 import juice_spec_lib as juice_spec
@@ -12,12 +12,13 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID21 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid21_read(cdf):
+def hf_sid21_read(cdf, RPWI_FSW_version):
     """
     input:  CDF, cf:conversion factor
     return: data
     """
     data = struct()
+    data.RPWI_FSW_version = RPWI_FSW_version
 
     # AUX
     data.U_selected = cdf['U_selected'][...]

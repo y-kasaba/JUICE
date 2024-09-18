@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2024/8/29
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2024/9/18
 """
 import numpy          as np
 import scipy.stats    as stats
@@ -13,12 +13,13 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID23 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid23_read(cdf):
+def hf_sid23_read(cdf, RPWI_FSW_version):
     """
     input:  CDF
     return: data
     """
     data = struct()
+    data.RPWI_FSW_version = RPWI_FSW_version
 
     # AUX
     data.U_selected  = cdf['U_selected'][...]

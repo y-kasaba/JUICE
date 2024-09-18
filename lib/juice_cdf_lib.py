@@ -1,8 +1,9 @@
-# JUICE RPWI HF CDF lib -- 2024/8/8
+# JUICE RPWI HF CDF lib -- 2024/9/18
 
-import glob
-import spacepy.pycdf
+# import glob
+# import spacepy.pycdf
 import numpy as np
+from cdflib import cdfread
 
 
 class struct:
@@ -12,6 +13,13 @@ class struct:
 # ---------------------------------------------------------------------
 # --- Read CDF --------------------------------------------------------------
 # ---------------------------------------------------------------------
+def _RPWI_FSW_version(cdf_file):
+    cdf = cdfread.CDF(cdf_file)
+    globalaAttrs = cdf.globalattsget()
+    RPWI_FSW_version = globalaAttrs.get("RPWI_FSW_version", "Unknown")
+    return(RPWI_FSW_version[0])
+
+"""
 def juice_read_cdfs(date_str, label, ver_str="01", base_dir="/db/JUICE/juice/datasets/"):
 
     yr_str = date_str[0:4]
@@ -30,6 +38,7 @@ def juice_read_cdfs(date_str, label, ver_str="01", base_dir="/db/JUICE/juice/dat
         ret = 0
 
     return ret, err
+"""
 
 
 # ---------------------------------------------------------------------
