@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/9/17
+# JUICE RPWI HF CAL lib -- 2024/9/22
 
 import csv
 import math
@@ -16,27 +16,17 @@ def power_label(unit_mode, band_mode):
     Outout: str
     """
     if band_mode == 0:
-        if   unit_mode == 0:
-            str = '[RAW2]'
-        elif unit_mode == 1:
-            str = '[V2 @ADC]'
-        elif unit_mode == 2:
-            str = '[V2 @HF]'
-        elif unit_mode == 3:
-            str = '[V2 @RWI]'
-        elif unit_mode == 4:
-            str = '[V2/m2]'
+        if   unit_mode == 0:  str = '[RAW2]'
+        elif unit_mode == 1:  str = '[V2 @ADC]'
+        elif unit_mode == 2:  str = '[V2 @HF]'
+        elif unit_mode == 3:  str = '[V2 @RWI]'
+        elif unit_mode == 4:  str = '[V2/m2]'
     else:
-        if  unit_mode == 0:
-            str = '[RAW2/Hz]'
-        elif unit_mode == 1:
-            str = '[V2/Hz @ADC]'
-        elif unit_mode == 2:
-            str = '[V2/Hz @HF]'
-        elif unit_mode == 3:
-            str = '[V2/Hz @RWI]'
-        elif unit_mode == 4:
-            str = '[V2/m2/Hz]'
+        if   unit_mode == 0:  str = '[RAW2/Hz]'
+        elif unit_mode == 1:  str = '[V2/Hz @ADC]'
+        elif unit_mode == 2:  str = '[V2/Hz @HF]'
+        elif unit_mode == 3:  str = '[V2/Hz @RWI]'
+        elif unit_mode == 4:  str = '[V2/m2/Hz]'
     return str
 
 
@@ -110,28 +100,22 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     # ******************************************************************************************
     print("ASW:", spec.RPWI_FSW_version)
 
-    if sid==5:
-        n_time = spec.EE.shape[0];  
-    else:
-        n_time = spec.EuEu.shape[0];  
+    if sid==5: n_time = spec.EE.shape[0];  
+    else:      n_time = spec.EuEu.shape[0];  
     
     freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
     # cal_factors depending on SID
     cal_factor = 1.0
     if unit_mode > 0:
-        if sid==3:
-            cal_factor = 0.1        # TMP --- SID-3 has x10 strength in Onboard CAL 
-        if sid==4 or sid==20:
-            cal_factor = 1.0
+        if sid==3 and spec.RPWI_FSW_version == '2.0':  cal_factor = 0.1        # TMP --- SID-3 has x10 strength in Onboard CAL 
 
     # Spectral CAL parameters from Ground + Onboard Test
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
     if band_mode > 0:
-        if sid == 3:
-            CAL_f_gain = CAL_f_gain / 300.     # TMP
-        else:
-            CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
+        if sid==3 and spec.RPWI_FSW_version == '2.0':  CAL_f_gain = CAL_f_gain / 300.     # TMP
+        else:                                          CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
+        print(freq_w)
 
     CAL_gain_u   = CAL_f_gain[0] * cal_factor;      CAL_gain_v   = CAL_f_gain[1] * cal_factor;      CAL_gain_w   = CAL_f_gain[2] * cal_factor
     CAL_phase_uv = CAL_f_phase[1] - CAL_f_phase[0]; CAL_phase_vw = CAL_f_phase[2] - CAL_f_phase[1]; CAL_phase_uw = CAL_f_phase[2] - CAL_f_phase[0]

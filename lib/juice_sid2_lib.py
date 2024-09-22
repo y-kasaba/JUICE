@@ -1,7 +1,8 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/9/18
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/9/22
 """
 import numpy as np
+import math
 
 class struct:
     pass
@@ -153,7 +154,6 @@ def hf_sid2_add(data, data1):
     data.frequency   = np.r_["0", data.frequency, data1.frequency]
     data.freq_step   = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width  = np.r_["0", data.freq_width, data1.freq_width]
-    
     return data
 
 
@@ -246,9 +246,9 @@ def hf_sid2_shaping(data, cal_mode):
         power = np.mean(power, axis=1)
         index = np.where(power > 1e4)
         data.cal_signal[:] = 0
-        data.cal_signal[index[0]]=1
+        data.cal_signal[index[0]] = 1
 
-    # Background / CAL only
+    # Selection: CAL
     if cal_mode < 2:
         index = np.where(data.cal_signal == cal_mode)
         # AUX
@@ -309,14 +309,10 @@ def hf_sid2_shaping(data, cal_mode):
         data.B4_repeat   = data.B4_repeat  [index[0]]
         data.B4_subdiv   = data.B4_subdiv  [index[0]]
         # Data
-        data.epoch       = data.epoch[index[0]]
-        data.scet        = data.scet [index[0]]
-        data.Eu_i        = data.Eu_i [index[0]]
-        data.Eu_q        = data.Eu_q [index[0]]
-        data.Ev_i        = data.Ev_i [index[0]]
-        data.Ev_q        = data.Ev_q [index[0]]
-        data.Ew_i        = data.Ew_i [index[0]]
-        data.Ew_q        = data.Ew_q [index[0]]
+        data.epoch       = data.epoch      [index[0]];  data.scet = data.scet[index[0]]
+        data.Eu_i        = data.Eu_i       [index[0]];  data.Eu_q = data.Eu_q[index[0]]
+        data.Ev_i        = data.Ev_i       [index[0]];  data.Ev_q = data.Ev_q[index[0]]
+        data.Ew_i        = data.Ew_i       [index[0]];  data.Ew_q = data.Ew_q[index[0]]
         data.pps_count   = data.pps_count  [index[0]]
         data.sweep_start = data.sweep_start[index[0]]
         data.reduction   = data.reduction  [index[0]]
@@ -327,101 +323,18 @@ def hf_sid2_shaping(data, cal_mode):
         data.freq_width  = data.freq_width [index[0]]
 
         n_time = data.Eu_i.shape[0]
-        if cal_mode == 0:
-            print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only BG>")
-        else:
-            print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only CAL>")
+        if cal_mode == 0: print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only BG>")
+        else:             print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "<only CAL>")
+
+    # NAN
+    index = np.where(data.U_selected == 0);  data.Eu_i[index[0]] = math.nan;  data.Eu_q[index[0]] = math.nan
+    index = np.where(data.V_selected == 0);  data.Ev_i[index[0]] = math.nan;  data.Ev_q[index[0]] = math.nan
+    index = np.where(data.W_selected == 0);  data.Ew_i[index[0]] = math.nan;  data.Ew_q[index[0]] = math.nan
     return data
 
 
-
-# [MEMO: ASW1 data]  *** Flight - Ver.1
-"""
-data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2023/'        # CDF data folder
-# *** 20230419 ***
-data_name_list = ['04/19/SID2_20230419T135849-20230419T141229.cdf',
-                  '04/19/SID2_20230419T141231-20230419T141402.cdf',
-                 ]
-# *** 202305-06 ***
-data_name_list = ['05/30/SID2_20230530T100326-20230530T100925.cdf',     # CAL
-                  '05/30/SID2_20230530T100927-20230530T100937.cdf',
-                  '06/01/SID2_20230601T120759-20230601T120857.cdf',
-                  '06/01/SID2_20230601T121435-20230601T121533.cdf',
-                  '06/01/SID2_20230601T122138-20230601T122236.cdf',
-                  '06/01/SID2_20230601T122707-20230601T122805.cdf',
-                 ]
-# *** 20230712-13 ***
-data_name_list = ['07/12/SID2_20230712T090434-20230712T093848.cdf',
-                  '07/12/SID2_20230712T093942-20230712T101355.cdf',
-                  '07/12/SID2_20230712T101449-20230712T104147.cdf',
-                  '07/12/SID2_20230712T104149-20230712T232406.cdf',
-                  '07/12/SID2_20230712T232408-20230712T235156.cdf',
-                  '07/12/SID2_20230712T235158-20230713T001854.cdf',     # type-III
-                  '07/13/SID2_20230713T001856-20230713T004644.cdf',     # type-III
-                  '07/13/SID2_20230713T004648-20230713T011342.cdf',
-                  '07/13/SID2_20230713T011436-20230713T014134.cdf',
-                  '07/13/SID2_20230713T014136-20230713T020924.cdf',
-                  '07/13/SID2_20230713T020928-20230713T023718.cdf',
-                  '07/13/SID2_20230713T023720-20230713T030416.cdf',
-                  '07/13/SID2_20230713T030510-20230713T033208.cdf',
-                  '07/13/SID2_20230713T033210-20230713T040000.cdf',
-                  '07/13/SID2_20230713T040002-20230713T042751.cdf',
-                  '07/13/SID2_20230713T042753-20230713T045449.cdf',
-                  '07/13/SID2_20230713T045543-20230713T050917.cdf',
-                 ]
-"""
-
-# [MEMO: ASW1 data]  *** Ground Test - Ver.1 ***
-"""
-# *** 202105 ***
-data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202105/'
-data_name_list = ['SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32770.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32774.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32775.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32776.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32777.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32778.cdf',
-                 ]
-data_name_list = ['SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32772.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32773.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32774.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32775.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32776.cdf',
-                  'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32777.cdf',
-                 ]
-# *** 202106 ***
-data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202106/'
-data_name_list = ['SID2_SCTBTV_Phase11_xid32831.cdf',
-                  'SID2_SCTBTV_Phase11_xid32832.cdf',
-                  'SID2_SCTBTV_Phase11_xid32833.cdf',
-                  'SID2_SCTBTV_Phase11_xid32834.cdf',
-                 ]
-data_name_list = ['SID2_SCTBTV_Phase13_xid32844.cdf',
-                  'SID2_SCTBTV_Phase13_xid32845.cdf',
-                  'SID2_SCTBTV_Phase13_xid32846.cdf',
-                 ]
-# *** 202111 ***
-data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202111/'
-data_name_list = ['SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32770.cdf',
-                  'SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32771.cdf',
-                  'SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32772.cdf',
-                 ]
-data_name_list = ['SID2_SCPFM_RPWI_30c_xid32776.cdf',
-                  'SID2_SCPFM_RPWI_30c_xid32777.cdf',
-                  'SID2_SCPFM_RPWI_30c_xid32778.cdf',
-                  'SID2_SCPFM_RPWI_30c_xid32779.cdf',
-                 ]
-# *** 202207 ***
-data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202207/'
-data_name_list = ['SID2_SCPFM_RPWI_30c_xid32776.cdf',
-                  'SID2_SCPFM_RPWI_30c_xid32777.cdf',
-                  'SID2_SCPFM_RPWI_30c_xid32778.cdf',
-                  'SID2_SCPFM_RPWI_30c_xid32779.cdf',
-                 ]
-# *** 202208 ***
-data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202208/'
-data_name_list = ['SID2_20220824_HF-FFT-rerun_xid32791.cdf',
-                  'SID2_20220824_HF-FFT-rerun_xid32792.cdf',
-                  'SID2_20220824_HF-FFT-rerun_xid32793.cdf',
-                  ]
-"""
+def hf_sid2_spec_nan(data, i):
+    data.EE        [i] = math.nan; 
+    data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
+    data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
+    data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan

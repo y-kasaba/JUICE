@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2024/9/17
+    JUICE RPWI HF: L1a spec -- 2024/9/22
 """
 import copy
 import math
@@ -60,12 +60,8 @@ def get_stokes(p1, p2, re, im):
     Input:  EuEu, EvEv, EuEv_re, EuEv_im
     Output: I, Q, U, V: Stokes parameters [Any]
     """
-    m = p1.shape[0]
-    n = p1.shape[1]
-    I = np.zeros((m, n))
-    Q = np.zeros((m, n))
-    U = np.zeros((m, n))
-    V = np.zeros((m, n))
+    m = p1.shape[0];       n = p1.shape[1]
+    I = np.zeros((m, n));  Q = np.zeros((m, n));  U = np.zeros((m, n));  V = np.zeros((m, n))
     if p1[0][0] > 0:
         I = p1 + p2     # total
         Q = p1 - p2     # 0deg -  90deg
@@ -79,29 +75,21 @@ def get_pol(I, Q, U, V):
     Input:  I, Q, U, V: Stokes parameters [Any]
     Output: DoP, DoL, DoC, Ang
     """
-    m = I.shape[0];  n = I.shape[1]
-    dop = np.zeros((m, n))
-    dol = ang = np.zeros((m, n))
-    doc = np.zeros((m, n))
-    ang = np.zeros((m, n))
+    m = I.shape[0];            n = I.shape[1]
+    dop = np.zeros((m, n));  dol = np.zeros((m, n));  doc = np.zeros((m, n));  ang = np.zeros((m, n))
     for j in range(m):
-        if I[j][0] > 0 and Q[j][0] > -1e30 and U[j][0] > -1e30 and V[j][0] > -1e30:
+        if I[j][0] > 0:
             dop[j] = (Q[j]*Q[j] + U[j]*U[j] + V[j]*V[j])**0.5 / I[j]   # Degree of Total Polarization
             dol[j] = (Q[j]*Q[j] + U[j]*U[j])**0.5 / I[j]               # Degree of Linear Polarization
             doc[j] = V[j] / I[j]                                       # Degree of Circular Polarization
-
             for i in range(n):
-                if U[j][i] >= 0.0 and Q[j][i] > 0.0:    # 0-90
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi
-                elif U[j][i] <= 0.0 and Q[j][i] > 0.0:  # 270-360
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 180.
-                elif Q[j][i] < 0.0:                     # 90-270
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 90.
+                if math.isnan(U[j][i]):                 ang[j][i] = math.nan
+                elif U[j][i] >= 0.0 and Q[j][i] > 0.0:  ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi           # 0-90
+                elif U[j][i] <= 0.0 and Q[j][i] > 0.0:  ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 180.    # 270-360
+                elif Q[j][i] < 0.0:                     ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 90.     # 90-270
                 else:
-                    if U[j][i] >= 0.0:
-                        ang[j][i] = 45.
-                    else:
-                        ang[j][i] = 135.
+                    if U[j][i] >= 0.0:                  ang[j][i] = 45.
+                    else:                               ang[j][i] = 135.
     return dop, dol, doc, ang
 
 
@@ -123,22 +111,15 @@ def get_pol_3D(I, Q, U, Vu, Vv, Vw):
         dop = (Q*Q + U*U + V_mag*V_mag)**0.5 / I  # Degree of Total Polari.
         dol = (Q*Q + U*U)**0.5 / I                # Degree of Linear Polari.
         doc = V_mag / I                           # Degree of Circular Polari.
-
-        # Linear Polarization Angle (deg)
         for j in range(m):
             for i in range(n):
-                if U[j][i] >= 0.0 and Q[j][i] > 0.0:    # 0-90
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi
-                elif U[j][i] <= 0.0 and Q[j][i] > 0.0:  # 270-360
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 180.
-                elif Q[j][i] < 0.0:                     # 90-270
-                    ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 90.
+                if math.isnan(U[j][i]):                 ang[j][i] = math.nan
+                elif U[j][i] >= 0.0 and Q[j][i] > 0.0:  ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi           # 0-90
+                elif U[j][i] <= 0.0 and Q[j][i] > 0.0:  ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 180.    # 270-360
+                elif Q[j][i] < 0.0:                     ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 90.     # 90-270
                 else:
-                    if U[j][i] >= 0.0:
-                        ang[j][i] = 45.
-                    else:
-                        ang[j][i] = 135.
-
+                    if U[j][i] >= 0.0:                  ang[j][i] = 45.
+                    else:                               ang[j][i] = 135.
                 #k_lat[j][i] = math.asin(Vw[j][i]/(Vu[j][i]*Vu[j][i] + Vv[j][i]*Vv[j][i])**0.5) * 180./math.pi
                 k_lat[j][i] = math.atan2(Vw[j][i], (Vu[j][i]*Vu[j][i] + Vv[j][i]*Vv[j][i])**0.5) * 180./math.pi
                 k_lon[j][i] = math.atan2(Vv[j][i], Vu[j][i]) * 180.0/math.pi
@@ -175,29 +156,17 @@ def hf_getspec_sid2(data):
     window = np.hanning(n_samp*1.0)
     acf = 1.0/(sum(window)/n_samp) # / 1.23
 
-    """
-    # ***DEBUG***
-    Eu = data.Eu_i[0][6]; Eq = data.Eu_q[0][6];  s1 = np.mean(Eu**2.0 + Eq**2.0)
-    s = np.fft.fft((Eu - Eq * 1.0j) * window);  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf 
-    EuEu = np.fft.fftshift(s); s2 = np.sum(EuEu)
-    print(s1, s2, s2/s1, (s2/s1)**.5)
-    s = np.fft.fft((Eu - Eq * 1.0j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = (s_u_re*s_u_re + s_u_im*s_u_im) / n_samp**2.0 * acf**2 
-    EuEu = np.fft.fftshift(s); s2 = np.sum(EuEu)
-    print(s1, s2, s2/s1, (s2/s1)**.5)
-    # ***DEBUG***
-    """
-
-    # -- auto
-    s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EuEu = np.fft.fftshift(s, axes=(2,))
-    s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EvEv = np.fft.fftshift(s, axes=(2,))
-    s = np.fft.fft((data.Ew_i - data.Ew_q * 1j) * window);  s_w_re = s.real; s_w_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EwEw = np.fft.fftshift(s, axes=(2,))
-    # -- cross
-    s = s_u_re * s_v_re + s_u_im * s_v_im;  s = s / n_samp / n_samp * acf * acf;  spec.EuEv_re = np.fft.fftshift(s, axes=(2,))
-    s = s_v_re * s_w_re + s_v_im * s_w_im;  s = s / n_samp / n_samp * acf * acf;  spec.EvEw_re = np.fft.fftshift(s, axes=(2,))
-    s = s_w_re * s_u_re + s_w_im * s_u_im;  s = s / n_samp / n_samp * acf * acf;  spec.EwEu_re = np.fft.fftshift(s, axes=(2,))
-    s = s_u_im * s_v_re - s_u_re * s_v_im;  s = s / n_samp / n_samp * acf * acf;  spec.EuEv_im = np.fft.fftshift(s, axes=(2,))
-    s = s_v_im * s_w_re - s_v_re * s_w_im;  s = s / n_samp / n_samp * acf * acf;  spec.EvEw_im = np.fft.fftshift(s, axes=(2,))
-    s = s_w_im * s_u_re - s_w_re * s_u_im;  s = s / n_samp / n_samp * acf * acf;  spec.EwEu_im = np.fft.fftshift(s, axes=(2,))
+    # -- auto  (rms)
+    s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EuEu = np.fft.fftshift(s, axes=(2,))
+    s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EvEv = np.fft.fftshift(s, axes=(2,))
+    s = np.fft.fft((data.Ew_i - data.Ew_q * 1j) * window);  s_w_re = s.real; s_w_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EwEw = np.fft.fftshift(s, axes=(2,))
+    # -- cross (rms)
+    s = s_u_re * s_v_re + s_u_im * s_v_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EuEv_re = np.fft.fftshift(s, axes=(2,))
+    s = s_v_re * s_w_re + s_v_im * s_w_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EvEw_re = np.fft.fftshift(s, axes=(2,))
+    s = s_w_re * s_u_re + s_w_im * s_u_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EwEu_re = np.fft.fftshift(s, axes=(2,))
+    s = s_u_im * s_v_re - s_u_re * s_v_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EuEv_im = np.fft.fftshift(s, axes=(2,))
+    s = s_v_im * s_w_re - s_v_re * s_w_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EvEw_im = np.fft.fftshift(s, axes=(2,))
+    s = s_w_im * s_u_re - s_w_re * s_u_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EwEu_im = np.fft.fftshift(s, axes=(2,))
 
     # Cut: 75%
     samp1 = n_samp//8           # 0
@@ -258,15 +227,6 @@ def hf_getspec_sid23(data):
     print("freq:", spec.freq.shape, spec.freq_w.shape)
     print("freq:", spec.freq[0][0], spec.freq_w[0][0])
 
-    """
-    # Frequency
-    dt = 1.0 / juice_cdf._sample_rate(data.decimation_AUX[0])
-    spec.freq = np.fft.fftshift(np.fft.fftfreq(data.N_feed[0]*128, d=dt)) / 1000.
-    spec.freq = spec.freq + data.freq_center[0]
-    spec.freq_w = spec.freq[1] - spec.freq[0]
-    print("freq:", spec.freq.shape, spec.freq_w.shape)
-    """
-
     # FFT
     window = np.hanning(n_samp)
     acf = 1/(sum(window)/n_samp)
@@ -301,61 +261,3 @@ def hf_getspec_sid23(data):
 
     print("EuEu:", spec.EuEu.shape)
     return spec
-
-
-# ---------------------------------------------------------------------
-# --- generic
-# ---------------------------------------------------------------------
-"""
-def hf_getspec(data):
-    # input:  data    waveform:      Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q   ([n_time, n_samp], For usual waveform, "*_i" can be set as 0.)
-    #                 sampling rate: sample_rate (/sec)
-    # return: spec   
-    # Spec formation
-    spec = struct()
-    spec.RPWI_FSW_version = data.RPWI_FSW_version
-
-    n_time = data.Eu_i.shape[0]
-    n_samp = data.Eu_i.shape[1]
-
-    # Frequency
-    dt = 1.0 / data.sample_rate
-    spec.freq    = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt))
-    spec.freq_w  = spec.freq[1] - spec.freq[0]
-    print("freq:", spec.freq[0], spec.freq[-1], spec.freq_w[0])
-
-    # FFT
-    window = np.hanning(n_samp)
-    acf = 1/(sum(window)/n_samp)
-    #
-    # -- auto
-    s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EuEu = np.fft.fftshift(s, axes=(1,))
-    s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EvEv = np.fft.fftshift(s, axes=(1,))
-    s = np.fft.fft((data.Ew_i - data.Ew_q * 1j) * window);  s_w_re = s.real; s_w_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EwEw = np.fft.fftshift(s, axes=(1,))
-    spec.EE   = spec.EuEu + spec.EvEv + spec.EwEw
-    # -- cross
-    s = s_u_re * s_v_re + s_u_im * s_v_im;  s = s / n_samp / n_samp * acf * acf;  spec.EuEv_re = np.fft.fftshift(s, axes=(1,))
-    s = s_v_re * s_w_re + s_v_im * s_w_im;  s = s / n_samp / n_samp * acf * acf;  spec.EvEw_re = np.fft.fftshift(s, axes=(1,))
-    s = s_w_re * s_u_re + s_w_im * s_u_im;  s = s / n_samp / n_samp * acf * acf;  spec.EwEu_re = np.fft.fftshift(s, axes=(1,))
-    s = s_u_im * s_v_re - s_u_re * s_v_im;  s = s / n_samp / n_samp * acf * acf;  spec.EuEv_im = np.fft.fftshift(s, axes=(1,))
-    s = s_v_im * s_w_re - s_v_re * s_w_im;  s = s / n_samp / n_samp * acf * acf;  spec.EvEw_im = np.fft.fftshift(s, axes=(1,))
-    s = s_w_im * s_u_re - s_w_re * s_u_im;  s = s / n_samp / n_samp * acf * acf;  spec.EwEu_im = np.fft.fftshift(s, axes=(1,))
-
-    # Stokes Parameters and Polarization
-    spec.E_Iuv   = copy.copy(spec.EE);  spec.E_Quv   = copy.copy(spec.EE);  spec.E_Uuv   = copy.copy(spec.EE);  spec.E_Vuv   = copy.copy(spec.EE) 
-    spec.E_Ivw   = copy.copy(spec.EE);  spec.E_Qvw   = copy.copy(spec.EE);  spec.E_Uvw   = copy.copy(spec.EE);  spec.E_Vvw   = copy.copy(spec.EE) 
-    spec.E_Iwu   = copy.copy(spec.EE);  spec.E_Qwu   = copy.copy(spec.EE);  spec.E_Uwu   = copy.copy(spec.EE);  spec.E_Vwu   = copy.copy(spec.EE) 
-    spec.E_DoPuv = copy.copy(spec.EE);  spec.E_DoLuv = copy.copy(spec.EE);  spec.E_DoCuv = copy.copy(spec.EE);  spec.E_ANGuv = copy.copy(spec.EE) 
-    spec.E_DoPvw = copy.copy(spec.EE);  spec.E_DoLvw = copy.copy(spec.EE);  spec.E_DoCvw = copy.copy(spec.EE);  spec.E_ANGvw = copy.copy(spec.EE) 
-    spec.E_DoPwu = copy.copy(spec.EE);  spec.E_DoLwu = copy.copy(spec.EE);  spec.E_DoCwu = copy.copy(spec.EE);  spec.E_ANGwu = copy.copy(spec.EE) 
-    for i in range(n_time):
-        spec.E_Iuv[i],   spec.E_Quv[i],   spec.E_Uuv[i],   spec.E_Vuv[i]   = get_stokes(spec.EuEu[i],  spec.EvEv[i],  spec.EuEv_re[i], spec.EuEv_im[i])
-        spec.E_Ivw[i],   spec.E_Qvw[i],   spec.E_Uvw[i],   spec.E_Vvw[i]   = get_stokes(spec.EvEv[i],  spec.EwEw[i],  spec.EvEw_re[i], spec.EvEw_im[i])
-        spec.E_Iwu[i],   spec.E_Qwu[i],   spec.E_Uwu[i],   spec.E_Vwu[i]   = get_stokes(spec.EwEw[i],  spec.EuEu[i],  spec.EwEu_re[i], spec.EwEu_im[i])
-        spec.E_DoPuv[i], spec.E_DoLuv[i], spec.E_DoCuv[i], spec.E_ANGuv[i] = get_pol   (spec.E_Iuv[i], spec.E_Quv[i], spec.E_Uuv[i],   spec.E_Vuv[i])
-        spec.E_DoPvw[i], spec.E_DoLvw[i], spec.E_DoCvw[i], spec.E_ANGvw[i] = get_pol   (spec.E_Ivw[i], spec.E_Qvw[i], spec.E_Uvw[i],   spec.E_Vvw[i])
-        spec.E_DoPwu[i], spec.E_DoLwu[i], spec.E_DoCwu[i], spec.E_ANGwu[i] = get_pol   (spec.E_Iwu[i], spec.E_Qwu[i], spec.E_Uwu[i],   spec.E_Vwu[i])
-
-    print("EuEu:", spec.EuEu.shape)
-    return spec
-"""
