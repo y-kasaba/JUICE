@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/9/22
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/9/28
 """
 import numpy as np
 import math
@@ -37,12 +37,13 @@ def hf_sid2_read(cdf, RPWI_FSW_version):
     data.proc_param0 = cdf['proc_param0'][...];  data.proc_param1 = cdf['proc_param1'][...]
     data.proc_param2 = cdf['proc_param2'][...];  data.proc_param3 = cdf['proc_param3'][...]
     data.BG_downlink = cdf['BG_downlink'][...]
-    data.N_block     = cdf['N_block'][...]
-    data.T_RWI_CH1   = np.float16(cdf['T_RWI_CH1'][...])    
-    data.T_RWI_CH2   = np.float16(cdf['T_RWI_CH2'][...])  
-    data.T_HF_FPGA   = np.float16(cdf['T_HF_FPGA'][...])
+    data.N_block     = np.int64(cdf['N_block'][...])
+    data.T_RWI_CH1   = np.float64(cdf['T_RWI_CH1'][...])
+    data.T_RWI_CH2   = np.float64(cdf['T_RWI_CH2'][...])
+    data.T_HF_FPGA   = np.float64(cdf['T_HF_FPGA'][...])
     # Header
-    data.N_samp      = cdf['N_samp'][...];     data.N_step    = cdf['N_step'][...]
+    data.N_samp      = np.int64(cdf['N_samp'][...])
+    data.N_step      = np.int64(cdf['N_step'][...])
     data.decimation  = cdf['decimation'][...]; data.pol       = cdf['pol'][...]
     data.B0_startf   = cdf['B0_startf'][...];  data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...];
     data.B0_repeat   = cdf['B0_repeat'][...];  data.B0_subdiv = cdf['B0_subdiv'][...]

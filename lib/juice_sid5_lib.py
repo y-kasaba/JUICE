@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2024/9/19
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2024/9/28
 """
 import numpy as np
 
@@ -28,35 +28,35 @@ def hf_sid5_read(cdf, RPWI_FSW_version):
     data.sweep_table = cdf['sweep_table'][...]      # (fixed: not defined in V.2)
     data.FFT_window = cdf['FFT_window'][...]
     data.RFI_rejection = cdf['RFI_rejection'][...]
-    data.N_freq = cdf['N_freq'][...]
+    data.N_freq     = cdf['N_freq'][...]
     data.freq_start = cdf['freq_start'][...]        # [same with ‘B0_startf’]
-    data.freq_stop = cdf['freq_stop'][...]          # [same with ‘B0_stopf’]
+    data.freq_stop  = cdf['freq_stop'][...]          # [same with ‘B0_stopf’]
     data.subdiv_reduction = cdf['subdiv_reduction'][...]
     #
-    data.T_RWI_CH1 = cdf['T_RWI_CH1'][...]
-    data.T_RWI_CH2 = cdf['T_RWI_CH2'][...]
-    data.T_HF_FPGA = cdf['T_HF_FPGA'][...]
+    data.T_RWI_CH1 = np.float64(cdf['T_RWI_CH1'][...])
+    data.T_RWI_CH2 = np.float64(cdf['T_RWI_CH2'][...])
+    data.T_HF_FPGA = np.float64(cdf['T_HF_FPGA'][...])
 
     # Header
-    data.N_samp = cdf['N_samp'][...]
-    data.N_step = cdf['N_step'][...]
+    data.N_samp = np.int64(cdf['N_samp'][...])
+    data.N_step = np.int64(cdf['N_step'][...])
     data.decimation = cdf['decimation'][...]
     data.pol = cdf['pol'][...]
     data.B0_startf = cdf['B0_startf'][...]
-    data.B0_stopf = cdf['B0_stopf'][...]
-    data.B0_step = cdf['B0_step'][...]
+    data.B0_stopf  = cdf['B0_stopf'][...]
+    data.B0_step   = cdf['B0_step'][...]
     data.B0_repeat = cdf['B0_repeat'][...]
     data.B0_subdiv = cdf['B0_subdiv'][...]
 
     # Data
-    data.frequency = cdf['frequency'][...]
-    data.freq_step = cdf['freq_step'][...]
+    data.frequency  = cdf['frequency'][...]
+    data.freq_step  = cdf['freq_step'][...]
     data.freq_width = cdf['freq_width'][...]
     #
     data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
+    data.scet  = cdf['SCET'][...]
     #
-    data.EE = cdf['EE'][...]
+    data.EE    = np.float64(cdf['EE'][...])
 
     return data
 

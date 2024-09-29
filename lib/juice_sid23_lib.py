@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2024/9/18
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2024/9/28
 """
 import numpy          as np
 import scipy.stats    as stats
@@ -28,13 +28,13 @@ def hf_sid23_read(cdf, RPWI_FSW_version):
     data.cal_signal  = cdf['cal_signal'][...]
     data.pol_AUX     = cdf['pol_AUX'][...]
     data.decimation_AUX = cdf['decimation_AUX'][...]
-    data.N_block     = cdf['N_block'][...]
+    data.N_block     = np.int64(cdf['N_block'][...])
     data.freq_center = cdf['freq_center'][...]
-    data.N_feed      = cdf['N_feed'][...]
-    data.N_skip      = cdf['N_skip'][...]
+    data.N_feed      = np.int64(cdf['N_feed'][...])
+    data.N_skip      = np.int64(cdf['N_skip'][...])
     # Header
-    data.N_samp      = cdf['N_samp'][...]
-    data.N_step      = cdf['N_step'][...]
+    data.N_samp      = np.int64(cdf['N_samp'][...])
+    data.N_step      = np.int64(cdf['N_step'][...])
     data.decimation  = cdf['decimation'][...]
     data.pol         = cdf['pol'][...]
     # Data
@@ -172,7 +172,7 @@ def hf_sid23_shaping(data, f_max, f_min):
 
     # Time   
     time  = np.arange(0, n_num0, 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
-    time0 = np.float32(np.arange(0, n_num, 1))
+    time0 = np.float64(np.arange(0, n_num, 1))
     for i in range(data.N_block[0]):
         time0[n_num0*i:n_num0*(i+1)] = time + i * n_num1 / juice_cdf._sample_rate(data.decimation_AUX[0])
     time0 = np.array(time0).reshape(data.N_block[0], data.N_feed[0]*128)

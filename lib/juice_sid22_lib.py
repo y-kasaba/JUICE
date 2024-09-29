@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2024/9/19
+    JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2024/9/28
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -22,31 +22,31 @@ def hf_sid22_read(cdf, RPWI_FSW_version):
 
     # AUX
     data.ch_selected = cdf['ch_selected'][...]      # [0:U  1:V  2:W]
-    data.cal_signal = cdf['cal_signal'][...]
-    data.pol_AUX = cdf['pol_AUX'][...]
+    data.cal_signal  = cdf['cal_signal'][...]
+    data.pol_AUX     = cdf['pol_AUX'][...]
     data.decimation_AUX = cdf['decimation_AUX'][...]
-    data.N_samp_AUX = cdf['N_samp_AUX'][...]
-    data.N_auto_corr = cdf['N_auto_corr'][...]
-    data.N_step_AUX = cdf['N_step_AUX'][...]
-    data.freq_start = cdf['freq_start'][...]
-    data.freq_stop = cdf['freq_stop'][...]
+    data.N_samp_AUX  = np.int64(cdf['N_samp_AUX'][...])
+    data.N_auto_corr = np.int64(cdf['N_auto_corr'][...])
+    data.N_step_AUX  = np.int64(cdf['N_step_AUX'][...])
+    data.freq_start  = cdf['freq_start'][...]
+    data.freq_stop   = cdf['freq_stop'][...]
 
     # Header
-    data.N_samp = cdf['N_samp'][...]            # not used
-    data.N_step = cdf['N_step'][...]            # [same with ‘N_step_AUX’]
-    data.decimation = cdf['decimation'][...]    # [same with ‘decimation_AUX’]
-    data.pol = cdf['pol'][...]                  # [same with ‘pol_AUX’]	
-    data.B0_startf = cdf['B0_startf'][...]
-    data.B0_stopf = cdf['B0_stopf'][...]
-    data.B0_step = cdf['B0_step'][...]
-    data.B0_repeat = cdf['B0_repeat'][...]
-    data.B0_subdiv = cdf['B0_subdiv'][...]
+    data.N_samp      = np.int64(cdf['N_samp'][...]) # not used
+    data.N_step      = np.int64(cdf['N_step'][...]) # [same with ‘N_step_AUX’]
+    data.decimation  = cdf['decimation'][...]       #  [same with ‘decimation_AUX’]
+    data.pol         = cdf['pol'][...]              # [same with ‘pol_AUX’]	
+    data.B0_startf   = cdf['B0_startf'][...]
+    data.B0_stopf    = cdf['B0_stopf'][...]
+    data.B0_step     = cdf['B0_step'][...]
+    data.B0_repeat   = cdf['B0_repeat'][...]
+    data.B0_subdiv   = cdf['B0_subdiv'][...]
 
     # Data
-    data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
+    data.epoch       = cdf['Epoch'][...]
+    data.scet        = cdf['SCET'][...]
     #
-    data.auto_corr = cdf['auto_corr'][...]
+    data.auto_corr      = np.float64(cdf['auto_corr'][...])
     data.freq_auto_corr = cdf['freq_auto_corr'][...]
 
     return data

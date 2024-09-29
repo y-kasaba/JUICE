@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2024/9/19
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2024/9/29
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -21,23 +21,23 @@ def hf_sid7_read(cdf, RPWI_FSW_version):
     data.RPWI_FSW_version = RPWI_FSW_version
 
     # AUX
-    data.U_selected = cdf['U_selected'][...]
-    data.V_selected = cdf['V_selected'][...]
-    data.W_selected = cdf['W_selected'][...]
-    data.cal_signal = cdf['cal_signal'][...]
+    data.U_selected  = cdf['U_selected'][...]
+    data.V_selected  = cdf['V_selected'][...]
+    data.W_selected  = cdf['W_selected'][...]
+    data.cal_signal  = cdf['cal_signal'][...]
     data.pol_AUX     = cdf['pol_AUX'][...]
     data.decimation_AUX = cdf['decimation_AUX'][...]
-    data.N_block     = cdf['N_block'][...]
+    data.N_block     = np.int16(cdf['N_block'][...])
     data.interval    = cdf['interval'][...]
     data.freq_center = cdf['freq_center'][...]
-    data.N_samp_AUX  = cdf['N_samp_AUX'][...]
-    data.T_RWI_CH1   = cdf['T_RWI_CH1'][...]
-    data.T_RWI_CH2   = cdf['T_RWI_CH2'][...]
-    data.T_HF_FPGA   = cdf['T_HF_FPGA'][...]
+    data.N_samp_AUX  = np.int16(cdf['N_samp_AUX'][...])
+    data.T_RWI_CH1   = np.float64(cdf['T_RWI_CH1'][...])
+    data.T_RWI_CH2   = np.float64(cdf['T_RWI_CH2'][...])
+    data.T_HF_FPGA   = np.float64(cdf['T_HF_FPGA'][...])
 
     # Header
-    data.N_samp      = cdf['N_samp'][...]            # not used
-    data.N_step      = cdf['N_step'][...]            # [same with ‘N_step_AUX’]
+    data.N_samp      = np.int64(cdf['N_samp'][...]) # not used
+    data.N_step      = np.int64(cdf['N_step'][...]) # [same with ‘N_step_AUX’]
     data.decimation  = cdf['decimation'][...]    # [same with ‘decimation_AUX’]
     data.pol         = cdf['pol'][...]                  # [same with ‘pol_AUX’]	
 
@@ -45,7 +45,7 @@ def hf_sid7_read(cdf, RPWI_FSW_version):
     data.epoch       = cdf['Epoch'][...]
     data.scet        = cdf['SCET'][...]
     #
-    data.auto_corr   = cdf['auto_corr'][...]
+    data.auto_corr   = np.float64(cdf['auto_corr'][...])
     return data
 
 

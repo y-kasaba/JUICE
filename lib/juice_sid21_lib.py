@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2024/9/18
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2024/9/28
 """
 import numpy as np
 import juice_spec_lib as juice_spec
@@ -45,34 +45,34 @@ def hf_sid21_read(cdf, RPWI_FSW_version):
     data.freq_start = cdf['freq_start'][...]      # [same with ‘B0_startf’]
 
     # Header
-    data.N_samp = cdf['N_samp'][...]
-    data.N_step = cdf['N_step'][...]
+    data.N_samp = np.int64(cdf['N_samp'][...])
+    data.N_step = np.int64(cdf['N_step'][...])
     data.decimation = cdf['decimation'][...]
-    data.pol = cdf['pol'][...]
+    data.pol       = cdf['pol'][...]
     data.B0_startf = cdf['B0_startf'][...]
-    data.B0_stopf = cdf['B0_stopf'][...]
-    data.B0_step = cdf['B0_step'][...]
+    data.B0_stopf  = cdf['B0_stopf'][...]
+    data.B0_step   = cdf['B0_step'][...]
     data.B0_repeat = cdf['B0_repeat'][...]
     data.B0_subdiv = cdf['B0_subdiv'][...]
 
     # Data
-    data.frequency = cdf['frequency'][...]
-    data.freq_step = cdf['freq_step'][...]
+    data.frequency  = cdf['frequency'][...]
+    data.freq_step  = cdf['freq_step'][...]
     data.freq_width = cdf['freq_width'][...]
     #
     data.epoch = cdf['Epoch'][...]
-    data.scet = cdf['SCET'][...]
+    data.scet  = cdf['SCET'][...]
     #
-    data.EuEu = cdf['EuEu'][...]
-    data.EvEv = cdf['EvEv'][...]
-    data.EwEw = cdf['EwEw'][...]
+    data.EuEu = np.float64(cdf['EuEu'][...])
+    data.EvEv = np.float64(cdf['EvEv'][...])
+    data.EwEw = np.float64(cdf['EwEw'][...])
     if data.complex[0] > 0:    # Matrix
-        data.EuEv_re = cdf['EuEv_re'][...]
-        data.EuEv_im = cdf['EuEv_im'][...]
-        data.EvEw_re = cdf['EvEw_re'][...]
-        data.EvEw_im = cdf['EvEw_im'][...]
-        data.EwEu_re = cdf['EwEu_re'][...]
-        data.EwEu_im = cdf['EwEu_im'][...]
+        data.EuEv_re = np.float64(cdf['EuEv_re'][...])
+        data.EuEv_im = np.float64(cdf['EuEv_im'][...])
+        data.EvEw_re = np.float64(cdf['EvEw_re'][...])
+        data.EvEw_im = np.float64(cdf['EvEw_im'][...])
+        data.EwEu_re = np.float64(cdf['EwEu_re'][...])
+        data.EwEu_im = np.float64(cdf['EwEu_im'][...])
 
     return data
 

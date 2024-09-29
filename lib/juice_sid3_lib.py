@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/9/22
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/9/28
 """
 import numpy as np
 import math
@@ -36,13 +36,14 @@ def hf_sid3_read(cdf, RPWI_FSW_version):
     data.proc_param0 = cdf['proc_param0'][...];  data.proc_param1 = cdf['proc_param1'][...]
     data.proc_param2 = cdf['proc_param2'][...];  data.proc_param3 = cdf['proc_param3'][...]
     data.BG_downlink = cdf['BG_downlink'][...]
-    data.N_block     = cdf['N_block'][...]
-    data.T_RWI_CH1   = np.float16(cdf['T_RWI_CH1'][...])
-    data.T_RWI_CH2   = np.float16(cdf['T_RWI_CH2'][...])
-    data.T_HF_FPGA   = np.float16(cdf['T_HF_FPGA'][...])
+    data.N_block     = np.int64(cdf['N_block'][...])
+    data.T_RWI_CH1   = np.float64(cdf['T_RWI_CH1'][...])
+    data.T_RWI_CH2   = np.float64(cdf['T_RWI_CH2'][...])
+    data.T_HF_FPGA   = np.float64(cdf['T_HF_FPGA'][...])
 
     # Header
-    data.N_samp      = cdf['N_samp'][...];     data.N_step    = cdf['N_step'][...]
+    data.N_samp      = np.int64(cdf['N_samp'][...])
+    data.N_step      = np.int64(cdf['N_step'][...])
     data.decimation  = cdf['decimation'][...]; data.pol       = cdf['pol'][...]
     data.B0_startf   = cdf['B0_startf'][...];  data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...]
     data.B0_repeat   = cdf['B0_repeat'][...];  data.B0_subdiv = cdf['B0_subdiv'][...]
@@ -58,41 +59,41 @@ def hf_sid3_read(cdf, RPWI_FSW_version):
     data.frequency   = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...]; data.freq_width  = cdf['freq_width'][...]
     data.epoch       = cdf['Epoch'][...];      data.scet      = cdf['SCET'][...]
     # complex < 2:     # Power
-    data.EuEu        = cdf['EuEu'][...];       data.EvEv       = cdf['EvEv'][...];       data.EwEw = cdf['EwEw'][...]
+    data.EuEu        = np.float64(cdf['EuEu'][...]);       data.EvEv       = np.float64(cdf['EvEv'][...]);       data.EwEw = np.float64(cdf['EwEw'][...])
     # complex == 1:    # Matrix
-    data.EuEv_re     = cdf['EuEv_re'][...];    data.EvEw_re    = cdf['EvEw_re'][...];    data.EwEu_re    = cdf['EwEu_re'][...];    
-    data.EuEv_im     = cdf['EuEv_im'][...];    data.EvEw_im    = cdf['EvEw_im'][...];    data.EwEu_im    = cdf['EwEu_im'][...]
+    data.EuEv_re     = np.float64(cdf['EuEv_re'][...]);    data.EvEw_re    = np.float64(cdf['EvEw_re'][...]);    data.EwEu_re    = np.float64(cdf['EwEu_re'][...])   
+    data.EuEv_im     = np.float64(cdf['EuEv_im'][...]);    data.EvEw_im    = np.float64(cdf['EvEw_im'][...]);    data.EwEu_im    = np.float64(cdf['EwEu_im'][...])
     # complex == 2:    # Matrix - N/R/L-separated
     # *** NC
-    data.EuEu_NC     = cdf['EuEu_NC'][...];    data.EvEv_NC    = cdf['EvEv_NC'][...];    data.EwEw_NC    = cdf['EwEw_NC'][...]
-    data.EuEv_re_NC  = cdf['EuEv_re_NC'][...]; data.EvEw_re_NC = cdf['EvEw_re_NC'][...]; data.EwEu_re_NC = cdf['EwEu_re_NC'][...]
-    data.EuEv_im_NC  = cdf['EuEv_im_NC'][...]; data.EvEw_im_NC = cdf['EvEw_im_NC'][...]; data.EwEu_im_NC = cdf['EwEu_im_NC'][...]
+    data.EuEu_NC     = np.float64(cdf['EuEu_NC'][...]);    data.EvEv_NC    = np.float64(cdf['EvEv_NC'][...]);    data.EwEw_NC    = np.float64(cdf['EwEw_NC'][...])
+    data.EuEv_re_NC  = np.float64(cdf['EuEv_re_NC'][...]); data.EvEw_re_NC = np.float64(cdf['EvEw_re_NC'][...]); data.EwEu_re_NC = np.float64(cdf['EwEu_re_NC'][...])
+    data.EuEv_im_NC  = np.float64(cdf['EuEv_im_NC'][...]); data.EvEw_im_NC = np.float64(cdf['EvEw_im_NC'][...]); data.EwEu_im_NC = np.float64(cdf['EwEu_im_NC'][...])
     # *** RC
-    data.EuEu_RC     = cdf['EuEu_RC'][...];    data.EvEv_RC    = cdf['EvEv_RC'][...];    data.EwEw_RC    = cdf['EwEw_RC'][...]
-    data.EuEv_re_RC  = cdf['EuEv_re_RC'][...]; data.EvEw_re_RC = cdf['EvEw_re_RC'][...]; data.EwEu_re_RC = cdf['EwEu_re_RC'][...]
-    data.EuEv_im_RC  = cdf['EuEv_im_RC'][...]; data.EvEw_im_RC = cdf['EvEw_im_RC'][...]; data.EwEu_im_RC = cdf['EwEu_im_RC'][...]
+    data.EuEu_RC     = np.float64(cdf['EuEu_RC'][...]);    data.EvEv_RC    = np.float64(cdf['EvEv_RC'][...]);    data.EwEw_RC    = np.float64(cdf['EwEw_RC'][...])
+    data.EuEv_re_RC  = np.float64(cdf['EuEv_re_RC'][...]); data.EvEw_re_RC = np.float64(cdf['EvEw_re_RC'][...]); data.EwEu_re_RC = np.float64(cdf['EwEu_re_RC'][...])
+    data.EuEv_im_RC  = np.float64(cdf['EuEv_im_RC'][...]); data.EvEw_im_RC = np.float64(cdf['EvEw_im_RC'][...]); data.EwEu_im_RC = np.float64(cdf['EwEu_im_RC'][...])
     # *** LC
-    data.EuEu_LC     = cdf['EuEu_LC'][...];    data.EvEv_LC    = cdf['EvEv_LC'][...];    data.EwEw_LC    = cdf['EwEw_LC'][...]
-    data.EuEv_re_LC  = cdf['EuEv_re_LC'][...]; data.EvEw_re_LC = cdf['EvEw_re_LC'][...]; data.EwEu_re_LC = cdf['EwEu_re_LC'][...]
-    data.EuEv_im_LC  = cdf['EuEv_im_LC'][...]; data.EvEw_im_LC = cdf['EvEw_im_LC'][...]; data.EwEu_im_LC = cdf['EwEu_im_LC'][...]
+    data.EuEu_LC     = np.float64(cdf['EuEu_LC'][...]);    data.EvEv_LC    = np.float64(cdf['EvEv_LC'][...]);    data.EwEw_LC    = np.float64(cdf['EwEw_LC'][...])
+    data.EuEv_re_LC  = np.float64(cdf['EuEv_re_LC'][...]); data.EvEw_re_LC = np.float64(cdf['EvEw_re_LC'][...]); data.EwEu_re_LC = np.float64(cdf['EwEu_re_LC'][...])
+    data.EuEv_im_LC  = np.float64(cdf['EuEv_im_LC'][...]); data.EvEw_im_LC = np.float64(cdf['EvEw_im_LC'][...]); data.EwEu_im_LC = np.float64(cdf['EwEu_im_LC'][...])
     #
-    data.num_NC      = cdf['num_NC'][...];     data.num_RC     = cdf['num_RC'][...];     data.num_LC     = cdf['num_LC'][...]
+    data.num_NC      = cdf['num_NC'][...];                 data.num_RC     = cdf['num_RC'][...];                 data.num_LC     = cdf['num_LC'][...]
     # complex == 3:    # 3D-matrix
-    data.EuiEui      = cdf['EuiEui'][...];     data.EuqEuq     = cdf['EuqEuq'][...]
-    data.EviEvi      = cdf['EviEvi'][...];     data.EvqEvq     = cdf['EvqEvq'][...]
-    data.EwiEwi      = cdf['EwiEwi'][...];     data.EwqEwq     = cdf['EwqEwq'][...]
+    data.EuiEui      = np.float64(cdf['EuiEui'][...]);     data.EuqEuq     = np.float64(cdf['EuqEuq'][...])
+    data.EviEvi      = np.float64(cdf['EviEvi'][...]);     data.EvqEvq     = np.float64(cdf['EvqEvq'][...])
+    data.EwiEwi      = np.float64(cdf['EwiEwi'][...]);     data.EwqEwq     = np.float64(cdf['EwqEwq'][...])
     #
-    data.EuiEvi      = cdf['EuiEvi'][...];     data.EviEwi     = cdf['EviEwi'][...]
-    data.EwiEui      = cdf['EwiEui'][...];     data.EuqEvq     = cdf['EuqEvq'][...]
-    data.EvqEwq      = cdf['EvqEwq'][...];     data.EwqEuq     = cdf['EwqEuq'][...]
+    data.EuiEvi      = np.float64(cdf['EuiEvi'][...]);     data.EviEwi     = np.float64(cdf['EviEwi'][...])
+    data.EwiEui      = np.float64(cdf['EwiEui'][...]);     data.EuqEvq     = np.float64(cdf['EuqEvq'][...])
+    data.EvqEwq      = np.float64(cdf['EvqEwq'][...]);     data.EwqEuq     = np.float64(cdf['EwqEuq'][...])
     #
-    data.EuiEvq      = cdf['EuiEvq'][...];     data.EuqEvi     = cdf['EuqEvi'][...]
-    data.EviEwq      = cdf['EviEwq'][...];     data.EvqEwi     = cdf['EvqEwi'][...]
-    data.EwiEuq      = cdf['EwiEuq'][...];     data.EwqEui     = cdf['EwqEui'][...]
+    data.EuiEvq      = np.float64(cdf['EuiEvq'][...]);     data.EuqEvi     = np.float64(cdf['EuqEvi'][...])
+    data.EviEwq      = np.float64(cdf['EviEwq'][...]);     data.EvqEwi     = np.float64(cdf['EvqEwi'][...])
+    data.EwiEuq      = np.float64(cdf['EwiEuq'][...]);     data.EwqEui     = np.float64(cdf['EwqEui'][...])
     #
-    data.EuiEuq      = cdf['EuiEuq'][...];     data.EviEvq     = cdf['EviEvq'][...];    data.EwiEwq     = cdf['EwiEwq'][...]
+    data.EuiEuq      = np.float64(cdf['EuiEuq'][...]);     data.EviEvq     = np.float64(cdf['EviEvq'][...]);    data.EwiEwq     = np.float64(cdf['EwiEwq'][...])
     #
-    data.BG_Eu       = cdf['BG_Eu'][...];      data.BG_Ev      = cdf['BG_Ev'][...];     data.BG_Ew      = cdf['BG_Ew'][...]
+    data.BG_Eu       = np.float64(cdf['BG_Eu'][...]);      data.BG_Ev      = np.float64(cdf['BG_Ev'][...]);     data.BG_Ew      = np.float64(cdf['BG_Ew'][...])
     return data
 
 
@@ -491,7 +492,6 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
 
 
 def hf_sid3_spec_nan(data, i):
-    data.EE        [i] = math.nan; 
     data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
     data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
     data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan

@@ -1,21 +1,18 @@
 """
-    JUICE SPICE LIB -- 2024/2/27
+    JUICE SPICE LIB -- 2024/9/23
 """
 import numpy as np
 import math
 import spiceypy as spice
-import datetime
+# import datetime
 from planetary_coverage import MetaKernel
-
 
 # ---------------------------------------------------------
 # Load NAIF SPICE kernels for S/C
 # ---------------------------------------------------------
 def spice_ini(source_dir):
-
     # load spice kernel files
     spice.furnsh(source_dir + 'spk/juice_crema_5_1_150lb_23_1_v01.bsp')
-    #
     spice.furnsh(source_dir + 'spk/jup365_19900101_20500101.bsp')
     spice.furnsh(source_dir + 'spk/de432s.bsp')
     spice.furnsh(source_dir + 'lsk/naif0012.tls')
@@ -23,7 +20,6 @@ def spice_ini(source_dir):
     return
 
 def spice_predict_ini(source_dir):
-
     # load spice kernel files
     # spice.furnsh(source_dir + "mk/juice_ops.tm")
     # spice.furnsh(source_dir + "mk/juice_plan.tm")
@@ -33,7 +29,7 @@ def spice_predict_ini(source_dir):
     spice.furnsh(source_dir + "spk/jup365_19900101_20500101.bsp")
     spice.furnsh(source_dir + "spk/de432s.bsp")
     spice.furnsh(source_dir + "lsk/naif0012.tls")
-    spice.furnsh(source_dir + "pck/pck00010.tpc")
+    spice.furnsh(source_dir + "pck/pck00011.tpc")
 
     return
 

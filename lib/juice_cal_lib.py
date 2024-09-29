@@ -1,14 +1,16 @@
-# JUICE RPWI HF CAL lib -- 2024/9/22
+# JUICE RPWI HF CAL lib -- 2024/9/29
 
+import copy
 import csv
-import math
 import numpy as np
 
 class struct:
     pass
 
 
+# -----------------------------------------------------------------------------
 # power label
+# -----------------------------------------------------------------------------
 def power_label(unit_mode, band_mode):
     """
     Input:  unit_mode       0: raw     1: V＠ADC     2: V@HF    3: V@RWI    4: V/m@RWI
@@ -30,6 +32,9 @@ def power_label(unit_mode, band_mode):
     return str
 
 
+# -----------------------------------------------------------------------------
+# Setting Wave CAL (non FFT/IFFT)
+# -----------------------------------------------------------------------------
 def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     """
     Input:  data            Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q
@@ -85,6 +90,10 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     return wave_cal
 
 
+# -----------------------------------------------------------------------------
+# Setting Spectrum CAL
+# -----------------------------------------------------------------------------
+# complex version
 def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     """
     Input:  spec            EuEu, EuEv, EwEw, EuEv_re, EuEv_im, EvEw_re, EvEw_im, EwEu_re, EwEu_im, freq, freq_w
@@ -99,13 +108,12 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     # ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
     # ******************************************************************************************
     print("ASW:", spec.RPWI_FSW_version)
-
     if sid==5: n_time = spec.EE.shape[0];  
     else:      n_time = spec.EuEu.shape[0];  
     
     freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
-    # cal_factors depending on SID
+    # BUG correction in ASW2 SID-3
     cal_factor = 1.0
     if unit_mode > 0:
         if sid==3 and spec.RPWI_FSW_version == '2.0':  cal_factor = 0.1        # TMP --- SID-3 has x10 strength in Onboard CAL 
@@ -113,89 +121,55 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     # Spectral CAL parameters from Ground + Onboard Test
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
     if band_mode > 0:
+        # BUG correction in ASW2 SID-3
         if sid==3 and spec.RPWI_FSW_version == '2.0':  CAL_f_gain = CAL_f_gain / 300.     # TMP
         else:                                          CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
-        print(freq_w)
 
-    CAL_gain_u   = CAL_f_gain[0] * cal_factor;      CAL_gain_v   = CAL_f_gain[1] * cal_factor;      CAL_gain_w   = CAL_f_gain[2] * cal_factor
-    CAL_phase_uv = CAL_f_phase[1] - CAL_f_phase[0]; CAL_phase_vw = CAL_f_phase[2] - CAL_f_phase[1]; CAL_phase_uw = CAL_f_phase[2] - CAL_f_phase[0]
-    CAL_UV_re = np.zeros(n_freq); CAL_UV_im = np.zeros(n_freq)
-    CAL_VW_re = np.zeros(n_freq); CAL_VW_im = np.zeros(n_freq)
-    CAL_WU_re = np.zeros(n_freq); CAL_WU_im = np.zeros(n_freq)
-    for j in range(n_freq):                # frequency
-        CAL_UV_re[j] =  math.cos(math.pi * CAL_phase_uv[j]/180) * CAL_gain_u[j] * CAL_gain_v[j]
-        CAL_UV_im[j] =  math.sin(math.pi * CAL_phase_uv[j]/180) * CAL_gain_u[j] * CAL_gain_v[j]
-        CAL_VW_re[j] =  math.cos(math.pi * CAL_phase_vw[j]/180) * CAL_gain_v[j] * CAL_gain_w[j]
-        CAL_VW_im[j] =  math.sin(math.pi * CAL_phase_vw[j]/180) * CAL_gain_v[j] * CAL_gain_w[j]
-        CAL_WU_re[j] =  math.cos(math.pi * CAL_phase_uw[j]/180) * CAL_gain_u[j] * CAL_gain_w[j]
-        CAL_WU_im[j] = -math.sin(math.pi * CAL_phase_uw[j]/180) * CAL_gain_u[j] * CAL_gain_w[j]
+    # Complex CAL parameters
+    CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
+    CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
+    CAL_f_gainC  = CAL_f_gainC * cal_factor
+    CAL_f_gainC2 = np.conjugate(CAL_f_gainC)
+    CAL_f_gain0  = CAL_f_gain  * cal_factor
 
-    spec_cal = struct()
     if sid==5:
-        spec.EE      = spec.EE      * CAL_gain_u**2
+        spec.EE   = spec.EE   * CAL_f_gain0[0]**2
     else:
-        spec.EuEu    = spec.EuEu    * CAL_gain_u**2
-        spec.EvEv    = spec.EvEv    * CAL_gain_v**2
-        spec.EwEw    = spec.EwEw    * CAL_gain_w**2
-        spec_cal.EuEv_re = spec.EuEv_re * CAL_UV_re + spec.EuEv_im * CAL_UV_im
-        spec_cal.EuEv_im = spec.EuEv_im * CAL_UV_re - spec.EuEv_re * CAL_UV_im
-        spec_cal.EvEw_re = spec.EvEw_re * CAL_VW_re + spec.EvEw_im * CAL_VW_im
-        spec_cal.EvEw_im = spec.EvEw_im * CAL_VW_re - spec.EvEw_re * CAL_VW_im
-        spec_cal.EwEu_re = spec.EwEu_re * CAL_WU_re + spec.EwEu_im * CAL_WU_im
-        spec_cal.EwEu_im = spec.EwEu_im * CAL_WU_re - spec.EwEu_re * CAL_WU_im
-        spec.EuEv_re = spec_cal.EuEv_re;  spec.EvEw_re = spec_cal.EvEw_re;  spec.EwEu_re = spec_cal.EwEu_re
-        spec.EuEv_im = spec_cal.EuEv_im;  spec.EvEw_im = spec_cal.EvEw_im;  spec.EwEu_im = spec_cal.EwEu_im
+        spec.EuEu = spec.EuEu * CAL_f_gain0[0]**2;  spec.EvEv = spec.EvEv * CAL_f_gain0[1]**2;      spec.EwEw = spec.EwEw * CAL_f_gain0[2]**2
+        EuEv = spec.EuEv_re + spec.EuEv_im * 1j;    EuEv = EuEv * CAL_f_gainC[0] * CAL_f_gainC[1];  spec.EuEv_re = EuEv.real; spec.EuEv_im = EuEv.imag
+        EvEw = spec.EvEw_re + spec.EvEw_im * 1j;    EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC[2];  spec.EvEw_re = EvEw.real; spec.EvEw_im = EvEw.imag
+        EwEu = spec.EwEu_re + spec.EwEu_im * 1j;    EwEu = EwEu * CAL_f_gainC[2] * CAL_f_gainC[0];  spec.EwEu_re = EwEu.real; spec.EwEu_im = EwEu.imag
         #
         if sid == 3:
-            spec.EuEu_NC = spec.EuEu_NC * CAL_gain_u**2; spec.EvEv_NC = spec.EvEv_NC * CAL_gain_v**2;  spec.EwEw_NC = spec.EwEw_NC * CAL_gain_w**2
-            spec.EuEu_RC = spec.EuEu_RC * CAL_gain_u**2; spec.EvEv_RC = spec.EvEv_RC * CAL_gain_v**2;  spec.EwEw_RC = spec.EwEw_RC * CAL_gain_w**2
-            spec.EuEu_LC = spec.EuEu_LC * CAL_gain_u**2; spec.EvEv_LC = spec.EvEv_LC * CAL_gain_v**2;  spec.EwEw_LC = spec.EwEw_LC * CAL_gain_w**2
+            spec.EuEu_NC = spec.EuEu_NC * CAL_f_gain0[0]**2;  spec.EvEv_NC = spec.EvEv_NC * CAL_f_gain0[1]**2;  spec.EwEw_NC = spec.EwEw_NC * CAL_f_gain0[2]**2
+            spec.EuEu_RC = spec.EuEu_RC * CAL_f_gain0[0]**2;  spec.EvEv_RC = spec.EvEv_RC * CAL_f_gain0[1]**2;  spec.EwEw_RC = spec.EwEw_RC * CAL_f_gain0[2]**2
+            spec.EuEu_LC = spec.EuEu_LC * CAL_f_gain0[0]**2;  spec.EvEv_LC = spec.EvEv_LC * CAL_f_gain0[1]**2;  spec.EwEw_LC = spec.EwEw_LC * CAL_f_gain0[2]**2
+            spec.BG_Eu   = spec.BG_Eu   * CAL_f_gain0[0]**2;  spec.BG_Ev   = spec.BG_Ev   * CAL_f_gain0[1]**2;  spec.BG_Ew   = spec.BG_Ew   * CAL_f_gain0[2]**2
             #
-            spec_cal.EuEv_re_NC = spec.EuEv_re_NC * CAL_UV_re + spec.EuEv_im_NC * CAL_UV_im
-            spec_cal.EuEv_im_NC = spec.EuEv_im_NC * CAL_UV_re - spec.EuEv_re_NC * CAL_UV_im
-            spec_cal.EvEw_re_NC = spec.EvEw_re_NC * CAL_VW_re + spec.EvEw_im_NC * CAL_VW_im
-            spec_cal.EvEw_im_NC = spec.EvEw_im_NC * CAL_VW_re - spec.EvEw_re_NC * CAL_VW_im
-            spec_cal.EwEu_re_NC = spec.EwEu_re_NC * CAL_WU_re + spec.EwEu_im_NC * CAL_WU_im
-            spec_cal.EwEu_im_NC = spec.EwEu_im_NC * CAL_WU_re - spec.EwEu_re_NC * CAL_WU_im
-            spec.EuEv_re_NC = spec_cal.EuEv_re_NC;  spec.EvEw_re_NC = spec_cal.EvEw_re_NC;  spec.EwEu_re_NC = spec_cal.EwEu_re_NC
-            spec.EuEv_im_NC = spec_cal.EuEv_im_NC;  spec.EvEw_im_NC = spec_cal.EvEw_im_NC;  spec.EwEu_im_NC = spec_cal.EwEu_im_NC
+            EuEv = spec.EuEv_re_NC + spec.EuEv_im_NC * 1j;  EuEv = EuEv * CAL_f_gainC[0] * CAL_f_gainC2[1];  spec.EuEv_re_NC = EuEv.real; spec.EuEv_im_NC = EuEv.imag
+            EvEw = spec.EvEw_re_NC + spec.EvEw_im_NC * 1j;  EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC2[2];  spec.EvEw_re_NC = EvEw.real; spec.EvEw_im_NC = EvEw.imag
+            EwEu = spec.EwEu_re_NC + spec.EwEu_im_NC * 1j;  EwEu = EwEu * CAL_f_gainC[2] * CAL_f_gainC2[0];  spec.EwEu_re_NC = EwEu.real; spec.EwEu_im_NC = EwEu.imag
             #
-            spec_cal.EuEu_RC    = spec.EuEu_RC    * CAL_gain_u**2
-            spec_cal.EvEv_RC    = spec.EvEv_RC    * CAL_gain_v**2
-            spec_cal.EwEw_RC    = spec.EwEw_RC    * CAL_gain_w**2
-            spec_cal.EuEv_re_RC = spec.EuEv_re_RC * CAL_UV_re + spec.EuEv_im_RC * CAL_UV_im
-            spec_cal.EuEv_im_RC = spec.EuEv_im_RC * CAL_UV_re - spec.EuEv_re_RC * CAL_UV_im
-            spec_cal.EvEw_re_RC = spec.EvEw_re_RC * CAL_VW_re + spec.EvEw_im_RC * CAL_VW_im
-            spec_cal.EvEw_im_RC = spec.EvEw_im_RC * CAL_VW_re - spec.EvEw_re_RC * CAL_VW_im
-            spec_cal.EwEu_re_RC = spec.EwEu_re_RC * CAL_WU_re + spec.EwEu_im_RC * CAL_WU_im
-            spec_cal.EwEu_im_RC = spec.EwEu_im_RC * CAL_WU_re - spec.EwEu_re_RC * CAL_WU_im
-            spec.EuEv_re_RC = spec_cal.EuEv_re_RC;  spec.EvEw_re_RC = spec_cal.EvEw_re_RC;  spec.EwEu_re_RC = spec_cal.EwEu_re_RC
-            spec.EuEv_im_RC = spec_cal.EuEv_im_RC;  spec.EvEw_im_RC = spec_cal.EvEw_im_RC;  spec.EwEu_im_RC = spec_cal.EwEu_im_RC
+            EuEv = spec.EuEv_re_RC + spec.EuEv_im_NC * 1j;  EuEv = EuEv * CAL_f_gainC[0] * CAL_f_gainC2[1];  spec.EuEv_re_RC = EuEv.real; spec.EuEv_im_RC = EuEv.imag
+            EvEw = spec.EvEw_re_RC + spec.EvEw_im_NC * 1j;  EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC2[2];  spec.EvEw_re_RC = EvEw.real; spec.EvEw_im_RC = EvEw.imag
+            EwEu = spec.EwEu_re_RC + spec.EwEu_im_NC * 1j;  EwEu = EwEu * CAL_f_gainC[2] * CAL_f_gainC2[0];  spec.EwEu_re_RC = EwEu.real; spec.EwEu_im_RC = EwEu.imag
             #
-            spec_cal.EuEu_LC    = spec.EuEu_LC    * CAL_gain_u**2
-            spec_cal.EvEv_LC    = spec.EvEv_LC    * CAL_gain_v**2
-            spec_cal.EwEw_LC    = spec.EwEw_LC    * CAL_gain_w**2
-            spec_cal.EuEv_re_LC = spec.EuEv_re_LC * CAL_UV_re + spec.EuEv_im_LC * CAL_UV_im
-            spec_cal.EuEv_im_LC = spec.EuEv_im_LC * CAL_UV_re - spec.EuEv_re_LC * CAL_UV_im
-            spec_cal.EvEw_re_LC = spec.EvEw_re_LC * CAL_VW_re + spec.EvEw_im_LC * CAL_VW_im
-            spec_cal.EvEw_im_LC = spec.EvEw_im_LC * CAL_VW_re - spec.EvEw_re_LC * CAL_VW_im
-            spec_cal.EwEu_re_LC = spec.EwEu_re_LC * CAL_WU_re + spec.EwEu_im_LC * CAL_WU_im
-            spec_cal.EwEu_im_LC = spec.EwEu_im_LC * CAL_WU_re - spec.EwEu_re_LC * CAL_WU_im
-            spec.EuEv_re_LC = spec_cal.EuEv_re_LC;  spec.EvEw_re_LC = spec_cal.EvEw_re_LC;  spec.EwEu_re_LC = spec_cal.EwEu_re_LC
-            spec.EuEv_im_LC = spec_cal.EuEv_im_LC;  spec.EvEw_im_LC = spec_cal.EvEw_im_LC;  spec.EwEu_im_LC = spec_cal.EwEu_im_LC
+            EuEv = spec.EuEv_re_LC + spec.EuEv_im_NC * 1j;  EuEv = EuEv * CAL_f_gainC[0] * CAL_f_gainC2[1];  spec.EuEv_re_LC = EuEv.real; spec.EuEv_im_LC = EuEv.imag
+            EvEw = spec.EvEw_re_LC + spec.EvEw_im_NC * 1j;  EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC2[2];  spec.EvEw_re_LC = EvEw.real; spec.EvEw_im_LC = EvEw.imag
+            EwEu = spec.EwEu_re_LC + spec.EwEu_im_NC * 1j;  EwEu = EwEu * CAL_f_gainC[2] * CAL_f_gainC2[0];  spec.EwEu_re_LC = EwEu.real; spec.EwEu_im_LC = EwEu.imag
             #
-            spec.BG_Eu = spec.BG_Eu * CAL_gain_u**2
-            spec.BG_Ev = spec.BG_Ev * CAL_gain_v**2
-            spec.BG_Ew = spec.BG_Ew * CAL_gain_w**2
 
     for j in range(n_freq):
         if 1000 < freq[j]:
             break
-    spec.cf  = 20*np.log10(CAL_gain_u[j])
+    spec.cf  = 20*np.log10(CAL_f_gain[0][j])
     spec.str = power_label(unit_mode, band_mode)
     return spec
 
 
+# -----------------------------------------------------------------------------
+# Setting Spectrum CAL prameters
+# -----------------------------------------------------------------------------
 def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
     """
     [Spectral CAL parameters from Ground + Onboard Test]
@@ -219,12 +193,16 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
             # CAL_phase[i] = CAL_phase[i] + 0.0
 
     if unit_mode == 2:                      # V @ HF    gain: 128.3 dB @ RT      8.2dB (-25degC)     7.9dB (25degC)      7.6dB (+75degC)  
+        # -----------------------
         # 20kHz - 35.5MHz
+        # -----------------------
         g0_l = +7.87438532E+00;  g1_l = +9.72891774E-03;  g2_l = -5.01061375E-03;  g3_l = +1.08353478E-03;  g4_l = -1.19769590E-04
         g5_l = +7.30311031E-06;  g6_l = -2.47328435E-07;  g7_l = +4.33831673E-09;  g8_l = -3.06837976E-11
         # p0_l = +1.45012955E-02;  p1_l = -6.79809370E+00;  p2_l = +1.32583659E-02;  p3_l = -2.94140368E-03;  p4_l = +2.38078227E-04
         # p5_l = -1.15806368E-05;  p6_l = +2.73703677E-07;  p7_l = -2.60940286E-09;  p8_l = +1.18266537E-12
+        # -----------------------
         # 35.5 - 45 MHz
+        # -----------------------
         g0_h = -7.48554687E+02;  g1_h = +0.00000000E+00;  g2_h = +0.00000000E+00;  g3_h = +5.93627500E-01;  g4_h = -5.30852619E-02
         g5_h = +2.01301317E-03;  g6_h = -3.94992379E-05;  g7_h = +3.95918790E-07;  g8_h = -1.60963119E-09
         # p0_h = -1.19845870E+02;  p1_h = +0.00000000E+00;  p2_h = +0.00000000E+00;  p3_h = +4.04944288E-01;  p4_h = -4.99624633E-02
@@ -261,6 +239,9 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
         g6 = g_tmp6[0] + g_tmp6[1] * T_RWI + g_tmp6[2] * T_RWI**2 + g_tmp6[3] * T_RWI**3 + g_tmp6[4] * T_RWI**4
         g7 = g_tmp7[0] + g_tmp7[1] * T_RWI + g_tmp7[2] * T_RWI**2 + g_tmp7[3] * T_RWI**3 + g_tmp7[4] * T_RWI**4
         g8 = g_tmp8[0] + g_tmp8[1] * T_RWI + g_tmp8[2] * T_RWI**2 + g_tmp8[3] * T_RWI**3 + g_tmp8[4] * T_RWI**4
+
+
+        print(g_tmp0[0], g_tmp0[1] * T_RWI, g_tmp0[2] * T_RWI**2, g_tmp0[3] * T_RWI**3, g_tmp0[4] * T_RWI**4, T_RWI**4)
         """
         # RWI temperature (degC) 
         p_tmp0 = [ 0., 0., 0., 0., 0. ]
@@ -364,15 +345,12 @@ def spec_gain_phase2(freq):
     return CAL_gain, CAL_phase
 
 
-
 def spec_gain_onboard_cal(freq):
     """
     [Onboard CAL gain from source (0.1Vpp)]
     Input:  freq            frequency (kHz)
     Output: CAL_gain        Gain cal parameters
     """
-    # g0 = -1.35852444E+01;  g1 = -1.27127173E+00;  g2 = +1.42269322E-01;  g3 = -1.57468571E-02;  g4 = +9.15531853E-04
-    # g5 = -2.78149871E-05;  g6 = +3.99622245E-07;  g7 = -1.53121094E-09;  g8 = -1.16048217E-11
     g0 = -2.88554859E+01;  g1 = -9.80334986E-01;  g2 = +2.04468516E-01;  g3 = -2.61079083E-02;  g4 = +1.66536526E-03
     g5 = -5.71588394E-05;  g6 = +1.05658805E-06;  g7 = -9.43569895E-09;  g8 = 2.80310935E-11
     f = freq/1000.
