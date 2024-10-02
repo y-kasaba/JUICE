@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/9/29
+# JUICE RPWI HF CAL lib -- 2024/10/1
 
 import copy
 import csv
@@ -46,7 +46,11 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     # ******************************************************************************************
     # ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
     # ******************************************************************************************
-    print("ASW:", data.RPWI_FSW_version)
+    print("  ASW:", data.RPWI_FSW_version)
+    # ***************************************
+    # ***** Date will be used in future *****
+    # ***************************************
+    print("Epoch:", data.epoch[0], "-", data.epoch[-1])
 
     # ******************************************************
     # [EM2-0]
@@ -107,9 +111,13 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     # ******************************************************************************************
     # ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
     # ******************************************************************************************
-    print("ASW:", spec.RPWI_FSW_version)
+    print("  ASW:", spec.RPWI_FSW_version)
     if sid==5: n_time = spec.EE.shape[0];  
     else:      n_time = spec.EuEu.shape[0];  
+    # ***************************************
+    # ***** Date will be used in future *****
+    # ***************************************
+    print("Epoch:", spec.epoch[0], "-", spec.epoch[-1])
     
     freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
