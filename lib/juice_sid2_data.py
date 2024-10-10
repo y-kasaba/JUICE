@@ -1,11 +1,11 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a data list -- 2024/9/21
+    JUICE RPWI HF SID2 (RAW): L1a data list -- 2024/10/3
 """
 import glob
 import os
 os.environ["CDF_LIB"] = "/Applications/cdf/cdf39_1-dist/lib"
 
-def hf_sid2_datalist(date_str):
+def hf_sid2_datalist(date_str, ver_str):
     """
     input:  date_str        yyyymmdd: group read    others: file list
     return: data_dir
@@ -19,10 +19,10 @@ def hf_sid2_datalist(date_str):
     # *** Group read
     if yr_format=='20':
         base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
-        if yr_str == '2023':
-            base_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'              # ASW1 -- DATA in IRFU's server has old format.
+        # if yr_str == '2023':
+        #    base_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'              # ASW1 -- DATA in IRFU's server has old format.
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
-        data_name = '*HF*SID2_*.cdf'
+        data_name = '*HF*SID2_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
 
         print(cdf_file)

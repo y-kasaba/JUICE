@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/10/1
+# JUICE RPWI HF CAL lib -- 2024/10/8
 
 import copy
 import csv
@@ -79,16 +79,16 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     wave_cal.str  = str     # unit for wave
 
     if unit_mode == 4:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
+        """
         # In LGA
         wave_cal.Eu_i = wave_cal.Eu_i / 0.20;   wave_cal.Eu_q = wave_cal.Eu_q / 0.20    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
         wave_cal.Ev_i = wave_cal.Ev_i / 0.47;   wave_cal.Ev_q = wave_cal.Ev_q / 0.47    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
         wave_cal.Ew_i = wave_cal.Ew_i / 0.25;   wave_cal.Ew_q = wave_cal.Ew_q / 0.25    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
         """
-        # In post EGA
-        wave_cal.Eu_i = wave_cal.Eu_i / 0.20;   wave_cal.Eu_q = wave_cal.Eu_q / 0.20    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
-        wave_cal.Ev_i = wave_cal.Ev_i / 0.20;   wave_cal.Ev_q = wave_cal.Ev_q / 0.20    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
-        wave_cal.Ew_i = wave_cal.Ew_i / 0.20;   wave_cal.Ew_q = wave_cal.Ew_q / 0.20    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
-        """
+        # Fischer+ 2021
+        wave_cal.Eu_i = wave_cal.Eu_i / 0.26;   wave_cal.Eu_q = wave_cal.Eu_q / 0.26    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
+        wave_cal.Ev_i = wave_cal.Ev_i / 0.43;   wave_cal.Ev_q = wave_cal.Ev_q / 0.43    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
+        wave_cal.Ew_i = wave_cal.Ew_i / 0.23;   wave_cal.Ew_q = wave_cal.Ew_q / 0.23    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
         wave_cal.cf   = cf - 20*np.log10(0.20)
         
     return wave_cal
@@ -124,17 +124,16 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     # BUG correction in ASW2 SID-3
     cal_factor = 1.0
     if unit_mode > 0:
-        if sid==3 and spec.RPWI_FSW_version == '2.0':  cal_factor = 0.1        # TMP --- SID-3 has x10 strength in Onboard CAL 
+        if sid==3 and spec.RPWI_FSW_version == '2.0':  cal_factor = 0.1                 # TMP --- SID-3 has x10 strength in Onboard CAL 
 
     # Spectral CAL parameters from Ground + Onboard Test
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
     if band_mode > 0:
         # BUG correction in ASW2 SID-3
-        if sid==3 and spec.RPWI_FSW_version == '2.0':  CAL_f_gain = CAL_f_gain / 300.     # TMP
+        if sid==3 and spec.RPWI_FSW_version == '2.0':  CAL_f_gain = CAL_f_gain / 289.   # TMP --- from FFT bug in ASW2
         else:                                          CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
 
     # Complex CAL parameters
-    CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
     CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
     CAL_f_gainC  = CAL_f_gainC * cal_factor
     CAL_f_gainC2 = np.conjugate(CAL_f_gainC)
@@ -165,7 +164,32 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
             EuEv = spec.EuEv_re_LC + spec.EuEv_im_NC * 1j;  EuEv = EuEv * CAL_f_gainC[0] * CAL_f_gainC2[1];  spec.EuEv_re_LC = EuEv.real; spec.EuEv_im_LC = EuEv.imag
             EvEw = spec.EvEw_re_LC + spec.EvEw_im_NC * 1j;  EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC2[2];  spec.EvEw_re_LC = EvEw.real; spec.EvEw_im_LC = EvEw.imag
             EwEu = spec.EwEu_re_LC + spec.EwEu_im_NC * 1j;  EwEu = EwEu * CAL_f_gainC[2] * CAL_f_gainC2[0];  spec.EwEu_re_LC = EwEu.real; spec.EwEu_im_LC = EwEu.imag
+            """
+            spec.EuiEui = spec.EuiEui
+            spec.EuqEuq = spec.EuqEuq
+            spec.EviEvi = spec.EviEvi
+            spec.EvqEvq = spec.EvqEvq
+            spec.EwiEwi = spec.EwiEwi
+            spec.EwqEwq = spec.EwqEwq
             #
+            spec.EuiEvi = spec.EuiEvi
+            spec.EuqEvq = spec.EuqEvq
+            spec.EviEwi = spec.EviEwi
+            spec.EvqEwq = spec.EvqEwq
+            spec.EwiEui = spec.EwiEui
+            spec.EwqEuq = spec.EwqEuq
+            #
+            spec.EuiEvq = spec.EuiEvq
+            spec.EuqEvi = spec.EuqEvi
+            spec.EviEwq = spec.EviEwq
+            spec.EvqEwi = spec.EvqEwi
+            spec.EwiEuq = spec.EwiEuq
+            spec.EwqEui = spec.EwqEui
+            #
+            spec.EuiEuq = spec.EuiEuq
+            spec.EviEvq = spec.EviEvq
+            spec.EwiEwq = spec.EwiEwq
+            """
 
     for j in range(n_freq):
         if 1000 < freq[j]:

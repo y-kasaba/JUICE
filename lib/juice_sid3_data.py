@@ -1,11 +1,11 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a data list -- 2024/9/21
+    JUICE RPWI HF SID3 (Full): L1a data list -- 2024/10/3
 """
 import glob
 import os
 os.environ["CDF_LIB"] = "/Applications/cdf/cdf39_1-dist/lib"
 
-def hf_sid3_datalist(date_str):
+def hf_sid3_datalist(date_str, ver_str):
     """
     input:  date_str        yyyymmdd: group read    others: file list
     return: data_dir
@@ -19,10 +19,10 @@ def hf_sid3_datalist(date_str):
     # *** Group read
     if yr_format=='20':
         base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
-        if yr_str == '2023':
-            base_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'              # ASW1 -- DATA in IRFU's server has old format.
+        #if yr_str == '2023':
+        #    base_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'              # ASW1 -- DATA in IRFU's server has old format.
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
-        data_name = '*HF*SID3_*.cdf'
+        data_name = '*HF*SID3_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
 
         print(cdf_file)
@@ -61,18 +61,18 @@ def hf_sid3_datalist(date_str):
         """
 
         # *** Ground Test - Ver.2 ***
-        """
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
         data_name_list = [#'SID03_20231024-0036.cdf',                # 10/10/10mV, 0/90/0deg,  1.55MHz
                         #'SID03-2ch-comp0-20231117-1438.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                         #'SID03-2ch-comp1-20231117-1448.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                         #'SID03-2ch-comp2-20231117-1500.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                        #'SID03-3ch-comp0-20231117-1424.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                        'SID03-3ch-comp0-20231117-1424.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                         'SID03-3ch-comp1-20231117-1418.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                         'SID03-3ch-comp2-20231117-1429.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                         'SID03-3ch-comp3-20231117-1432.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                         ]
+        """
         # 202310 -- FS
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
         data_name_list = ['SID03_Seq03.cdf',
@@ -155,8 +155,8 @@ def hf_sid3_datalist(date_str):
         """
 
         # [MEMO: ASW1 data]  *** Flight - Ver.1 ***
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2023/'
         """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2023/'
         # *** 2023/4/20 before deployment of MAG-BOOM
         data_name_list = ['04/20/JUICE_L1a_RPWI-HF-SID3_20230420T103604.cdf']
         # *** 2023/5/23 before deployment of RWI
@@ -171,9 +171,7 @@ def hf_sid3_datalist(date_str):
         data_name_list = ['05/23/JUICE_L1a_RPWI-HF-SID3_20230523T104936.cdf',        # *** 2023/5/23 after Z deployment of RWI
                           '05/23/JUICE_L1a_RPWI-HF-SID3_20230523T110542.cdf',
                          ]
-        """
         data_name_list = ['05/23/JUICE_L1a_RPWI-HF-SID3_20230523T110938.cdf']        # *** 2023/5/23 after Y deployment of RWI
-        """
         # *** 2023/5/23 background
         data_name_list = ['05/23/JUICE_L1a_RPWI-HF-SID3_20230523T121543.cdf',
                           '05/23/JUICE_L1a_RPWI-HF-SID3_20230523T124139.cdf',

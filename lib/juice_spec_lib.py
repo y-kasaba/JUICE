@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2024/9/22
+    JUICE RPWI HF: L1a spec -- 2024/10/9
 """
 import copy
 import math
@@ -10,7 +10,7 @@ class struct:
     pass
 
 
-def hf_getspec_angle(spec):
+def hf_getspec_angle(spec, sid):
     """
     input:  spec
     return: spec
@@ -22,10 +22,33 @@ def hf_getspec_angle(spec):
     spec.E_PHAuv = np.rad2deg(np.arctan2(spec.EuEv_im, spec.EuEv_re))
     spec.E_PHAvw = np.rad2deg(np.arctan2(spec.EvEw_im, spec.EvEw_re))
     spec.E_PHAwu = np.rad2deg(np.arctan2(spec.EwEu_im, spec.EwEu_re))
+
+    if sid == 3:
+        spec.E_COHuv_NC = spec.EuEv_re_NC**2 / (spec.EuEu_NC * spec.EvEv_NC)
+        spec.E_COHvw_NC = spec.EvEw_re_NC**2 / (spec.EvEv_NC * spec.EwEw_NC)
+        spec.E_COHwu_NC = spec.EwEu_re_NC**2 / (spec.EwEw_NC * spec.EuEu_NC)
+        spec.E_PHAuv_NC = np.rad2deg(np.arctan2(spec.EuEv_im_NC, spec.EuEv_re_NC))
+        spec.E_PHAvw_NC = np.rad2deg(np.arctan2(spec.EvEw_im_NC, spec.EvEw_re_NC))
+        spec.E_PHAwu_NC = np.rad2deg(np.arctan2(spec.EwEu_im_NC, spec.EwEu_re_NC))
+
+        spec.E_COHuv_RC = spec.EuEv_re_RC**2 / (spec.EuEu_RC * spec.EvEv_RC)
+        spec.E_COHvw_RC = spec.EvEw_re_RC**2 / (spec.EvEv_RC * spec.EwEw_RC)
+        spec.E_COHwu_RC = spec.EwEu_re_RC**2 / (spec.EwEw_RC * spec.EuEu_RC)
+        spec.E_PHAuv_RC = np.rad2deg(np.arctan2(spec.EuEv_im_RC, spec.EuEv_re_RC))
+        spec.E_PHAvw_RC = np.rad2deg(np.arctan2(spec.EvEw_im_RC, spec.EvEw_re_RC))
+        spec.E_PHAwu_RC = np.rad2deg(np.arctan2(spec.EwEu_im_RC, spec.EwEu_re_RC))
+
+        spec.E_COHuv_LC = spec.EuEv_re_LC**2 / (spec.EuEu_LC * spec.EvEv_LC)
+        spec.E_COHvw_LC = spec.EvEw_re_LC**2 / (spec.EvEv_LC * spec.EwEw_LC)
+        spec.E_COHwu_LC = spec.EwEu_re_LC**2 / (spec.EwEw_LC * spec.EuEu_LC)
+        spec.E_PHAuv_LC = np.rad2deg(np.arctan2(spec.EuEv_im_LC, spec.EuEv_re_LC))
+        spec.E_PHAvw_LC = np.rad2deg(np.arctan2(spec.EvEw_im_LC, spec.EvEw_re_LC))
+        spec.E_PHAwu_LC = np.rad2deg(np.arctan2(spec.EwEu_im_LC, spec.EwEu_re_LC))
+
     return spec
 
 
-def hf_getspec_stokes(spec):
+def hf_getspec_stokes(spec, sid):
     """
     input:  spec
     return: spec
@@ -36,6 +59,28 @@ def hf_getspec_stokes(spec):
     spec.E_DoPuv, spec.E_DoLuv, spec.E_DoCuv, spec.E_ANGuv = get_pol   (spec.E_Iuv, spec.E_Quv, spec.E_Uuv,   spec.E_Vuv)
     spec.E_DoPvw, spec.E_DoLvw, spec.E_DoCvw, spec.E_ANGvw = get_pol   (spec.E_Ivw, spec.E_Qvw, spec.E_Uvw,   spec.E_Vvw)
     spec.E_DoPwu, spec.E_DoLwu, spec.E_DoCwu, spec.E_ANGwu = get_pol   (spec.E_Iwu, spec.E_Qwu, spec.E_Uwu,   spec.E_Vwu)
+
+    if sid == 3:
+        spec.E_Iuv_NC,   spec.E_Quv_NC,   spec.E_Uuv_NC,   spec.E_Vuv_NC   = get_stokes(spec.EuEu_NC,  spec.EvEv_NC,  spec.EuEv_re_NC, spec.EuEv_im_NC)
+        spec.E_Ivw_NC,   spec.E_Qvw_NC,   spec.E_Uvw_NC,   spec.E_Vvw_NC   = get_stokes(spec.EvEv_NC,  spec.EwEw_NC,  spec.EvEw_re_NC, spec.EvEw_im_NC)
+        spec.E_Iwu_NC,   spec.E_Qwu_NC,   spec.E_Uwu_NC,   spec.E_Vwu_NC   = get_stokes(spec.EwEw_NC,  spec.EuEu_NC,  spec.EwEu_re_NC, spec.EwEu_im_NC)
+        spec.E_DoPuv_NC, spec.E_DoLuv_NC, spec.E_DoCuv_NC, spec.E_ANGuv_NC = get_pol   (spec.E_Iuv_NC, spec.E_Quv_NC, spec.E_Uuv_NC,   spec.E_Vuv_NC)
+        spec.E_DoPvw_NC, spec.E_DoLvw_NC, spec.E_DoCvw_NC, spec.E_ANGvw_NC = get_pol   (spec.E_Ivw_NC, spec.E_Qvw_NC, spec.E_Uvw_NC,   spec.E_Vvw_NC)
+        spec.E_DoPwu_NC, spec.E_DoLwu_NC, spec.E_DoCwu_NC, spec.E_ANGwu_NC = get_pol   (spec.E_Iwu_NC, spec.E_Qwu_NC, spec.E_Uwu_NC,   spec.E_Vwu_NC)
+
+        spec.E_Iuv_RC,   spec.E_Quv_RC,   spec.E_Uuv_RC,   spec.E_Vuv_RC   = get_stokes(spec.EuEu_RC,  spec.EvEv_RC,  spec.EuEv_re_RC, spec.EuEv_im_RC)
+        spec.E_Ivw_RC,   spec.E_Qvw_RC,   spec.E_Uvw_RC,   spec.E_Vvw_RC   = get_stokes(spec.EvEv_RC,  spec.EwEw_RC,  spec.EvEw_re_RC, spec.EvEw_im_RC)
+        spec.E_Iwu_RC,   spec.E_Qwu_RC,   spec.E_Uwu_RC,   spec.E_Vwu_RC   = get_stokes(spec.EwEw_RC,  spec.EuEu_RC,  spec.EwEu_re_RC, spec.EwEu_im_RC)
+        spec.E_DoPuv_RC, spec.E_DoLuv_RC, spec.E_DoCuv_RC, spec.E_ANGuv_RC = get_pol   (spec.E_Iuv_RC, spec.E_Quv_RC, spec.E_Uuv_RC,   spec.E_Vuv_RC)
+        spec.E_DoPvw_RC, spec.E_DoLvw_RC, spec.E_DoCvw_RC, spec.E_ANGvw_RC = get_pol   (spec.E_Ivw_RC, spec.E_Qvw_RC, spec.E_Uvw_RC,   spec.E_Vvw_RC)
+        spec.E_DoPwu_RC, spec.E_DoLwu_RC, spec.E_DoCwu_RC, spec.E_ANGwu_RC = get_pol   (spec.E_Iwu_RC, spec.E_Qwu_RC, spec.E_Uwu_RC,   spec.E_Vwu_RC)
+
+        spec.E_Iuv_LC,   spec.E_Quv_LC,   spec.E_Uuv_LC,   spec.E_Vuv_LC   = get_stokes(spec.EuEu_LC,  spec.EvEv_LC,  spec.EuEv_re_LC, spec.EuEv_im_LC)
+        spec.E_Ivw_LC,   spec.E_Qvw_LC,   spec.E_Uvw_LC,   spec.E_Vvw_LC   = get_stokes(spec.EvEv_LC,  spec.EwEw_LC,  spec.EvEw_re_LC, spec.EvEw_im_LC)
+        spec.E_Iwu_LC,   spec.E_Qwu_LC,   spec.E_Uwu_LC,   spec.E_Vwu_LC   = get_stokes(spec.EwEw_LC,  spec.EuEu_LC,  spec.EwEu_re_LC, spec.EwEu_im_LC)
+        spec.E_DoPuv_LC, spec.E_DoLuv_LC, spec.E_DoCuv_LC, spec.E_ANGuv_LC = get_pol   (spec.E_Iuv_LC, spec.E_Quv_LC, spec.E_Uuv_LC,   spec.E_Vuv_LC)
+        spec.E_DoPvw_LC, spec.E_DoLvw_LC, spec.E_DoCvw_LC, spec.E_ANGvw_LC = get_pol   (spec.E_Ivw_LC, spec.E_Qvw_LC, spec.E_Uvw_LC,   spec.E_Vvw_LC)
+        spec.E_DoPwu_LC, spec.E_DoLwu_LC, spec.E_DoCwu_LC, spec.E_ANGwu_LC = get_pol   (spec.E_Iwu_LC, spec.E_Qwu_LC, spec.E_Uwu_LC,   spec.E_Vwu_LC)
     return spec
 
 
@@ -147,10 +192,12 @@ def hf_getspec_sid2(data):
     spec.freq_w   = np.zeros(n_time * n_freq * n_samp);  spec.freq_w   = spec.freq_w.reshape(n_time, n_freq, n_samp)
     dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
     freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
+    d_freq = freq[1] - freq[0]
+    freq = freq + d_freq/2.0
     for i in range(n_time):
         for j in range(n_freq):
             spec.freq[i][j]   = data.frequency[i][j] + freq
-            spec.freq_w[i][j] = freq[1] - freq[0]
+            spec.freq_w[i][j] = d_freq
 
     # FFT
     window = np.hanning(n_samp*1.0)
@@ -220,10 +267,12 @@ def hf_getspec_sid23(data):
     # Frequency
     dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
     freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
+    d_freq = freq[1] - freq[0]
+    freq = freq + d_freq/2.0
     for i in range(n_time):
         for j in range(n_block):
             spec.freq[i][j]   = data.freq_center[i] + freq
-            spec.freq_w[i][j] = freq[1] - freq[0]
+            spec.freq_w[i][j] = d_freq
     print("freq:", spec.freq.shape, spec.freq_w.shape)
     print("freq:", spec.freq[0][0], spec.freq_w[0][0])
 

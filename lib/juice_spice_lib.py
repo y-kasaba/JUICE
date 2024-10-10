@@ -1,11 +1,57 @@
 """
-    JUICE SPICE LIB -- 2024/9/23
+    JUICE SPICE LIB -- 2024/10/6
 """
-import numpy as np
-import math
-import spiceypy as spice
 # import datetime
+import math
+import numpy as np
+import spiceypy as spice
 from planetary_coverage import MetaKernel
+
+# ---------------------------------------------------------
+# Geometry file name
+# ---------------------------------------------------------
+def name_geometry(ID_target, ID_observer, ID_frame, Epoch_min, Epoch_max):
+    """
+    ID_target   = 3         # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE
+    ID_observer = 99        # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE
+    ID_frame    = 99        # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE  991:RWI
+    Epoch_min   = '2024-08-19 00:00:00'
+    Epoch_max   = '2024-08-24 00:00:00'
+    """
+    if   ID_target   == 0:   name_target   = 'SUN'
+    elif ID_target   == 3:   name_target   = 'EARTH'
+    elif ID_target   == 5:   name_target   = 'JUPITER'
+    elif ID_target   == 52:  name_target   = 'EUROPA'
+    elif ID_target   == 53:  name_target   = 'GANYMEDE'
+    elif ID_target   == 54:  name_target   = 'CALLISTO'
+    elif ID_target   == 99:  name_target   = 'SC'
+    else:                    print("!!! ID_target error !!! : ", ID_target)
+    #
+    if   ID_observer == 0:   name_observer = 'SUN'
+    elif ID_observer == 3:   name_observer = 'EARTH'
+    elif ID_observer == 5:   name_observer = 'JUPITER'
+    elif ID_observer == 52:  name_observer = 'EUROPA'
+    elif ID_observer == 53:  name_observer = 'GANYMEDE'
+    elif ID_observer == 54:  name_observer = 'CALLISTO'
+    elif ID_observer == 99:  name_observer = 'SC'
+    else:                    print("!!! ID_observer error !!! : ", ID_observer)
+    #
+    if   ID_frame    == 0:   name_frame    = 'SUN'
+    elif ID_frame    == 3:   name_frame    = 'EARTH'
+    elif ID_frame    == 5:   name_frame    = 'JUPITER'
+    elif ID_frame    == 52:  name_frame    = 'EUROPA'
+    elif ID_frame    == 53:  name_frame    = 'GANYMEDE'
+    elif ID_frame    == 54:  name_frame    = 'CALLISTO'
+    elif ID_frame    == 99:  name_frame    = 'SC'
+    elif ID_frame    == 991: name_frame    = 'RWI'
+    else:                    print("!!! ID_frame error !!! : ", ID_frame)
+    #
+    name_yyyymm = Epoch_min[0:4] + Epoch_min[5:7]
+    #
+    name_file = 'JUICE_' + name_target + '_' + name_observer+ '_' +  name_frame + '_' +  name_yyyymm + '.csv'
+    #
+    return  name_file, name_target, name_observer, name_frame 
+
 
 # ---------------------------------------------------------
 # Load NAIF SPICE kernels for S/C
