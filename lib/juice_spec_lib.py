@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2024/10/9
+    JUICE RPWI HF: L1a spec -- 2024/10/11
 """
 import copy
 import math
@@ -128,13 +128,17 @@ def get_pol(I, Q, U, V):
             dol[j] = (Q[j]*Q[j] + U[j]*U[j])**0.5 / I[j]               # Degree of Linear Polarization
             doc[j] = V[j] / I[j]                                       # Degree of Circular Polarization
             for i in range(n):
-                if math.isnan(U[j][i]):                 ang[j][i] = math.nan
-                elif U[j][i] >= 0.0 and Q[j][i] > 0.0:  ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi           # 0-90
+                #if math.isnan(U[j][i]):
+                #    ang[j][i] = math.nan
+                #    print(j, i, U[j][i], ang[j][i])
+                if   U[j][i] >= 0.0 and Q[j][i] > 0.0:  ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi           # 0-90
                 elif U[j][i] <= 0.0 and Q[j][i] > 0.0:  ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 180.    # 270-360
                 elif Q[j][i] < 0.0:                     ang[j][i] = 0.5*math.atan(U[j][i]/Q[j][i])*180./math.pi + 90.     # 90-270
                 else:
                     if U[j][i] >= 0.0:                  ang[j][i] = 45.
                     else:                               ang[j][i] = 135.
+        else:
+            dop[j] = math.nan;  dol[j] = math.nan;  doc[j] = math.nan;  ang[j] = math.nan;  
     return dop, dol, doc, ang
 
 

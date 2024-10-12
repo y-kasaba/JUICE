@@ -2,6 +2,7 @@
     JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2024/9/28
 """
 import numpy as np
+import math
 import juice_spec_lib as juice_spec
 
 

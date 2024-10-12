@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/10/8
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/10/11
 """
 import numpy as np
 import math
@@ -513,7 +513,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     return data
 
 
-def hf_sid3_spec_nan(data, i):
+def spec_nan(data, i):
     data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
     data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
     data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan

@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/10/8
+# JUICE RPWI HF CAL lib -- 2024/10/11
 
 import copy
 import csv
@@ -89,7 +89,7 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
         wave_cal.Eu_i = wave_cal.Eu_i / 0.26;   wave_cal.Eu_q = wave_cal.Eu_q / 0.26    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
         wave_cal.Ev_i = wave_cal.Ev_i / 0.43;   wave_cal.Ev_q = wave_cal.Ev_q / 0.43    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
         wave_cal.Ew_i = wave_cal.Ew_i / 0.23;   wave_cal.Ew_q = wave_cal.Ew_q / 0.23    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
-        wave_cal.cf   = cf - 20*np.log10(0.20)
+        wave_cal.cf   = cf - 20*np.log10(0.30)
         
     return wave_cal
 
