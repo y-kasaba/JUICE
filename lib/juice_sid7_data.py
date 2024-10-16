@@ -19,6 +19,8 @@ def datalist(date_str, ver_str, sid):
     # *** Group read
     if yr_format=='20':
         base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
+        # if yr_str == '2023':
+        #    base_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'             # ASW1 -- DATA in IRFU's server has old format.
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         if sid == 4:  data_name = '*HF*SID4_*'+ver_str+'.cdf'
         else:         data_name = '*HF*SID20_*'+ver_str+'.cdf'    

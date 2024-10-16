@@ -1,10 +1,10 @@
-# JUICE RPWI HF CAL lib -- 2024/10/11
+# JUICE RPWI HF CAL lib -- 2024/10/16
 
 import copy
 import csv
 import numpy as np
 
-class struct:
+class struct_hf:
     pass
 
 
@@ -15,21 +15,21 @@ def power_label(unit_mode, band_mode):
     """
     Input:  unit_mode       0: raw     1: V＠ADC     2: V@HF    3: V@RWI    4: V/m@RWI
             band_mode       0: sum     1: /Hz
-    Outout: str
+    Outout: str_unit
     """
     if band_mode == 0:
-        if   unit_mode == 0:  str = '[RAW2]'
-        elif unit_mode == 1:  str = '[V2 @ADC]'
-        elif unit_mode == 2:  str = '[V2 @HF]'
-        elif unit_mode == 3:  str = '[V2 @RWI]'
-        elif unit_mode == 4:  str = '[V2/m2]'
+        if   unit_mode == 0:  str_unit = '[RAW2]'
+        elif unit_mode == 1:  str_unit = '[V2 @ADC]'
+        elif unit_mode == 2:  str_unit = '[V2 @HF]'
+        elif unit_mode == 3:  str_unit = '[V2 @RWI]'
+        elif unit_mode == 4:  str_unit = '[V2/m2]'
     else:
-        if   unit_mode == 0:  str = '[RAW2/Hz]'
-        elif unit_mode == 1:  str = '[V2/Hz @ADC]'
-        elif unit_mode == 2:  str = '[V2/Hz @HF]'
-        elif unit_mode == 3:  str = '[V2/Hz @RWI]'
-        elif unit_mode == 4:  str = '[V2/m2/Hz]'
-    return str
+        if   unit_mode == 0:  str_unit = '[RAW2/Hz]'
+        elif unit_mode == 1:  str_unit = '[V2/Hz @ADC]'
+        elif unit_mode == 2:  str_unit = '[V2/Hz @HF]'
+        elif unit_mode == 3:  str_unit = '[V2/Hz @RWI]'
+        elif unit_mode == 4:  str_unit = '[V2/m2/Hz]'
+    return str_unit
 
 
 # -----------------------------------------------------------------------------
@@ -61,22 +61,22 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     # "1-bit" = -110.1 dBm = -110.1 dB V  = 9.9E-7 V "   ==> "20-bit": 1.03 Vpp
     # "HF input"  +9dB(AMP)  -3dB(50-ohm) = "+6dB"       ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
     # ******************************************************
-    str     = '[RAW]';     cf = 0.0         # RAW
+    str_unit     = '[RAW]';     cf = 0.0         # RAW
     if unit_mode == 1:                      # V @ ADC   gain: 120.4 dB          1.0 Vpp @ 20-bit    9.5E-7 V/bit = -120.4 dB V/bit
-        str = '[V @ADC]';  cf = -120.4
+        str_unit = '[V @ADC]';  cf = -120.4
     if unit_mode == 2:                      # V @ HF    gain: 128.3 dB @ RT      8.2dB (-25degC)     7.9dB (25degC)      7.6dB (+75degC)       
-        str = '[V @HF]';   cf = -120.4 - 7.9 + 0.3*(T_HF-25.)/50.
+        str_unit = '[V @HF]';   cf = -120.4 - 7.9 + 0.3*(T_HF-25.)/50.
     if unit_mode == 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
-        str = '[V @RWI]';  cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
+        str_unit = '[V @RWI]';  cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
     if unit_mode == 4:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
-        str = '[V/m]';     cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
+        str_unit= '[V/m]';      cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
 
-    wave_cal = struct()
+    wave_cal = struct_hf()
     wave_cal.Eu_i = data.Eu_i * 10**(cf/20.);   wave_cal.Eu_q = data.Eu_q * 10**(cf/20.)
     wave_cal.Ev_i = data.Ev_i * 10**(cf/20.);   wave_cal.Ev_q = data.Ev_q * 10**(cf/20.)
     wave_cal.Ew_i = data.Ew_i * 10**(cf/20.);   wave_cal.Ew_q = data.Ew_q * 10**(cf/20.)
     wave_cal.cf   = cf      # dB
-    wave_cal.str  = str     # unit for wave
+    wave_cal.str_unit  = str_unit     # unit for wave
 
     if unit_mode == 4:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
         """
@@ -195,7 +195,7 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
         if 1000 < freq[j]:
             break
     spec.cf  = 20*np.log10(CAL_f_gain[0][j])
-    spec.str = power_label(unit_mode, band_mode)
+    spec.str_unit = power_label(unit_mode, band_mode)
     return spec
 
 
@@ -210,7 +210,7 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
             T_HF & T_RWI    HF & RWI T (degC)
     Output: CAL_gain[3]     Gain cal parameters
             CAL_phase[3]    Phase cal parameters    ("0.0" at the moment)
-            str                     
+            str_unit                     
     """
     n_freq = freq.shape[0];  CAL_gain = np.zeros((3, n_freq));  CAL_phase = np.zeros((3, n_freq))
     cf = -120.4     # dB V of 1-bit

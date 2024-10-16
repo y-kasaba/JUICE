@@ -13,7 +13,7 @@ class struct:
 # ---------------------------------------------------------------------
 def hf_sid2_read(cdf, RPWI_FSW_version):
     """
-    input:  CDF
+    input:  CDF, FSW version
     return: data
     """
     data = struct()

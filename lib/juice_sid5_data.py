@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a data list -- 2024/10/11
+    JUICE RPWI HF SID5 (PSSR1 Surv): L1a data list -- 2024/10/13
 """
 import glob
 import os
@@ -20,7 +20,7 @@ def datalist(date_str, ver_str):
     if yr_format=='20':
         base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
-        data_name = '*HF*SID21_*'+ver_str+'.cdf'
+        data_name = '*HF*SID5_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
 
         data_name_list = glob.glob(cdf_file)
@@ -33,11 +33,15 @@ def datalist(date_str, ver_str):
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
-        data_name_list = ['SID21_20231024-0046.cdf']
+        data_name_list = ['SID05_20231024-0046.cdf',
+                          'SID05_20231117-1603.cdf',
+                          'SID05_20231117-1611.cdf',
+                          ]
         # 202310 -- FS
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
-        data_name_list = ['SID21_Seq05.cdf']
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'        # CDF data folder
+        data_name_list = ['SID05_Seq05.cdf',
+                        ]
         """
 
     print(data_dir)

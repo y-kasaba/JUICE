@@ -12,7 +12,7 @@ class struct:
 # ---------------------------------------------------------------------
 def hf_sid3_read(cdf, RPWI_FSW_version):
     """
-    input:  CDF
+    input:  CDF, FSW version
     return: data
     """
     data = struct()
@@ -55,6 +55,7 @@ def hf_sid3_read(cdf, RPWI_FSW_version):
     data.B3_repeat   = cdf['B3_repeat'][...];  data.B3_subdiv = cdf['B3_subdiv'][...]
     data.B4_startf   = cdf['B4_startf'][...];  data.B4_stopf  = cdf['B4_stopf'][...];  data.B4_step = cdf['B4_step'][...]
     data.B4_repeat   = cdf['B4_repeat'][...];  data.B4_subdiv = cdf['B4_subdiv'][...]
+
     # Data
     data.frequency   = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...]; data.freq_width  = cdf['freq_width'][...]
     data.epoch       = cdf['Epoch'][...];      data.scet      = cdf['SCET'][...]
@@ -107,7 +108,6 @@ def hf_sid3_add(data, data1):
     data.V_selected  = np.r_["0", data.V_selected, data1.V_selected]
     data.W_selected  = np.r_["0", data.W_selected, data1.W_selected]
     data.complex     = np.r_["0", data.complex, data1.complex]
-    #
     data.cal_signal  = np.r_["0", data.cal_signal, data1.cal_signal]
     data.sweep_table = np.r_["0", data.sweep_table, data1.sweep_table]
     data.onboard_cal = np.r_["0", data.onboard_cal, data1.onboard_cal]
@@ -315,78 +315,77 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
                 print(    "  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
 
         # AUX
-        data.U_selected = data.U_selected[index[0]];  data.V_selected  = data.V_selected[index[0]];  data.W_selected  = data.W_selected[index[0]]
-        data.complex    = data.complex[index[0]]
-        #
-        data.cal_signal = data.cal_signal[index[0]]
-        data.sweep_table= data.sweep_table[index[0]]
-        data.onboard_cal= data.onboard_cal[index[0]]
-        data.BG_subtract= data.BG_subtract[index[0]]
-        data.BG_select  = data.BG_select [index[0]]
-        data.FFT_window = data.FFT_window[index[0]]
+        data.U_selected  = data.U_selected[index[0]];  data.V_selected  = data.V_selected[index[0]];  data.W_selected  = data.W_selected[index[0]]
+        data.complex     = data.complex[index[0]]
+        data.cal_signal  = data.cal_signal[index[0]]
+        data.sweep_table = data.sweep_table[index[0]]
+        data.onboard_cal = data.onboard_cal[index[0]]
+        data.BG_subtract = data.BG_subtract[index[0]]
+        data.BG_select   = data.BG_select [index[0]]
+        data.FFT_window  = data.FFT_window[index[0]]
         data.RFI_rejection = data.RFI_rejection[index[0]]
         data.Pol_sep_thres = data.Pol_sep_thres[index[0]]
-        data.Pol_sep_SW = data.Pol_sep_SW[index[0]]
-        data.overflow_U = data.overflow_U[index[0]]
-        data.overflow_V = data.overflow_V[index[0]]
-        data.overflow_W = data.overflow_W[index[0]]
-        data.proc_param0= data.proc_param0[index[0]]; data.proc_param1 = data.proc_param1[index[0]]
-        data.proc_param2= data.proc_param2[index[0]]; data.proc_param3 = data.proc_param3[index[0]]
-        data.BG_downlink= data.BG_downlink[index[0]]
-        data.N_block    = data.N_block   [index[0]]
-        data.T_RWI_CH1  = data.T_RWI_CH1 [index[0]]
-        data.T_RWI_CH2  = data.T_RWI_CH2 [index[0]]
-        data.T_HF_FPGA  = data.T_HF_FPGA [index[0]]
+        data.Pol_sep_SW  = data.Pol_sep_SW[index[0]]
+        data.overflow_U  = data.overflow_U[index[0]]
+        data.overflow_V  = data.overflow_V[index[0]]
+        data.overflow_W  = data.overflow_W[index[0]]
+        data.proc_param0 = data.proc_param0[index[0]];  data.proc_param1 = data.proc_param1[index[0]]
+        data.proc_param2 = data.proc_param2[index[0]];  data.proc_param3 = data.proc_param3[index[0]]
+        data.BG_downlink = data.BG_downlink[index[0]]
+        data.N_block     = data.N_block   [index[0]]
+        data.T_RWI_CH1   = data.T_RWI_CH1 [index[0]]
+        data.T_RWI_CH2   = data.T_RWI_CH2 [index[0]]
+        data.T_HF_FPGA   = data.T_HF_FPGA [index[0]]
         # Header
-        data.N_samp     = data.N_samp    [index[0]]
-        data.N_step     = data.N_step    [index[0]]
-        data.decimation = data.decimation[index[0]]
-        data.pol        = data.pol       [index[0]]
-        data.B0_startf  = data.B0_startf [index[0]]; data.B0_stopf  = data.B0_stopf [index[0]]; data.B0_step = data.B0_step[index[0]]
-        data.B0_repeat  = data.B0_repeat [index[0]]; data.B0_subdiv = data.B0_subdiv[index[0]]
-        data.B1_startf  = data.B1_startf [index[0]]; data.B1_stopf  = data.B1_stopf [index[0]]; data.B1_step = data.B1_step[index[0]]
-        data.B1_repeat  = data.B1_repeat [index[0]]; data.B1_subdiv = data.B1_subdiv[index[0]]
-        data.B2_startf  = data.B2_startf [index[0]]; data.B2_stopf  = data.B2_stopf [index[0]]; data.B2_step = data.B2_step[index[0]]
-        data.B2_repeat  = data.B2_repeat [index[0]]; data.B2_subdiv = data.B2_subdiv[index[0]]
-        data.B3_startf  = data.B3_startf [index[0]]; data.B3_stopf  = data.B3_stopf [index[0]]; data.B3_step = data.B3_step[index[0]]
-        data.B3_repeat  = data.B3_repeat [index[0]]; data.B3_subdiv = data.B3_subdiv[index[0]]
-        data.B4_startf  = data.B4_startf [index[0]]; data.B4_stopf  = data.B4_stopf [index[0]]; data.B4_step = data.B4_step[index[0]]
-        data.B4_repeat  = data.B4_repeat [index[0]]; data.B4_subdiv = data.B4_subdiv[index[0]]
+        data.N_samp      = data.N_samp    [index[0]]
+        data.N_step      = data.N_step    [index[0]]
+        data.decimation  = data.decimation[index[0]]
+        data.pol         = data.pol       [index[0]]
+        data.B0_startf   = data.B0_startf [index[0]]; data.B0_stopf  = data.B0_stopf [index[0]]; data.B0_step = data.B0_step[index[0]]
+        data.B0_repeat   = data.B0_repeat [index[0]]; data.B0_subdiv = data.B0_subdiv[index[0]]
+        data.B1_startf   = data.B1_startf [index[0]]; data.B1_stopf  = data.B1_stopf [index[0]]; data.B1_step = data.B1_step[index[0]]
+        data.B1_repeat   = data.B1_repeat [index[0]]; data.B1_subdiv = data.B1_subdiv[index[0]]
+        data.B2_startf   = data.B2_startf [index[0]]; data.B2_stopf  = data.B2_stopf [index[0]]; data.B2_step = data.B2_step[index[0]]
+        data.B2_repeat   = data.B2_repeat [index[0]]; data.B2_subdiv = data.B2_subdiv[index[0]]
+        data.B3_startf   = data.B3_startf [index[0]]; data.B3_stopf  = data.B3_stopf [index[0]]; data.B3_step = data.B3_step[index[0]]
+        data.B3_repeat   = data.B3_repeat [index[0]]; data.B3_subdiv = data.B3_subdiv[index[0]]
+        data.B4_startf   = data.B4_startf [index[0]]; data.B4_stopf  = data.B4_stopf [index[0]]; data.B4_step = data.B4_step[index[0]]
+        data.B4_repeat   = data.B4_repeat [index[0]]; data.B4_subdiv = data.B4_subdiv[index[0]]
         # Data
-        data.epoch      = data.epoch     [index[0]]
-        data.scet       = data.scet      [index[0]]
-        data.frequency  = data.frequency [index[0]]
-        data.freq_step  = data.freq_step [index[0]]
-        data.freq_width = data.freq_width[index[0]]
+        data.epoch       = data.epoch     [index[0]]
+        data.scet        = data.scet      [index[0]]
+        data.frequency   = data.frequency [index[0]]
+        data.freq_step   = data.freq_step [index[0]]
+        data.freq_width  = data.freq_width[index[0]]
         # complex < 2:     # Power
-        data.EuEu       = data.EuEu      [index[0]]; data.EvEv       = data.EvEv      [index[0]]; data.EwEw       = data.EwEw      [index[0]]
+        data.EuEu        = data.EuEu      [index[0]]; data.EvEv       = data.EvEv      [index[0]]; data.EwEw       = data.EwEw      [index[0]]
         # complex == 1:    # Matrix
-        data.EuEv_re    = data.EuEv_re   [index[0]]; data.EvEw_re    = data.EvEw_re   [index[0]]; data.EwEu_re    = data.EwEu_re   [index[0]]
-        data.EuEv_im    = data.EuEv_im   [index[0]]; data.EvEw_im    = data.EvEw_im   [index[0]]; data.EwEu_im    = data.EwEu_im   [index[0]]
+        data.EuEv_re     = data.EuEv_re   [index[0]]; data.EvEw_re    = data.EvEw_re   [index[0]]; data.EwEu_re    = data.EwEu_re   [index[0]]
+        data.EuEv_im     = data.EuEv_im   [index[0]]; data.EvEw_im    = data.EvEw_im   [index[0]]; data.EwEu_im    = data.EwEu_im   [index[0]]
         # complex == 2:    # Matrix - N/R/L-separated
-        data.EuEu_NC    = data.EuEu_NC   [index[0]]; data.EvEv_NC    = data.EvEv_NC   [index[0]]; data.EwEw_NC    = data.EwEw_NC   [index[0]]
-        data.EuEv_re_NC = data.EuEv_re_NC[index[0]]; data.EvEw_re_NC = data.EvEw_re_NC[index[0]]; data.EwEu_re_NC = data.EwEu_re_NC[index[0]]
-        data.EuEv_im_NC = data.EuEv_im_NC[index[0]]; data.EvEw_im_NC = data.EvEw_im_NC[index[0]]; data.EwEu_im_NC = data.EwEu_im_NC[index[0]]
+        data.EuEu_NC     = data.EuEu_NC   [index[0]]; data.EvEv_NC    = data.EvEv_NC   [index[0]]; data.EwEw_NC    = data.EwEw_NC   [index[0]]
+        data.EuEv_re_NC  = data.EuEv_re_NC[index[0]]; data.EvEw_re_NC = data.EvEw_re_NC[index[0]]; data.EwEu_re_NC = data.EwEu_re_NC[index[0]]
+        data.EuEv_im_NC  = data.EuEv_im_NC[index[0]]; data.EvEw_im_NC = data.EvEw_im_NC[index[0]]; data.EwEu_im_NC = data.EwEu_im_NC[index[0]]
         #
-        data.EuEu_RC    = data.EuEu_RC   [index[0]]; data.EvEv_RC    = data.EvEv_RC   [index[0]]; data.EwEw_RC    = data.EwEw_RC   [index[0]]
-        data.EuEv_re_RC = data.EuEv_re_RC[index[0]]; data.EvEw_re_RC = data.EvEw_re_RC[index[0]]; data.EwEu_re_RC = data.EwEu_re_RC[index[0]]
-        data.EuEv_im_RC = data.EuEv_im_RC[index[0]]; data.EvEw_im_RC = data.EvEw_im_RC[index[0]]; data.EwEu_im_RC = data.EwEu_im_RC[index[0]]
+        data.EuEu_RC     = data.EuEu_RC   [index[0]]; data.EvEv_RC    = data.EvEv_RC   [index[0]]; data.EwEw_RC    = data.EwEw_RC   [index[0]]
+        data.EuEv_re_RC  = data.EuEv_re_RC[index[0]]; data.EvEw_re_RC = data.EvEw_re_RC[index[0]]; data.EwEu_re_RC = data.EwEu_re_RC[index[0]]
+        data.EuEv_im_RC  = data.EuEv_im_RC[index[0]]; data.EvEw_im_RC = data.EvEw_im_RC[index[0]]; data.EwEu_im_RC = data.EwEu_im_RC[index[0]]
         #
-        data.EuEu_LC    = data.EuEu_LC   [index[0]]; data.EvEv_LC    = data.EvEv_LC   [index[0]]; data.EwEw_LC    = data.EwEw_LC   [index[0]]
-        data.EuEv_re_LC = data.EuEv_re_LC[index[0]]; data.EvEw_re_LC = data.EvEw_re_LC[index[0]]; data.EwEu_re_LC = data.EwEu_re_LC[index[0]]
-        data.EuEv_im_LC = data.EuEv_im_LC[index[0]]; data.EvEw_im_LC = data.EvEw_im_LC[index[0]]; data.EwEu_im_LC = data.EwEu_im_LC[index[0]]
+        data.EuEu_LC     = data.EuEu_LC   [index[0]]; data.EvEv_LC    = data.EvEv_LC   [index[0]]; data.EwEw_LC    = data.EwEw_LC   [index[0]]
+        data.EuEv_re_LC  = data.EuEv_re_LC[index[0]]; data.EvEw_re_LC = data.EvEw_re_LC[index[0]]; data.EwEu_re_LC = data.EwEu_re_LC[index[0]]
+        data.EuEv_im_LC  = data.EuEv_im_LC[index[0]]; data.EvEw_im_LC = data.EvEw_im_LC[index[0]]; data.EwEu_im_LC = data.EwEu_im_LC[index[0]]
         #
-        data.num_NC     = data.num_NC    [index[0]]; data.num_RC     = data.num_RC    [index[0]]; data.num_LC     = data.num_LC    [index[0]]
+        data.num_NC      = data.num_NC    [index[0]]; data.num_RC     = data.num_RC    [index[0]]; data.num_LC     = data.num_LC    [index[0]]
         # complex == 3:    # 3D-matrix
-        data.EuiEui     = data.EuiEui    [index[0]]; data.EviEvi     = data.EviEvi    [index[0]]; data.EwiEwi     = data.EwiEwi    [index[0]]
-        data.EuqEuq     = data.EuqEuq    [index[0]]; data.EvqEvq     = data.EvqEvq    [index[0]]; data.EwqEwq     = data.EwqEwq    [index[0]]
-        data.EuiEvi     = data.EuiEvi    [index[0]]; data.EviEwi     = data.EviEwi    [index[0]]; data.EwiEui     = data.EwiEui    [index[0]]
-        data.EuqEvq     = data.EuqEvq    [index[0]]; data.EvqEwq     = data.EvqEwq    [index[0]]; data.EwqEuq     = data.EwqEuq    [index[0]]
-        data.EuiEvq     = data.EuiEvq    [index[0]]; data.EviEwq     = data.EviEwq    [index[0]]; data.EwiEuq     = data.EwiEuq    [index[0]]
-        data.EuqEvi     = data.EuqEvi    [index[0]]; data.EvqEwi     = data.EvqEwi    [index[0]]; data.EwqEui     = data.EwqEui    [index[0]]
-        data.EuiEuq     = data.EuiEuq    [index[0]]; data.EviEvq     = data.EviEvq    [index[0]]; data.EwiEwq     = data.EwiEwq    [index[0]]
+        data.EuiEui      = data.EuiEui    [index[0]]; data.EviEvi     = data.EviEvi    [index[0]]; data.EwiEwi     = data.EwiEwi    [index[0]]
+        data.EuqEuq      = data.EuqEuq    [index[0]]; data.EvqEvq     = data.EvqEvq    [index[0]]; data.EwqEwq     = data.EwqEwq    [index[0]]
+        data.EuiEvi      = data.EuiEvi    [index[0]]; data.EviEwi     = data.EviEwi    [index[0]]; data.EwiEui     = data.EwiEui    [index[0]]
+        data.EuqEvq      = data.EuqEvq    [index[0]]; data.EvqEwq     = data.EvqEwq    [index[0]]; data.EwqEuq     = data.EwqEuq    [index[0]]
+        data.EuiEvq      = data.EuiEvq    [index[0]]; data.EviEwq     = data.EviEwq    [index[0]]; data.EwiEuq     = data.EwiEuq    [index[0]]
+        data.EuqEvi      = data.EuqEvi    [index[0]]; data.EvqEwi     = data.EvqEwi    [index[0]]; data.EwqEui     = data.EwqEui    [index[0]]
+        data.EuiEuq      = data.EuiEuq    [index[0]]; data.EviEvq     = data.EviEvq    [index[0]]; data.EwiEwq     = data.EwiEwq    [index[0]]
         #
-        data.BG_Eu      = data.BG_Eu     [index[0]]; data.BG_Ev      = data.BG_Ev     [index[0]]; data.BG_Ew      = data.BG_Ew     [index[0]]
+        data.BG_Eu       = data.BG_Eu     [index[0]]; data.BG_Ev      = data.BG_Ev     [index[0]]; data.BG_Ew      = data.BG_Ew     [index[0]]
 
         n_time = data.EuEu.shape[0]
         if cal_mode < 2:
@@ -406,7 +405,6 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
 
     # NAN
     index = np.where(data.complex == 0)
-    print (index)
     data.EuEv_re   [index[0]] = math.nan; data.EvEw_re   [index[0]] = math.nan; data.EwEu_re   [index[0]] = math.nan
     data.EuEv_im   [index[0]] = math.nan; data.EvEw_im   [index[0]] = math.nan; data.EwEu_im   [index[0]] = math.nan
     #

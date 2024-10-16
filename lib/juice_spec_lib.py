@@ -1,12 +1,12 @@
 """
-    JUICE RPWI HF: L1a spec -- 2024/10/11
+    JUICE RPWI HF: L1a spec -- 2024/10/16
 """
 import copy
 import math
 import numpy as np
 import juice_cdf_lib as juice_cdf
 
-class struct:
+class struct_hf:
     pass
 
 
@@ -112,6 +112,8 @@ def get_stokes(p1, p2, re, im):
         Q = p1 - p2     # 0deg -  90deg
         U = re * 2.0    # 45deg - 135deg
         V = im * 2.0    # Right -  Left  (minus?)
+    else:
+        I[:][:] = math.nan;  Q[:][:] = math.nan;  U[:][:] = math.nan;  V[:][:] = math.nan
     return I, Q, U, V
 
 
@@ -184,7 +186,7 @@ def hf_getspec_sid2(data):
     return: spec
     """
     # Spec formation
-    spec = struct()
+    spec = struct_hf()
     spec.RPWI_FSW_version = data.RPWI_FSW_version
 
     n_time = data.Eu_i.shape[0]
@@ -257,7 +259,7 @@ def hf_getspec_sid23(data):
     return: spec
     """
     # Spec formation
-    spec = struct()
+    spec = struct_hf()
     spec.RPWI_FSW_version = data.RPWI_FSW_version
 
     n_time  = data.Eu_i.shape[0]
@@ -312,5 +314,5 @@ def hf_getspec_sid23(data):
         spec.E_DoPvw[i], spec.E_DoLvw[i], spec.E_DoCvw[i], spec.E_ANGvw[i] = get_pol   (spec.E_Ivw[i], spec.E_Qvw[i], spec.E_Uvw[i],   spec.E_Vvw[i])
         spec.E_DoPwu[i], spec.E_DoLwu[i], spec.E_DoCwu[i], spec.E_ANGwu[i] = get_pol   (spec.E_Iwu[i], spec.E_Qwu[i], spec.E_Uwu[i],   spec.E_Vwu[i])
 
-    print("EuEu:", spec.EuEu.shape)
+    spec.epoch    = data.epoch[:]
     return spec
