@@ -107,13 +107,14 @@ def get_stokes(p1, p2, re, im):
     """
     m = p1.shape[0];       n = p1.shape[1]
     I = np.zeros((m, n));  Q = np.zeros((m, n));  U = np.zeros((m, n));  V = np.zeros((m, n))
-    if p1[0][0] > 0:
-        I = p1 + p2     # total
-        Q = p1 - p2     # 0deg -  90deg
-        U = re * 2.0    # 45deg - 135deg
-        V = im * 2.0    # Right -  Left  (minus?)
-    else:
-        I[:][:] = math.nan;  Q[:][:] = math.nan;  U[:][:] = math.nan;  V[:][:] = math.nan
+    for j in range(m):
+        if p1[j][0] > 0:
+            I = p1 + p2     # total
+            Q = p1 - p2     # 0deg -  90deg
+            U = re * 2.0    # 45deg - 135deg
+            V = im * 2.0    # Right -  Left  (minus?)
+        else:
+            I[j] = math.nan;  Q[j] = math.nan;  U[j] = math.nan;  V[j] = math.nan
     return I, Q, U, V
 
 
