@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/10/11
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2024/10/19
 """
 import numpy as np
 import math
@@ -460,6 +460,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     for i in range(n_time):
         if data.complex[i] == 2: # Matrix - N/R/L-separated
             for j in range(n_freq):
+                """
                 # Case-1: Largest one is taken  (tentative)
                 if   data.Pol_sep_SW[i] == 0:
                     flux_NC = data.EuEu_NC[i][j] + data.EvEv_NC[i][j]; flux_RC = data.EuEu_RC[i][j] + data.EvEv_RC[i][j]; flux_LC = data.EuEu_LC[i][j] + data.EvEv_LC[i][j]
@@ -484,11 +485,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
                 num_NC = data.num_NC[i][j] / (data.num_NC[i][j] + data.num_RC[i][j] + data.num_LC[i][j])
                 num_RC = data.num_RC[i][j] / (data.num_NC[i][j] + data.num_RC[i][j] + data.num_LC[i][j])
                 num_LC = data.num_LC[i][j] / (data.num_NC[i][j] + data.num_RC[i][j] + data.num_LC[i][j])
-                if j==55:
-                    print(num_NC, num_RC, num_LC, data.num_NC[i][j] + data.num_RC[i][j] + data.num_LC[i][j])
                 data.EuEu[i][j]    = data.EuEu_NC[i][j]   *num_NC + data.EuEu_RC[i][j]   *num_RC + data.EuEu_LC[i][j]*num_LC
-                if j==55:
-                    print(data.EuEu[i][j], data.EuEu_NC[i][j], data.EuEu_RC[i][j], data.EuEu_LC[i][j])
                 data.EvEv[i][j]    = data.EvEv_NC[i][j]   *num_NC + data.EvEv_RC[i][j]   *num_RC + data.EvEv_LC[i][j]*num_LC
                 data.EwEw[i][j]    = data.EwEw_NC[i][j]   *num_NC + data.EwEw_RC[i][j]   *num_RC + data.EwEw_LC[i][j]*num_LC
                 data.EuEv_re[i][j] = data.EuEv_re_NC[i][j]*num_NC + data.EuEv_re_RC[i][j]*num_RC + data.EuEv_re_LC[i][j]*num_LC 
@@ -497,7 +494,6 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
                 data.EuEv_im[i][j] = data.EuEv_im_NC[i][j]*num_NC + data.EuEv_im_RC[i][j]*num_RC + data.EuEv_im_LC[i][j]*num_LC
                 data.EvEw_im[i][j] = data.EvEw_im_NC[i][j]*num_NC + data.EvEw_im_RC[i][j]*num_RC + data.EvEw_im_LC[i][j]*num_LC
                 data.EwEu_im[i][j] = data.EwEu_im_NC[i][j]*num_NC + data.EwEu_im_RC[i][j]*num_RC + data.EwEu_im_LC[i][j]*num_LC
-                """
                 #
         if data.complex[i] == 3:
             # TMP: "/2" ?
