@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 & 20: L1a QL -- 2024/10/11
+    JUICE RPWI HF SID4 & 20: L1a QL -- 2024/10/20
 """
 import numpy as np
 import math
@@ -334,9 +334,9 @@ def hf_sid20_shaping(data, sid, cal_mode, N_ch, comp_mode):
     for i in range(n_time):
         if data.complex[i] == 3:
             # TMP: "/2" ?
-            data.EuEu[i]    = ( data.EuiEui[i] + data.EuqEuq[i])/2; data.EvEv[i]    = ( data.EviEvi[i] + data.EvqEvq[i])/2; data.EwEw[i]    = ( data.EwiEwi[i] + data.EwqEwq[i])/2
-            data.EuEv_re[i] = ( data.EuiEvi[i] + data.EuqEvq[i])/2; data.EvEw_re[i] = ( data.EviEwi[i] + data.EvqEwq[i])/2; data.EwEu_re[i] = ( data.EwiEui[i] + data.EwqEuq[i])/2
-            data.EuEv_im[i] = (-data.EuiEvq[i] + data.EuqEvi[i])/2; data.EvEw_im[i] = (-data.EviEwq[i] + data.EviEvq[i])/2; data.EwEu_im[i] = (-data.EwiEuq[i] + data.EwqEui[i])/2
+            data.EuEu[i]    =  data.EuiEui[i] + data.EuqEuq[i]; data.EvEv[i]    =  data.EviEvi[i] + data.EvqEvq[i]; data.EwEw[i]    =  data.EwiEwi[i] + data.EwqEwq[i]
+            data.EuEv_re[i] =  data.EuiEvi[i] + data.EuqEvq[i]; data.EvEw_re[i] =  data.EviEwi[i] + data.EvqEwq[i]; data.EwEu_re[i] =  data.EwiEui[i] + data.EwqEuq[i]
+            data.EuEv_im[i] = -data.EuiEvq[i] + data.EuqEvi[i]; data.EvEw_im[i] = -data.EviEwq[i] + data.EviEvq[i]; data.EwEu_im[i] = -data.EwiEuq[i] + data.EwqEui[i]
 
     # *** frequncy & width for spec cal
     data.freq   = data.frequency
