@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2024/10/16
+# JUICE RPWI HF CAL lib -- 2025/3/21
 
 import copy
 import csv
@@ -34,6 +34,12 @@ def power_label(unit_mode, band_mode):
 
 # -----------------------------------------------------------------------------
 # Setting Wave CAL (non FFT/IFFT)
+# [SID-2 evaluation @ 1.5MHz for ASW2]
+#      0.0 dB  [RAW]
+#   -120.4 dB  [V @ADC]
+#   -128.3 dB  [V @HF]
+#   -143.1 dB  [V @RWI]
+#   -132.7 dB  [V/m]
 # -----------------------------------------------------------------------------
 def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     """
@@ -44,7 +50,7 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     Output: wave_cal        Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q, cf (dB), str
     """
     # ******************************************************************************************
-    # ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
+    # ***** SID-3 cal: different in ASW-1&3 - ASW-2 (wrong) --- TBC
     # ******************************************************************************************
     print("  ASW:", data.RPWI_FSW_version)
     # ***************************************
@@ -61,24 +67,22 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     # "1-bit" = -110.1 dBm = -110.1 dB V  = 9.9E-7 V "   ==> "20-bit": 1.03 Vpp
     # "HF input"  +9dB(AMP)  -3dB(50-ohm) = "+6dB"       ==> "1-bit": 5E-7 V,  Full: 0.5 Vpp
     # ******************************************************
-    str_unit     = '[RAW]';     cf = 0.0         # RAW
-    if unit_mode == 1:                      # V @ ADC   gain: 120.4 dB          1.0 Vpp @ 20-bit    9.5E-7 V/bit = -120.4 dB V/bit
-        str_unit = '[V @ADC]';  cf = -120.4
-    if unit_mode == 2:                      # V @ HF    gain: 128.3 dB @ RT      8.2dB (-25degC)     7.9dB (25degC)      7.6dB (+75degC)       
-        str_unit = '[V @HF]';   cf = -120.4 - 7.9 + 0.3*(T_HF-25.)/50.
-    if unit_mode == 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
-        str_unit = '[V @RWI]';  cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
-    if unit_mode == 4:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
-        str_unit= '[V/m]';      cf = -120.4 - (1.55409E+01 + (-2.96308E-02) * T_RWI + (-5.05863E-05) * T_RWI**2)
+    str_unit     = '[RAW]';    cf = 0.0         # RAW
+    if unit_mode >= 1:          # V @ ADC   gain: 120.4 dB          1.0 Vpp @ 20-bit    9.5E-7 V/bit = -120.4 dB V/bit
+        str_unit = '[V @ADC]'; cf = -120.4
+    if unit_mode >= 2:          # V @ HF    gain: 128.3 dB @ RT      8.2dB (-25degC)     7.9dB (25degC)      7.6dB (+75degC)       
+        str_unit = '[V @HF]';  cf = cf - ( 8.05 + (-6.00E-03) * T_HF )
+    if unit_mode >= 3:          # V @ RWI   gain: 143.1 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
+        str_unit = '[V @RWI]'; cf = cf - (15.60 + (-2.96E-02) * T_RWI + (-5.06E-05) * T_RWI**2)
+    if unit_mode == 4:
+        str_unit = '[V/m]'
 
     wave_cal = struct_hf()
     wave_cal.Eu_i = data.Eu_i * 10**(cf/20.);   wave_cal.Eu_q = data.Eu_q * 10**(cf/20.)
     wave_cal.Ev_i = data.Ev_i * 10**(cf/20.);   wave_cal.Ev_q = data.Ev_q * 10**(cf/20.)
     wave_cal.Ew_i = data.Ew_i * 10**(cf/20.);   wave_cal.Ew_q = data.Ew_q * 10**(cf/20.)
-    wave_cal.cf   = cf      # dB
-    wave_cal.str_unit  = str_unit     # unit for wave
 
-    if unit_mode == 4:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
+    if unit_mode == 4:          # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
         """
         # In LGA
         wave_cal.Eu_i = wave_cal.Eu_i / 0.20;   wave_cal.Eu_q = wave_cal.Eu_q / 0.20    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
@@ -89,8 +93,11 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
         wave_cal.Eu_i = wave_cal.Eu_i / 0.26;   wave_cal.Eu_q = wave_cal.Eu_q / 0.26    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
         wave_cal.Ev_i = wave_cal.Ev_i / 0.43;   wave_cal.Ev_q = wave_cal.Ev_q / 0.43    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
         wave_cal.Ew_i = wave_cal.Ew_i / 0.23;   wave_cal.Ew_q = wave_cal.Ew_q / 0.23    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
-        wave_cal.cf   = cf - 20*np.log10(0.30)
-        
+        cf = cf - 20*np.log10(0.30)
+
+    wave_cal.cf       = cf          # dB
+    wave_cal.str_unit = str_unit    # unit for wave
+    print("Wave-CAL (dB):", cf, str_unit)
     return wave_cal
 
 
@@ -109,29 +116,34 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     """
 
     # ******************************************************************************************
-    # ***** SID-3 cal could be different in ASW1, ASW2, and ASW3. It is not yet implemented.
+    # ***** SID-3 cal: different in ASW-1&3 - ASW-2 (wrong) --- TBC
     # ******************************************************************************************
     print("  ASW:", spec.RPWI_FSW_version)
-    if sid==5: n_time = spec.EE.shape[0];  
-    else:      n_time = spec.EuEu.shape[0];  
+    if sid==5:
+        n_time = spec.EE.shape[0]
+    else:
+        n_time = spec.EuEu.shape[0]
     # ***************************************
     # ***** Date will be used in future *****
     # ***************************************
     print("Epoch:", spec.epoch[0], "-", spec.epoch[-1])
-    
+
     freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
     # BUG correction in ASW2 SID-3
     cal_factor = 1.0
     if unit_mode > 0:
-        if sid==3 and spec.RPWI_FSW_version == '2.0':  cal_factor = 0.1                 # TMP --- SID-3 has x10 strength in Onboard CAL 
-
+        if sid==3 and spec.RPWI_FSW_version == '2.0':
+            cal_factor = 0.1                            # ASW2 --- bug
+    
     # Spectral CAL parameters from Ground + Onboard Test
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
     if band_mode > 0:
         # BUG correction in ASW2 SID-3
-        if sid==3 and spec.RPWI_FSW_version == '2.0':  CAL_f_gain = CAL_f_gain / 289.   # TMP --- from FFT bug in ASW2
-        else:                                          CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
+        if sid==3 and spec.RPWI_FSW_version == '2.0':
+            CAL_f_gain = CAL_f_gain / 289.              # ASW2 --- bug
+        else:
+            CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
 
     # Complex CAL parameters
     CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
@@ -201,6 +213,12 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
 
 # -----------------------------------------------------------------------------
 # Setting Spectrum CAL prameters
+# [SID-2 evaluation @ 1.5MHz for ASW2]
+#      0.0 dB [RAW]
+#   -120.4 dB  [V @ADC]
+#   -128.3 dB  [V @HF]
+#   -143.1 dB  [V @RWI]
+#   -132.7 dB  [V/m]
 # -----------------------------------------------------------------------------
 def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
     """
@@ -248,70 +266,49 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
                 else:
                     CAL_gain [i][j] = g0_h + g1_h * f + g2_h * f**2 + g3_h * f**3 + g4_h * f**4 + g5_h * f**5 + g6_h * f**6 + g7_h * f**7 + g8_h * f**8
                     # CAL_phase[i][j] = p0_h + p1_h * f + p2_h * f**2 + p3_h * f**3 + p4_h * f**4 + p5_h * f**5 + p6_h * f**6 + p7_h * f**7 + p8_h * f**8
+        #
+        # CAL_gain with HF-T
         CAL_gain = 10**( (cf - CAL_gain + 0.3*(T_HF-25.)/50.)/20 )
 
     if unit_mode >= 3:                      # V @ RWI   gain: 135.2 dB @ RT     18.7dB (-145degC)   14.8dB (25degC)     13.0dB (+75degC)
-        # RWI temperature (degC) 
-        g_tmp0 = [ 15.70226060, -2.044197E-02, -7.640780E-05, -1.562152E-06, -6.620953E-09 ]
-        g_tmp1 = [ -1.22544328, -2.428311E-04,  3.869358E-05,  5.149496E-07,  1.726930E-09 ]
-        g_tmp2 = [ -0.81571010,  1.503548E-02, -1.999807E-06, -1.812614E-06, -7.821654E-09 ]
-        g_tmp3 = [ -0.71374875,	-8.299497E-04,  1.493876E-05, -3.903649E-07, -2.818792E-09 ]
-        g_tmp4 = [ -3.02304099,	-3.070438E-02, -3.540418E-05,  2.903294E-06,  1.255253E-08 ]
-        g_tmp5 = [ 0.92912903,   4.171481E-04,  1.964224E-05,  6.550603E-07,  3.354454E-09 ]
-        g_tmp6 = [ 2.33609583,   1.730226E-02, -1.294253E-05, -1.922596E-06, -7.870634E-09 ]
-        g_tmp7 = [ -0.27964459, -4.980705E-05,  3.392395E-07, -1.003909E-07, -6.114530E-10 ]
-        g_tmp8 = [ -0.75715963, -3.011020E-03,  3.068570E-06,  3.366969E-07,  1.366694E-09 ]
-        # RWI+HF gain (dB) 
-        g0 = g_tmp0[0] + g_tmp0[1] * T_RWI + g_tmp0[2] * T_RWI**2 + g_tmp0[3] * T_RWI**3 + g_tmp0[4] * T_RWI**4
-        g1 = g_tmp1[0] + g_tmp1[1] * T_RWI + g_tmp1[2] * T_RWI**2 + g_tmp1[3] * T_RWI**3 + g_tmp1[4] * T_RWI**4
-        g2 = g_tmp2[0] + g_tmp2[1] * T_RWI + g_tmp2[2] * T_RWI**2 + g_tmp2[3] * T_RWI**3 + g_tmp2[4] * T_RWI**4
-        g3 = g_tmp3[0] + g_tmp3[1] * T_RWI + g_tmp3[2] * T_RWI**2 + g_tmp3[3] * T_RWI**3 + g_tmp3[4] * T_RWI**4
-        g4 = g_tmp4[0] + g_tmp4[1] * T_RWI + g_tmp4[2] * T_RWI**2 + g_tmp4[3] * T_RWI**3 + g_tmp4[4] * T_RWI**4
-        g5 = g_tmp5[0] + g_tmp5[1] * T_RWI + g_tmp5[2] * T_RWI**2 + g_tmp5[3] * T_RWI**3 + g_tmp5[4] * T_RWI**4
-        g6 = g_tmp6[0] + g_tmp6[1] * T_RWI + g_tmp6[2] * T_RWI**2 + g_tmp6[3] * T_RWI**3 + g_tmp6[4] * T_RWI**4
-        g7 = g_tmp7[0] + g_tmp7[1] * T_RWI + g_tmp7[2] * T_RWI**2 + g_tmp7[3] * T_RWI**3 + g_tmp7[4] * T_RWI**4
-        g8 = g_tmp8[0] + g_tmp8[1] * T_RWI + g_tmp8[2] * T_RWI**2 + g_tmp8[3] * T_RWI**3 + g_tmp8[4] * T_RWI**4
+        # HF + Harness + RWI + Dummy-ANT: gain (dB) with RWI-T (degC) during RWI TVAC
+        #   p.2 of https://share.obspm.fr/apps/files/files/29962540?dir=/JUICE-RPWI/JENRAGE/CAL&openfile=true
+        # Dummy-ANT correction: gain (dB)
+        #   p.3 of https://share.obspm.fr/apps/files/files/29962540?dir=/JUICE-RPWI/JENRAGE/CAL&openfile=true
+        b0 = [ 15.70226060 + 7.38949866,    -2.044197E-02, -7.640780E-05, -1.562152E-06, -6.620953E-09 ]
+        b1 = [ -1.22544328 - 1.48435771E-1, -2.428311E-04,  3.869358E-05,  5.149496E-07,  1.726930E-09 ]
+        b2 = [ -0.81571010 + 1.09242767E-1,  1.503548E-02, -1.999807E-06, -1.812614E-06, -7.821654E-09 ]
+        b3 = [ -0.71374875 - 1.87627444E-1,	-8.299497E-04,  1.493876E-05, -3.903649E-07, -2.818792E-09 ]
+        b4 = [ -3.02304099 + 7.7013971E-2,	-3.070438E-02, -3.540418E-05,  2.903294E-06,  1.255253E-08 ]
+        b5 = [  0.92912903,                  4.171481E-04,  1.964224E-05,  6.550603E-07,  3.354454E-09 ]
+        b6 = [  2.33609583,                  1.730226E-02, -1.294253E-05, -1.922596E-06, -7.870634E-09 ]
+        b7 = [ -0.27964459,                 -4.980705E-05,  3.392395E-07, -1.003909E-07, -6.114530E-10 ]
+        b8 = [ -0.75715963,                 -3.011020E-03,  3.068570E-06,  3.366969E-07,  1.366694E-09 ]
+        a0 = b0[0] + b0[1] * T_RWI + b0[2] * T_RWI**2 + b0[3] * T_RWI**3 + b0[4] * T_RWI**4
+        a1 = b1[0] + b1[1] * T_RWI + b1[2] * T_RWI**2 + b1[3] * T_RWI**3 + b1[4] * T_RWI**4
+        a2 = b2[0] + b2[1] * T_RWI + b2[2] * T_RWI**2 + b2[3] * T_RWI**3 + b2[4] * T_RWI**4
+        a3 = b3[0] + b3[1] * T_RWI + b3[2] * T_RWI**2 + b3[3] * T_RWI**3 + b3[4] * T_RWI**4
+        a4 = b4[0] + b4[1] * T_RWI + b4[2] * T_RWI**2 + b4[3] * T_RWI**3 + b4[4] * T_RWI**4
+        a5 = b5[0] + b5[1] * T_RWI + b5[2] * T_RWI**2 + b5[3] * T_RWI**3 + b5[4] * T_RWI**4
+        a6 = b6[0] + b6[1] * T_RWI + b6[2] * T_RWI**2 + b6[3] * T_RWI**3 + b6[4] * T_RWI**4
+        a7 = b7[0] + b7[1] * T_RWI + b7[2] * T_RWI**2 + b7[3] * T_RWI**3 + b7[4] * T_RWI**4
+        a8 = b8[0] + b8[1] * T_RWI + b8[2] * T_RWI**2 + b8[3] * T_RWI**3 + b8[4] * T_RWI**4
 
-
-        print(g_tmp0[0], g_tmp0[1] * T_RWI, g_tmp0[2] * T_RWI**2, g_tmp0[3] * T_RWI**3, g_tmp0[4] * T_RWI**4, T_RWI**4)
-        """
-        # RWI temperature (degC) 
-        p_tmp0 = [ 0., 0., 0., 0., 0. ]
-        p_tmp1 = [ 0., 0., 0., 0., 0. ]
-        p_tmp2 = [ 0., 0., 0., 0., 0. ]
-        p_tmp3 = [ 0., 0., 0., 0., 0. ]
-        p_tmp4 = [ 0., 0., 0., 0., 0. ]
-        p_tmp5 = [ 0., 0., 0., 0., 0. ]
-        p_tmp6 = [ 0., 0., 0., 0., 0. ]
-        p_tmp7 = [ 0., 0., 0., 0., 0. ]
-        p_tmp8 = [ 0., 0., 0., 0., 0. ]
-        # RWI+HF phase (dB) 
-        p0 = p_tmp0[0] + p_tmp0[1] * T_RWI + p_tmp0[2] * T_RWI**2 + p_tmp0[3] * T_RWI**3 + p_tmp0[4] * T_RWI**4
-        p1 = p_tmp1[0] + p_tmp1[1] * T_RWI + p_tmp1[2] * T_RWI**2 + p_tmp1[3] * T_RWI**3 + p_tmp1[4] * T_RWI**4
-        p2 = p_tmp2[0] + p_tmp2[1] * T_RWI + p_tmp2[2] * T_RWI**2 + p_tmp2[3] * T_RWI**3 + p_tmp2[4] * T_RWI**4
-        p3 = p_tmp3[0] + p_tmp3[1] * T_RWI + p_tmp3[2] * T_RWI**2 + p_tmp3[3] * T_RWI**3 + p_tmp3[4] * T_RWI**4
-        p4 = p_tmp4[0] + p_tmp4[1] * T_RWI + p_tmp4[2] * T_RWI**2 + p_tmp4[3] * T_RWI**3 + p_tmp4[4] * T_RWI**4
-        p5 = p_tmp5[0] + p_tmp5[1] * T_RWI + p_tmp5[2] * T_RWI**2 + p_tmp5[3] * T_RWI**3 + p_tmp5[4] * T_RWI**4
-        p6 = p_tmp6[0] + p_tmp6[1] * T_RWI + p_tmp6[2] * T_RWI**2 + p_tmp6[3] * T_RWI**3 + p_tmp6[4] * T_RWI**4
-        p7 = p_tmp7[0] + p_tmp7[1] * T_RWI + p_tmp7[2] * T_RWI**2 + p_tmp7[3] * T_RWI**3 + p_tmp7[4] * T_RWI**4
-        p8 = p_tmp8[0] + p_tmp8[1] * T_RWI + p_tmp8[2] * T_RWI**2 + p_tmp8[3] * T_RWI**3 + p_tmp8[4] * T_RWI**4
-        """
         f = np.log10(freq/1000.)
         for i in range(3):
-            CAL_gain [i] = g0 + g1 * f + g2 * f**2 + g3 * f**3 + g4 * f**4 + g5 * f**5 + g6 * f**6 + g7 * f**7 + g8 * f**8
-            # CAL_phase[i] = p0 + p1 * f + p2 * f**2 + p3 * f**3 + p4 * f**4 + p5 * f**5 + p6 * f**6 + p7 * f**7 + p8 * f**8
+            CAL_gain [i] = a0 + a1 * f + a2 * f**2 + a3 * f**3 + a4 * f**4 + a5 * f**5 + a6 * f**6 + a7 * f**7 + a8 * f**8
         CAL_gain = 10**( (cf - CAL_gain + 0.3*(T_HF-25.)/50.)/20 )
 
-    if unit_mode == 4:                      # TMP: Effective length 
+    if unit_mode == 4:                      # V/m   with Effective length
         # LGA
-        CAL_gain[0] = CAL_gain[0] / 0.20    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
-        CAL_gain[1] = CAL_gain[1] / 0.47    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
-        CAL_gain[2] = CAL_gain[2] / 0.25    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
+        CAL_gain[0] = CAL_gain[0] / 0.20    # U-ANT ~0.20m [-14 dB] in 100s KHz (AKR)
+        CAL_gain[1] = CAL_gain[1] / 0.47    # V-ANT ~0.47m [-6.5dB] in 100s KHz (AKR)
+        CAL_gain[2] = CAL_gain[2] / 0.25    # W-ANT ~0.25m [-12 dB] in 100s KHz (AKR)
         """
         # EGA
-        CAL_gain[0] = CAL_gain[0] / 0.20    # U-ANT     TMP: ~0.20m   [-14 dB down]    in 100s KHz (AKR)
-        CAL_gain[1] = CAL_gain[1] / 0.20    # V-ANT     TMP: ~0.47m   [-6.5dB down]    in 100s KHz (AKR)
-        CAL_gain[2] = CAL_gain[2] / 0.20    # W-ANT     TMP: ~0.25m   [-12 dB down]    in 100s KHz (AKR)
+        CAL_gain[0] = CAL_gain[0] / 0.20    # U-ANT ~0.20m [-14 dB] in 100s KHz (AKR)
+        CAL_gain[1] = CAL_gain[1] / 0.20    # V-ANT ~0.47m [-6.5dB] in 100s KHz (AKR)
+        CAL_gain[2] = CAL_gain[2] / 0.20    # W-ANT ~0.25m [-12 dB] in 100s KHz (AKR)
         """
 
     """
@@ -323,12 +320,22 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
     # TMP -- onboard CAL harness loss
     """
 
+    n_freq0 = freq.shape[0]
+    """
+    import csv
+    with open("gain.csv", 'w') as f:
+        writer = csv.writer(f)
+        for i in range(n_freq0):
+            writer.writerow([ i, freq[i], 20*np.log10(CAL_gain[0][i]), 20*np.log10(CAL_gain[1][i]), 20*np.log10(CAL_gain[2][i]) ])
+    """
     if unit_mode > 0:   # U/V/W diff from Onboard CAL
         CAL_gain2, CAL_phase2 = spec_gain_phase2(freq)
         CAL_gain  = CAL_gain  * CAL_gain2
         CAL_phase = CAL_phase + CAL_phase2
+    print("CAL-U (Hz) (dB) (phase):", freq[n_freq0//8], 20*np.log10(CAL_gain[0][n_freq0//8]), CAL_phase[0][n_freq0//8])
+    print("CAL-V (Hz) (dB) (phase):", freq[n_freq0//8], 20*np.log10(CAL_gain[1][n_freq0//8]), CAL_phase[1][n_freq0//8])
+    print("CAL-W (Hz) (dB) (phase):", freq[n_freq0//8], 20*np.log10(CAL_gain[2][n_freq0//8]), CAL_phase[2][n_freq0//8])
     return CAL_gain, CAL_phase
-
 
 def spec_gain_phase2(freq):
     """

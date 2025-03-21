@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a data list -- 2024/10/11
+    JUICE RPWI HF SID2 (RAW): L1a data list -- 2025/03/20
 """
 import glob
 import os
@@ -32,6 +32,13 @@ def datalist(date_str, ver_str):
             data_name_list[i] = os.path.split(data_name_list[i])[1]
 
     else:
+        # *** Ground Test - Ver.3 ***
+        """
+        # 202412 -- SAMPLE
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
+        data_name_list = ['SID02_20241021-1026-SID2.ccs.cdf']                 # SG - 1.5MHz 10mVpp 90/0/0deg
+        """
+
         # *** Flight - Ver.2 ***
         """
         data_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'
@@ -44,16 +51,12 @@ def datalist(date_str, ver_str):
         """
 
         # *** Ground Test - Ver.2 ***
-        """
         # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
-        data_name_list = [#'SID02_20231007-0349.cdf',                           # SG - 1.0MHz 10mVpp 90/0/0deg
-                        'SID02_20231117-1607.cdf',                            # SG - 1.5MHz 10mVpp 90/0/0deg 
-                        ]
-        data_name_list = ['SID02-high_20231019-1749.cdf',
-                        'SID02-high_20231020-1218.cdf',
-                        'SID02-high_20231020-1222.cdf',
-                        ]
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/'
+        data_name_list = ['SID02_20231007-0349.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
+                          'SID02_20231117-1607.ccs.cdf',                       # SG - 1.5MHz 10mVpp 90/0/0deg 
+                         ]
+        """
         # 202312 -- Checkout
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202312_C/cdf/'
         data_name_list = ['SID02_RPWI_HF_FFT_00000.cdf',
@@ -70,13 +73,12 @@ def datalist(date_str, ver_str):
         """
 
         # [MEMO: ASW1 data]  *** Flight - Ver.1
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2023/'
         """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2023/'
         # *** 20230419 ***
         data_name_list = ['04/19/JUICE_L1a_RPWI-HF-SID2_20230419T135855.cdf',
                           '04/19/JUICE_L1a_RPWI-HF-SID2_20230419T141237.cdf',
                         ]
-        """
         # *** 202305-06 ***
         data_name_list = ['05/30/JUICE_L1a_RPWI-HF-SID2_20230530T100330.cdf',     # CAL
                           #'05/30/JUICE_L1a_RPWI-HF-SID2_20230530T100932.cdf',
@@ -86,7 +88,6 @@ def datalist(date_str, ver_str):
                           #'06/01/JUICE_L1a_RPWI-HF-SID2_20230601T122712.cdf',
                           #'06/01/JUICE_L1a_RPWI-HF-SID2_20230601T123421.cdf',
                          ]
-        """
         # *** 20230712-13 ***
         data_name_list = ['07/12/JUICE_L1a_RPWI-HF-SID2_20230712T090437.cdf',
                           '07/12/JUICE_L1a_RPWI-HF-SID2_20230712T093945.cdf',

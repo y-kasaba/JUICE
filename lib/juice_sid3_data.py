@@ -58,6 +58,7 @@ def datalist(date_str, ver_str):
         """
 
         # *** Ground Test - Ver.3 ***
+        """
         # 202410 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
         data_name_list = [# 'SID03-3ch-comp1-20241014-2138.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
@@ -67,16 +68,17 @@ def datalist(date_str, ver_str):
         """
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
         data_name_list = [#'SID03_20231024-0036.cdf',                # 10/10/10mV, 0/90/0deg,  1.55MHz
-                          #'SID03-2ch-comp0-20231117-1438.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          #'SID03-2ch-comp1-20231117-1448.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          #'SID03-2ch-comp2-20231117-1500.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          # 'SID03-3ch-comp0-20231117-1424.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          # 'SID03-3ch-comp1-20231117-1418.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          #'SID03-3ch-comp0-20231117-1424.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          'SID03-3ch-comp1-20231117-1418.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          #'SID03-3ch-comp1-20241014-2138.ccs',
                           #'SID03-3ch-comp2-20231117-1429.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          #'SID03-3ch-comp2-20241014-1132.ccs',
                           #'SID03-3ch-comp3-20231117-1432.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          #'SID03-3ch-comp3-20241015-2313.ccs',
                          ]
+        """
         # 202310 -- FS
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
         data_name_list = ['SID03_Seq03.cdf',

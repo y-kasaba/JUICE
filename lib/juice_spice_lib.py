@@ -1,5 +1,5 @@
 """
-    JUICE SPICE LIB -- 2024/10/6
+    JUICE SPICE LIB -- 2025/3/19
 """
 # import datetime
 import math
@@ -8,77 +8,23 @@ import spiceypy as spice
 from planetary_coverage import MetaKernel
 
 # ---------------------------------------------------------
-# Geometry file name
-# ---------------------------------------------------------
-def name_geometry(ID_target, ID_observer, ID_frame, Epoch_min, Epoch_max):
-    """
-    ID_target   = 3         # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE
-    ID_observer = 99        # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE
-    ID_frame    = 99        # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE  991:RWI
-    Epoch_min   = '2024-08-19 00:00:00'
-    Epoch_max   = '2024-08-24 00:00:00'
-    """
-    if   ID_target   == 0:   name_target   = 'SUN'
-    elif ID_target   == 3:   name_target   = 'EARTH'
-    elif ID_target   == 5:   name_target   = 'JUPITER'
-    elif ID_target   == 52:  name_target   = 'EUROPA'
-    elif ID_target   == 53:  name_target   = 'GANYMEDE'
-    elif ID_target   == 54:  name_target   = 'CALLISTO'
-    elif ID_target   == 99:  name_target   = 'SC'
-    else:                    print("!!! ID_target error !!! : ", ID_target)
-    #
-    if   ID_observer == 0:   name_observer = 'SUN'
-    elif ID_observer == 3:   name_observer = 'EARTH'
-    elif ID_observer == 5:   name_observer = 'JUPITER'
-    elif ID_observer == 52:  name_observer = 'EUROPA'
-    elif ID_observer == 53:  name_observer = 'GANYMEDE'
-    elif ID_observer == 54:  name_observer = 'CALLISTO'
-    elif ID_observer == 99:  name_observer = 'SC'
-    else:                    print("!!! ID_observer error !!! : ", ID_observer)
-    #
-    if   ID_frame    == 0:   name_frame    = 'SUN'
-    elif ID_frame    == 3:   name_frame    = 'EARTH'
-    elif ID_frame    == 5:   name_frame    = 'JUPITER'
-    elif ID_frame    == 52:  name_frame    = 'EUROPA'
-    elif ID_frame    == 53:  name_frame    = 'GANYMEDE'
-    elif ID_frame    == 54:  name_frame    = 'CALLISTO'
-    elif ID_frame    == 99:  name_frame    = 'SC'
-    elif ID_frame    == 991: name_frame    = 'RWI'
-    else:                    print("!!! ID_frame error !!! : ", ID_frame)
-    #
-    name_yyyymm = Epoch_min[0:4] + Epoch_min[5:7]
-    #
-    name_file = 'JUICE_' + name_target + '_' + name_observer+ '_' +  name_frame + '_' +  name_yyyymm + '.csv'
-    #
-    return  name_file, name_target, name_observer, name_frame 
-
-
-# ---------------------------------------------------------
 # Load NAIF SPICE kernels for S/C
 # ---------------------------------------------------------
 def spice_ini(source_dir):
-    # load spice kernel files
-    spice.furnsh(source_dir + 'spk/juice_crema_5_1_150lb_23_1_v01.bsp')
-    spice.furnsh(source_dir + 'spk/jup365_19900101_20500101.bsp')
-    spice.furnsh(source_dir + 'spk/de432s.bsp')
+    spice.furnsh(MetaKernel(source_dir + "juice_plan.tm"))
+    spice.furnsh(MetaKernel(source_dir + "juice_ops.tm"))
+    spice.furnsh(MetaKernel(source_dir + "ground_stations_v0019.tm"))
+    spice.furnsh(MetaKernel(source_dir + "latest_lsk_v0004.tm"))
+    spice.furnsh(MetaKernel(source_dir + "latest_pck_v0005.tm"))
+    spice.furnsh(MetaKernel(source_dir + "solar_system_v0060.tm"))
+    return
+    """
+    spice.furnsh(source_dir + "ck/juice_sc_crema_5_1_150lb_default_v01.bc")
     spice.furnsh(source_dir + 'lsk/naif0012.tls')
     spice.furnsh(source_dir + 'pck/pck00011.tpc')
-    return
-
-def spice_predict_ini(source_dir):
-    # load spice kernel files
-    # spice.furnsh(source_dir + "mk/juice_ops.tm")
-    # spice.furnsh(source_dir + "mk/juice_plan.tm")
-    spice.furnsh(MetaKernel(source_dir + "mk/juice_plan.tm", kernels=source_dir))
-    #
-    spice.furnsh(source_dir + "ck/juice_sc_crema_5_1_150lb_default_v01.bc")
-    spice.furnsh(source_dir + "spk/jup365_19900101_20500101.bsp")
-    spice.furnsh(source_dir + "spk/de432s.bsp")
-    spice.furnsh(source_dir + "lsk/naif0012.tls")
-    spice.furnsh(source_dir + "pck/pck00011.tpc")
-
-    return
-
+    spice.furnsh(source_dir + 'spk/de432s.bsp')
+    spice.furnsh(source_dir + 'spk/jup365_19900101_20500101.bsp')
+    """
 
 # ---------------------------------------------------------
 #   Calculate JUICE orbit
@@ -223,6 +169,22 @@ def get_juice_pos_moon(et, x_ref="SUN"):
     return [x, y, z, r, lat, lon]
 
 # ---------------------------------------------------------
+#   Calculate EARTH orbit
+#   reference frame: IAU_MOON
+#   target: EARTH
+#   origin: MOON
+#   refernce target on the x-axis: x_ref
+# ---------------------------------------------------------
+def get_earth_pos_moon(et, x_ref="SUN"):
+
+    x, y, z, r, lat, lon = get_pos_xref(
+        et, ref="IAU_MOON", tar="EARTH", org="MOON", x_ref=x_ref, corr="LT+S"
+    )
+
+    return [x, y, z, r, lat, lon]
+
+
+# ---------------------------------------------------------
 #   Calculate JUICE orbit
 #   reference frame: IAU_VENUS
 #   target: JUICE
@@ -328,3 +290,50 @@ def get_pos_ref(
         lon[i] = math.atan2(y[i], x[i])
 
     return [x, y, z, r, lat, lon]
+
+
+"""
+# ---------------------------------------------------------
+# Geometry file name
+# ---------------------------------------------------------
+def name_geometry(ID_target, ID_observer, ID_frame, Epoch_min, Epoch_max):
+    # ID_target   = 3         # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE
+    # ID_observer = 99        # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE
+    # ID_frame    = 99        # 0:Sun  3:Earth  5:Jupiter  52:Europa  53:Ganymede  54:Callisto  99:JUICE  991:RWI
+    # Epoch_min   = '2024-08-19 00:00:00'
+    # Epoch_max   = '2024-08-24 00:00:00'
+
+    if   ID_target   == 0:   name_target   = 'SUN'
+    elif ID_target   == 3:   name_target   = 'EARTH'
+    elif ID_target   == 5:   name_target   = 'JUPITER'
+    elif ID_target   == 52:  name_target   = 'EUROPA'
+    elif ID_target   == 53:  name_target   = 'GANYMEDE'
+    elif ID_target   == 54:  name_target   = 'CALLISTO'
+    elif ID_target   == 99:  name_target   = 'SC'
+    else:                    print("!!! ID_target error !!! : ", ID_target)
+    #
+    if   ID_observer == 0:   name_observer = 'SUN'
+    elif ID_observer == 3:   name_observer = 'EARTH'
+    elif ID_observer == 5:   name_observer = 'JUPITER'
+    elif ID_observer == 52:  name_observer = 'EUROPA'
+    elif ID_observer == 53:  name_observer = 'GANYMEDE'
+    elif ID_observer == 54:  name_observer = 'CALLISTO'
+    elif ID_observer == 99:  name_observer = 'SC'
+    else:                    print("!!! ID_observer error !!! : ", ID_observer)
+    #
+    if   ID_frame    == 0:   name_frame    = 'SUN'
+    elif ID_frame    == 3:   name_frame    = 'EARTH'
+    elif ID_frame    == 5:   name_frame    = 'JUPITER'
+    elif ID_frame    == 52:  name_frame    = 'EUROPA'
+    elif ID_frame    == 53:  name_frame    = 'GANYMEDE'
+    elif ID_frame    == 54:  name_frame    = 'CALLISTO'
+    elif ID_frame    == 99:  name_frame    = 'SC'
+    elif ID_frame    == 991: name_frame    = 'RWI'
+    else:                    print("!!! ID_frame error !!! : ", ID_frame)
+    #
+    name_yyyymm = Epoch_min[0:4] + Epoch_min[5:7]
+    #
+    name_file = 'JUICE_' + name_target + '_' + name_observer+ '_' +  name_frame + '_' +  name_yyyymm + '.csv'
+    #
+    return  name_file, name_target, name_observer, name_frame 
+"""

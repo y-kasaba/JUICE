@@ -34,8 +34,8 @@ def datalist(date_str, ver_str):
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
         data_name_list = ['SID21_20231024-0046.cdf']
-        # 202310 -- FS
         """
+        # 202310 -- FS
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
         data_name_list = ['SID21_Seq05.cdf']
         """

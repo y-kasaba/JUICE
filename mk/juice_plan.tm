@@ -1,6 +1,6 @@
 KPL/MK
 
-Meta-kernel for JUICE Dataset v451 -- Planning 20240927_001
+Meta-kernel for JUICE Dataset v453 -- Planning 20250306_001
 ============================================================================
 
    This meta-kernel lists the JUICE Planning SPICE kernels
@@ -11,7 +11,7 @@ Meta-kernel for JUICE Dataset v451 -- Planning 20240927_001
    the most complete coverage for the JUICE Planning scenario.
 
    This meta-kernel was generated with the Auxiliary Data Conversion
-   System version: ADCSng v4.2.9.
+   System version: ADCSng v4.4.5.
 
 
 Usage of the Meta-kernel
@@ -45,13 +45,13 @@ Implementation Notes
 
 -------------------
 
-   This file was created on September 27, 2024 by Alfredo Escalante Lopez ESA/ESAC.
-   The original name of this file was juice_plan_v451_20240927_001.tm.
+   This file was created on March 6, 2025 by Alfredo Escalante Lopez ESA/ESAC.
+   The original name of this file was juice_plan_v453_20250306_001.tm.
 
 
    \begindata
 
-     PATH_VALUES       = ( '/Users/user/Dropbox-Univ/data/data-JUICE/spice/juice/kernels/' )
+     PATH_VALUES       = ( '/Users/user/0-python/SPICE_python/spice/juice/kernels' )
 
      PATH_SYMBOLS      = ( 'KERNELS' )
 
@@ -62,13 +62,13 @@ Implementation Notes
                            '$KERNELS/ck/juice_sc_crema_5_1_150lb_23_1_conjctn_v01.bc'
                            '$KERNELS/ck/juice_sc_crema_5_1_150lb_23_1_flybys_v01.bc'
                            '$KERNELS/ck/juice_sc_crema_5_1_150lb_23_1_baseline_v03.bc'
-                           '$KERNELS/ck/juice_sc_ptr_soc_pcw3_s01p00_v01.bc'
+                           '$KERNELS/ck/juice_sc_ptr_soc_pcw3_s01p00_v06.bc'
                            '$KERNELS/ck/juice_sc_ptr_soc_s007_01_s06p00_v01.bc'
-                           '$KERNELS/ck/juice_sc_attc_000074_230414_241114_v01.bc'
+                           '$KERNELS/ck/juice_sc_attc_000080_230414_250425_v01.bc'
                            '$KERNELS/ck/juice_lpbooms_f160326_v01.bc'
                            '$KERNELS/ck/juice_magboom_f160326_v04.bc'
                            '$KERNELS/ck/juice_majis_scan_zero_v02.bc'
-                           '$KERNELS/ck/juice_majis_scan_240819_240820_v01.bc'
+                           '$KERNELS/ck/juice_majis_scan_stp_240819_240820_v01.bc'
                            '$KERNELS/ck/juice_swi_scan_zero_v02.bc'
                            '$KERNELS/ck/juice_sa_crema_5_1_150lb_23_1_default_v01.bc'
                            '$KERNELS/ck/juice_sa_crema_5_1_150lb_23_1_baseline_v04.bc'
@@ -77,9 +77,9 @@ Implementation Notes
                            '$KERNELS/ck/juice_mga_crema_5_1_150lb_23_1_baseline_v04.bc'
                            '$KERNELS/ck/juice_mga_ptr_soc_s007_01_s02p00_v01.bc'
 
-                           '$KERNELS/fk/juice_v40.tf'
+                           '$KERNELS/fk/juice_v42.tf'
                            '$KERNELS/fk/juice_sci_v17.tf'
-                           '$KERNELS/fk/juice_ops_v11.tf'
+                           '$KERNELS/fk/juice_ops_v12.tf'
                            '$KERNELS/fk/juice_dsk_surfaces_v11.tf'
                            '$KERNELS/fk/juice_roi_v02.tf'
                            '$KERNELS/fk/juice_events_crema_5_1_150lb_23_1_v02.tf'
@@ -130,17 +130,17 @@ Implementation Notes
 
                            '$KERNELS/ik/juice_gala_v05.ti'
                            '$KERNELS/ik/juice_janus_v08.ti'
-                           '$KERNELS/ik/juice_jmc_v02.ti'
+                           '$KERNELS/ik/juice_jmc_v03.ti'
                            '$KERNELS/ik/juice_jmag_v02.ti'
-                           '$KERNELS/ik/juice_majis_v08.ti'
-                           '$KERNELS/ik/juice_navcam_v01.ti'
+                           '$KERNELS/ik/juice_majis_v09.ti'
+                           '$KERNELS/ik/juice_navcam_v02.ti'
                            '$KERNELS/ik/juice_pep_v14.ti'
                            '$KERNELS/ik/juice_radem_v03.ti'
                            '$KERNELS/ik/juice_rime_v04.ti'
                            '$KERNELS/ik/juice_rpwi_v03.ti'
                            '$KERNELS/ik/juice_str_v01.ti'
                            '$KERNELS/ik/juice_swi_v07.ti'
-                           '$KERNELS/ik/juice_uvs_v06.ti'
+                           '$KERNELS/ik/juice_uvs_v07.ti'
                            '$KERNELS/ik/juice_aux_v02.ti'
 
                            '$KERNELS/lsk/naif0012.tls'
@@ -161,21 +161,21 @@ Implementation Notes
                            '$KERNELS/spk/juice_struct_v21.bsp'
                            '$KERNELS/spk/juice_struct_internal_v01.bsp'
                            '$KERNELS/spk/juice_cog_v00.bsp'
-                           '$KERNELS/spk/juice_cog_000074_230416_241031_v01.bsp'
+                           '$KERNELS/spk/juice_cog_000080_230416_250409_v01.bsp'
                            '$KERNELS/spk/juice_roi_v02.bsp'
                            '$KERNELS/spk/mar085_20200101_20400101.bsp'
                            '$KERNELS/spk/earthstns_fx_201023.bsp'
                            '$KERNELS/spk/estrack_v04.bsp'
                            '$KERNELS/spk/juice_earthstns_v01.bsp'
                            '$KERNELS/spk/jup365_19900101_20500101.bsp'
-                           '$KERNELS/spk/jup343_19900101_20500101.bsp'
+                           '$KERNELS/spk/jup344_19900101_20500101.bsp'
                            '$KERNELS/spk/jup344-s2003_j24_19900101_20500101.bsp'
                            '$KERNELS/spk/jup346_19900101_20500101.bsp'
                            '$KERNELS/spk/de432s.bsp'
                            '$KERNELS/spk/inpop19a_19900101_20500101.bsp'
                            '$KERNELS/spk/noe-5-2017-gal-a-reduced_20200101_20380902.bsp'
                            '$KERNELS/spk/juice_crema_5_1_150lb_23_1_plan_v01.bsp'
-                           '$KERNELS/spk/juice_orbc_000074_230414_310721_v01.bsp'
+                           '$KERNELS/spk/juice_orbc_000080_230414_310721_v01.bsp'
 
                          )
 
@@ -191,7 +191,7 @@ SPICE Kernel Dataset Version
 
    \begindata
 
-      SKD_VERSION = 'v451_20240927_001'
+      SKD_VERSION = 'v453_20250306_001'
 
    \begintext
 
@@ -200,7 +200,7 @@ SPICE Kernel Dataset Version
 
    \begindata
 
-      MK_IDENTIFIER = 'juice_plan_v451_20240927_001'
+      MK_IDENTIFIER = 'juice_plan_v453_20250306_001'
 
    \begintext
 
