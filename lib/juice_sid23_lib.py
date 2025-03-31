@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2024/9/28
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/3/31
 """
 import numpy          as np
 import scipy.stats    as stats
@@ -26,8 +26,8 @@ def hf_sid23_read(cdf, RPWI_FSW_version):
     data.V_selected  = cdf['V_selected'][...]
     data.W_selected  = cdf['W_selected'][...]
     data.cal_signal  = cdf['cal_signal'][...]
-    data.pol_AUX     = cdf['pol_AUX'][...]
-    data.decimation_AUX = cdf['decimation_AUX'][...]
+    # data.pol_AUX     = cdf['pol_AUX'][...]
+    # data.decimation_AUX = cdf['decimation_AUX'][...]
     data.N_block     = np.int64(cdf['N_block'][...])
     data.freq_center = cdf['freq_center'][...]
     data.N_feed      = np.int64(cdf['N_feed'][...])
@@ -63,8 +63,8 @@ def hf_sid23_add(data, data1):
     data.V_selected     = np.r_["0", data.V_selected, data1.V_selected]
     data.W_selected     = np.r_["0", data.W_selected, data1.W_selected]
     data.cal_signal     = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.pol_AUX        = np.r_["0", data.pol_AUX, data1.pol_AUX]
-    data.decimation_AUX = np.r_["0", data.decimation_AUX, data1.decimation_AUX]
+    # data.pol_AUX        = np.r_["0", data.pol_AUX, data1.pol_AUX]
+    # data.decimation_AUX = np.r_["0", data.decimation_AUX, data1.decimation_AUX]
     data.N_block        = np.r_["0", data.N_block, data1.N_block]
     data.freq_center    = np.r_["0", data.freq_center, data1.freq_center]
     data.N_feed         = np.r_["0", data.N_feed, data1.N_feed]
@@ -111,8 +111,8 @@ def hf_sid23_shaping(data, f_max, f_min):
     data.V_selected     = data.V_selected [index[0]]
     data.W_selected     = data.W_selected [index[0]]
     data.cal_signal     = data.cal_signal [index[0]]
-    data.pol_AUX        = data.pol_AUX [index[0]]
-    data.decimation_AUX = data.decimation_AUX[index[0]]
+    # data.pol_AUX        = data.pol_AUX [index[0]]
+    # data.decimation_AUX = data.decimation_AUX[index[0]]
     data.N_block        = data.N_block [index[0]]
     data.freq_center    = data.freq_center [index[0]]
     data.N_feed         = data.N_feed  [index[0]]
@@ -171,10 +171,10 @@ def hf_sid23_shaping(data, f_max, f_min):
     print(" sort:", data.Eu_i.shape, data.n_time, n_num, data.N_block[0], data.N_feed[0])
 
     # Time   
-    time  = np.arange(0, n_num0, 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
+    time  = np.arange(0, n_num0, 1) / juice_cdf._sample_rate(data.decimation[0])
     time0 = np.float64(np.arange(0, n_num, 1))
     for i in range(data.N_block[0]):
-        time0[n_num0*i:n_num0*(i+1)] = time + i * n_num1 / juice_cdf._sample_rate(data.decimation_AUX[0])
+        time0[n_num0*i:n_num0*(i+1)] = time + i * n_num1 / juice_cdf._sample_rate(data.decimation[0])
     time0 = np.array(time0).reshape(data.N_block[0], data.N_feed[0]*128)
     #
     data.time = np.zeros(data.n_time*data.N_block[0]*data.N_feed[0]*128)

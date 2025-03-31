@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 Surv): L1a data list -- 2024/10/13
+    JUICE RPWI HF SID5 (PSSR1 Surv): L1a data list -- 2025/3/31
 """
 import glob
 import os
@@ -32,10 +32,10 @@ def datalist(date_str, ver_str):
     else:
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
-        data_name_list = ['SID05_20231024-0046.cdf',
-                          'SID05_20231117-1603.cdf',
-                          'SID05_20231117-1611.cdf',
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old2/'
+        data_name_list = ['SID05_20231024-0046.ccs.cdf',
+                          'SID05_20231117-1603.ccs.cdf',
+                          'SID05_20231117-1611.ccs.cdf',
                           ]
         # 202310 -- FS
         """

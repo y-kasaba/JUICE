@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2024/9/28
+    JUICE RPWI HF SID22 (PSSR2 rich): L1a QL -- 2025/3/31
 """
 import numpy as np
 import juice_cdf_lib as juice_cdf
@@ -23,11 +23,11 @@ def hf_sid22_read(cdf, RPWI_FSW_version):
     # AUX
     data.ch_selected = cdf['ch_selected'][...]      # [0:U  1:V  2:W]
     data.cal_signal  = cdf['cal_signal'][...]
-    data.pol_AUX     = cdf['pol_AUX'][...]
-    data.decimation_AUX = cdf['decimation_AUX'][...]
-    data.N_samp_AUX  = np.int64(cdf['N_samp_AUX'][...])
+    # data.pol_AUX     = cdf['pol_AUX'][...]
+    # data.decimation_AUX = cdf['decimation_AUX'][...]
+    # data.N_samp_AUX  = np.int64(cdf['N_samp_AUX'][...])
     data.N_auto_corr = np.int64(cdf['N_auto_corr'][...])
-    data.N_step_AUX  = np.int64(cdf['N_step_AUX'][...])
+    # data.N_step_AUX  = np.int64(cdf['N_step_AUX'][...])
     data.freq_start  = cdf['freq_start'][...]
     data.freq_stop   = cdf['freq_stop'][...]
 
@@ -60,11 +60,11 @@ def hf_sid22_add(data, data1):
     # AUX
     data.ch_selected    = np.r_["0", data.ch_selected, data1.ch_selected]
     data.cal_signal     = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.pol_AUX        = np.r_["0", data.pol_AUX, data1.pol_AUX]
-    data.decimation_AUX = np.r_["0", data.decimation_AUX, data1.decimation_AUX]
-    data.N_samp_AUX     = np.r_["0", data.N_samp_AUX, data1.N_samp]
+    # data.pol_AUX        = np.r_["0", data.pol_AUX, data1.pol_AUX]
+    # data.decimation_AUX = np.r_["0", data.decimation_AUX, data1.decimation_AUX]
+    # data.N_samp_AUX     = np.r_["0", data.N_samp_AUX, data1.N_samp]
     data.N_auto_corr    = np.r_["0", data.N_auto_corr, data1.N_auto_corr]
-    data.N_step_AUX     = np.r_["0", data.N_step_AUX, data1.N_step]
+    # data.N_step_AUX     = np.r_["0", data.N_step_AUX, data1.N_step]
     data.freq_start     = np.r_["0", data.freq_start, data1.freq_start]
     data.freq_stop      = np.r_["0", data.freq_stop, data1.freq_stop]
 
@@ -95,7 +95,7 @@ def hf_sid22_shaping(data):
     return: data
     """
     n_time = data.auto_corr.shape[0]
-    data.auto_corr = np.array(data.auto_corr).reshape(n_time, 16, data.N_samp_AUX[0])
-    data.time = np.arange(0, data.N_samp_AUX[0], 1) / juice_cdf._sample_rate(data.decimation_AUX[0])
+    data.auto_corr = np.array(data.auto_corr).reshape(n_time, 16, data.N_samp[0])
+    data.time = np.arange(0, data.N_samp[0], 1) / juice_cdf._sample_rate(data.decimation[0])
 
     return data

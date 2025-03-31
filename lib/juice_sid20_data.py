@@ -48,17 +48,19 @@ def datalist(date_str, ver_str, sid):
         """
 
         # *** Ground Test - Ver.2 ***
-        """
         # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old2/'
+        """
         data_name_list = [#'SID04_20231024-0042.cdf',
-                          'SID04-comp0-20231117-1529.cdf',          # 10/10/0mVpp, 0/90/0deg
-                          'SID04-comp1-20231117-1532.cdf',          # 10/10/0mVpp, 0/90/0deg
+                          'SID04-comp0-20231117-1529.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
+                          'SID04-comp1-20231117-1532.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
                          ]
-        data_name_list = [#'SID20_20231024-0042.cdf',
-                          #'SID20-comp0-20231117-1529.cdf',          # 10/10/0mVpp, 0/90/0deg
-                          'SID20-comp1-20231117-1532.cdf',          # 10/10/0mVpp, 0/90/0deg
+        """
+        data_name_list = [#'SID20_20231024-0042.ccs.cdf',
+                          #'SID20-comp0-20231117-1529.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
+                          'SID20-comp1-20231117-1532.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
                          ]
+        """
         # 202310 -- FS
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
         data_name_list = ['SID04_Seq01.cdf',

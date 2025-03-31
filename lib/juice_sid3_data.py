@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a data list -- 2024/10/20
+    JUICE RPWI HF SID3 (Full): L1a data list -- 2025/3/31
 """
 import glob
 import os
@@ -68,15 +68,15 @@ def datalist(date_str, ver_str):
         """
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
-        data_name_list = [#'SID03_20231024-0036.cdf',                # 10/10/10mV, 0/90/0deg,  1.55MHz
-                          #'SID03-3ch-comp0-20231117-1424.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          'SID03-3ch-comp1-20231117-1418.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          #'SID03-3ch-comp1-20241014-2138.ccs',
-                          #'SID03-3ch-comp2-20231117-1429.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          #'SID03-3ch-comp2-20241014-1132.ccs',
-                          #'SID03-3ch-comp3-20231117-1432.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
-                          #'SID03-3ch-comp3-20241015-2313.ccs',
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old2/'
+        data_name_list = [#'SID03_20231024-0036.ccs.cdf',                # 10/10/10mV, 0/90/0deg,  1.55MHz
+                          #'SID03-3ch-comp0-20231117-1424.ccs.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          'SID03-3ch-comp1-20231117-1418.ccs.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          #'SID03-3ch-comp1-20241014-2138.ccs.cdf',
+                          #'SID03-3ch-comp2-20231117-1429.ccs.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          #'SID03-3ch-comp2-20241014-1132.ccs.cdf',
+                          #'SID03-3ch-comp3-20231117-1432.ccs.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
+                          #'SID03-3ch-comp3-20241015-2313.ccs.cdf',
                          ]
         """
         # 202310 -- FS
