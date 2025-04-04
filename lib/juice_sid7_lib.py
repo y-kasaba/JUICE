@@ -30,7 +30,7 @@ def hf_sid7_read(cdf, RPWI_FSW_version):
     data.N_block     = np.int16(cdf['N_block'][...])
     data.interval    = cdf['interval'][...]
     data.freq_center = cdf['freq_center'][...]
-    data.N_samp      = np.int16(cdf['N_samp_AUX'][...])
+    data.N_samp      = np.int16(cdf['N_samp'][...])
     data.T_RWI_CH1   = np.float64(cdf['T_RWI_CH1'][...])
     data.T_RWI_CH2   = np.float64(cdf['T_RWI_CH2'][...])
     data.T_HF_FPGA   = np.float64(cdf['T_HF_FPGA'][...])
