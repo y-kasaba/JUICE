@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2024/9/28
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/4/6
 """
 import numpy as np
 import math
@@ -31,13 +31,14 @@ def hf_sid2_read(cdf, RPWI_FSW_version):
     data.RFI_rejection = cdf['RFI_rejection'][...]
     data.Pol_sep_thres = cdf['Pol_sep_thres'][...]
     data.Pol_sep_SW  = cdf['Pol_sep_SW'][...]
-    data.overflow_U  = cdf['overflow_U'][...]   # (fixed: not defined in V.2)
-    data.overflow_V  = cdf['overflow_V'][...]   # (fixed: not defined in V.2)
-    data.overflow_W  = cdf['overflow_W'][...]   # (fixed: not defined in V.2)
+    # data.overflow_U  = cdf['overflow_U'][...]   # (fixed: not defined in V.2)
+    # data.overflow_V  = cdf['overflow_V'][...]   # (fixed: not defined in V.2)
+    # data.overflow_W  = cdf['overflow_W'][...]   # (fixed: not defined in V.2)
     data.proc_param0 = cdf['proc_param0'][...];  data.proc_param1 = cdf['proc_param1'][...]
     data.proc_param2 = cdf['proc_param2'][...];  data.proc_param3 = cdf['proc_param3'][...]
     data.BG_downlink = cdf['BG_downlink'][...]
     data.N_block     = np.int64(cdf['N_block'][...])
+    data.Rich_flag   = np.int64(cdf['Rich_data_flag'][...])
     data.T_RWI_CH1   = np.float64(cdf['T_RWI_CH1'][...])
     data.T_RWI_CH2   = np.float64(cdf['T_RWI_CH2'][...])
     data.T_HF_FPGA   = np.float64(cdf['T_HF_FPGA'][...])
@@ -45,7 +46,8 @@ def hf_sid2_read(cdf, RPWI_FSW_version):
     data.N_samp      = np.int64(cdf['N_samp'][...])
     data.N_step      = np.int64(cdf['N_step'][...])
     data.decimation  = cdf['decimation'][...]; data.pol       = cdf['pol'][...]
-    data.B0_startf   = cdf['B0_startf'][...];  data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...];
+    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]; data.ISW_ver   = cdf['ISW_ver'][...]
+    data.B0_startf   = cdf['B0_startf'][...];  data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...]
     data.B0_repeat   = cdf['B0_repeat'][...];  data.B0_subdiv = cdf['B0_subdiv'][...]
     data.B1_startf   = cdf['B1_startf'][...];  data.B1_stopf  = cdf['B1_stopf'][...];  data.B1_step = cdf['B1_step'][...]
     data.B1_repeat   = cdf['B1_repeat'][...];  data.B1_subdiv = cdf['B1_subdiv'][...]
@@ -94,15 +96,16 @@ def hf_sid2_add(data, data1):
     data.RFI_rejection = np.r_["0", data.RFI_rejection, data1.RFI_rejection]
     data.Pol_sep_thres = np.r_["0", data.Pol_sep_thres, data1.Pol_sep_thres]
     data.Pol_sep_SW  = np.r_["0", data.Pol_sep_SW, data1.Pol_sep_SW]
-    data.overflow_U  = np.r_["0", data.overflow_U, data1.overflow_U]
-    data.overflow_V  = np.r_["0", data.overflow_V, data1.overflow_V]
-    data.overflow_W  = np.r_["0", data.overflow_W, data1.overflow_W]
+    # data.overflow_U  = np.r_["0", data.overflow_U, data1.overflow_U]
+    # data.overflow_V  = np.r_["0", data.overflow_V, data1.overflow_V]
+    # data.overflow_W  = np.r_["0", data.overflow_W, data1.overflow_W]
     data.proc_param0 = np.r_["0", data.proc_param0, data1.proc_param0]
     data.proc_param1 = np.r_["0", data.proc_param1, data1.proc_param1]
     data.proc_param2 = np.r_["0", data.proc_param2, data1.proc_param2]
     data.proc_param3 = np.r_["0", data.proc_param3, data1.proc_param3]
     data.BG_downlink = np.r_["0", data.BG_downlink, data1.BG_downlink]
     data.N_block     = np.r_["0", data.N_block, data1.N_block]
+    data.Rich_flag   = np.r_["0", data.Rich_flag, data1.Rich_flag]
     data.T_RWI_CH1   = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
     data.T_RWI_CH2   = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
     data.T_HF_FPGA   = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
@@ -111,6 +114,8 @@ def hf_sid2_add(data, data1):
     data.N_step      = np.r_["0", data.N_step, data1.N_step]
     data.decimation  = np.r_["0", data.decimation, data1.decimation]
     data.pol         = np.r_["0", data.pol, data1.pol]
+    data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
+    data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
     data.B0_startf   = np.r_["0", data.B0_startf, data1.B0_startf]
     data.B0_stopf    = np.r_["0", data.B0_stopf, data1.B0_stopf]
     data.B0_step     = np.r_["0", data.B0_step, data1.B0_step]
@@ -267,15 +272,16 @@ def hf_sid2_shaping(data, cal_mode):
         data.RFI_rejection = data.RFI_rejection[index[0]]
         data.Pol_sep_thres = data.Pol_sep_thres[index[0]]
         data.Pol_sep_SW  = data.Pol_sep_SW [index[0]]
-        data.overflow_U  = data.overflow_U [index[0]]
-        data.overflow_V  = data.overflow_V [index[0]]
-        data.overflow_W  = data.overflow_W [index[0]]
+        # data.overflow_U  = data.overflow_U [index[0]]
+        # data.overflow_V  = data.overflow_V [index[0]]
+        # data.overflow_W  = data.overflow_W [index[0]]
         data.proc_param0 = data.proc_param0[index[0]]
         data.proc_param1 = data.proc_param1[index[0]]
         data.proc_param2 = data.proc_param2[index[0]]
         data.proc_param3 = data.proc_param3[index[0]]
         data.BG_downlink = data.BG_downlink[index[0]]
         data.N_block     = data.N_block    [index[0]]
+        data.Rich_flag   = data.Rich_flag  [index[0]]
         data.T_RWI_CH1   = data.T_RWI_CH1  [index[0]]
         data.T_RWI_CH2   = data.T_RWI_CH2  [index[0]]
         data.T_HF_FPGA   = data.T_HF_FPGA  [index[0]]
@@ -284,6 +290,8 @@ def hf_sid2_shaping(data, cal_mode):
         data.N_step      = data.N_step     [index[0]]
         data.decimation  = data.decimation [index[0]]
         data.pol         = data.pol        [index[0]]
+        data.ADC_ovrflw  = data.ADC_ovrflw [index[0]]
+        data.ISW_ver     = data.ISW_ver    [index[0]]
         data.B0_startf   = data.B0_startf  [index[0]]
         data.B0_stopf    = data.B0_stopf   [index[0]]
         data.B0_step     = data.B0_step    [index[0]]

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a data list -- 2025/3/31
+    JUICE RPWI HF SID3 (Full): L1a data list -- 2025/4/6
 """
 import glob
 import os
@@ -30,6 +30,18 @@ def datalist(date_str, ver_str):
             data_name_list[i] = os.path.split(data_name_list[i])[1]
 
     else:
+        # *** Ground Test - Ver.3 ***
+        # 202411 -- SAMPLE
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
+        data_name_list = [#'SID03_20241125-1349_RadioFull_comp2_table1_asw3.ccs.cdf',
+                          'SID03_20241125-1405_RadioFull_comp1_table1_asw3.ccs.cdf',
+                          #'SID03_20241125-1413_RadioFull_comp3_table1_asw3.ccs.cdf',
+                          #'SID03_20241125-1421_RadioFull_comp0_table1_asw3.ccs.cdf',
+                          'SID03_20241125-1457_RadioFull_comp1_table1_bg1_asw3.ccs.cdf',
+                          'SID03_20241125-1502_RadioFull_comp1_table1_bg0_asw3.ccs.cdf',
+                          #'SID03_20241125-1506_RadioFull_comp2_table2_asw3.ccs.cdf',
+                          ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
+
         # *** Flight data: Ver.2 ***
         """
         # 202401
@@ -65,10 +77,9 @@ def datalist(date_str, ver_str):
                           'SID03-3ch-comp2-20241014-1132.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                           # 'SID03-3ch-comp3-20241015-2313.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                          ]
-        """
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old2/'
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
         data_name_list = [#'SID03_20231024-0036.ccs.cdf',                # 10/10/10mV, 0/90/0deg,  1.55MHz
                           #'SID03-3ch-comp0-20231117-1424.ccs.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                           'SID03-3ch-comp1-20231117-1418.ccs.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
@@ -78,6 +89,7 @@ def datalist(date_str, ver_str):
                           #'SID03-3ch-comp3-20231117-1432.ccs.cdf',      # 10/10/10mV, 90/0/0deg,  1.55MHz
                           #'SID03-3ch-comp3-20241015-2313.ccs.cdf',
                          ]
+        """
         """
         # 202310 -- FS
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a data list -- 2025/03/31
+    JUICE RPWI HF SID2 (RAW): L1a data list -- 2025/4/6
 """
 import glob
 import os
@@ -19,8 +19,6 @@ def datalist(date_str, ver_str):
     # *** Group read
     if yr_format=='20':
         base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
-        # if yr_str == '2023':
-        #    base_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'             # ASW1 -- DATA in IRFU's server has old format.
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID2_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -33,11 +31,9 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        """
-        # 202412 -- SAMPLE
+        # 202411 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID02_20241021-1026-SID2.ccs.cdf']                 # SG - 1.5MHz 10mVpp 90/0/0deg
-        """
+        data_name_list = ['SID02_20241125-1316_asw3.ccs.cdf']                   # SG - 1.5MHz 10mVpp 90/0/0deg
 
         # *** Flight - Ver.2 ***
         """
@@ -51,11 +47,18 @@ def datalist(date_str, ver_str):
         """
 
         # *** Ground Test - Ver.2 ***
+        """
+        # 202410 -- SAMPLE
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/'
+        data_name_list = ['SID02_20241021-1026.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
+                         ]
         # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old2/'
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
         data_name_list = ['SID02_20231007-0349.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
                           'SID02_20231117-1607.ccs.cdf',                       # SG - 1.5MHz 10mVpp 90/0/0deg 
                          ]
+        """
+
         """
         # 202312 -- Checkout
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202312_C/cdf/'
