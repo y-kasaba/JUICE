@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2024/10/11
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/4/7
 """
 import numpy as np
 import math
@@ -31,12 +31,12 @@ def hf_sid21_read(cdf, RPWI_FSW_version):
     data.RFI_rejection = cdf['RFI_rejection'][...]
     data.Pol_sep_thres = cdf['Pol_sep_thres'][...]
     data.Pol_sep_SW  = cdf['Pol_sep_SW'][...]
-    data.overflow_U  = cdf['overflow_U'][...]   # (fixed: not defined in V.2)
-    data.overflow_V  = cdf['overflow_V'][...]   # (fixed: not defined in V.2)
-    data.overflow_W  = cdf['overflow_W'][...]   # (fixed: not defined in V.2)
+    # data.overflow_U  = cdf['overflow_U'][...]   # (fixed: not defined in V.2)
+    # data.overflow_V  = cdf['overflow_V'][...]   # (fixed: not defined in V.2)
+    # data.overflow_W  = cdf['overflow_W'][...]   # (fixed: not defined in V.2)
     data.proc_param0 = cdf['proc_param0'][...];  data.proc_param1 = cdf['proc_param1'][...]
     data.proc_param2 = cdf['proc_param2'][...];  data.proc_param3 = cdf['proc_param3'][...]
-    data.freq_start  = cdf['freq_start'][...]    # [same with ‘B0_startf’]
+    # data.freq_start  = cdf['freq_start'][...]    # [same with ‘B0_startf’]
 
     # Header
     data.N_samp      = np.int64(cdf['N_samp'][...])
@@ -54,6 +54,7 @@ def hf_sid21_read(cdf, RPWI_FSW_version):
     # Matrix
     data.EuEv_re = np.float64(cdf['EuEv_re'][...]);  data.EvEw_re = np.float64(cdf['EvEw_re'][...]);  data.EwEu_re = np.float64(cdf['EwEu_re'][...])
     data.EuEv_im = np.float64(cdf['EuEv_im'][...]);  data.EvEw_im = np.float64(cdf['EvEw_im'][...]);  data.EwEu_im = np.float64(cdf['EwEu_im'][...])
+
     return data
 
 
@@ -76,14 +77,14 @@ def hf_sid21_add(data, data1):
     data.RFI_rejection = np.r_["0", data.RFI_rejection, data1.RFI_rejection]
     data.Pol_sep_thres = np.r_["0", data.Pol_sep_thres, data1.Pol_sep_thres]
     data.Pol_sep_SW    = np.r_["0", data.Pol_sep_SW, data1.Pol_sep_SW]
-    data.overflow_U    = np.r_["0", data.overflow_U, data1.overflow_U]
-    data.overflow_V    = np.r_["0", data.overflow_V, data1.overflow_V]
-    data.overflow_W    = np.r_["0", data.overflow_W, data1.overflow_W]
+    # data.overflow_U    = np.r_["0", data.overflow_U, data1.overflow_U]
+    # data.overflow_V    = np.r_["0", data.overflow_V, data1.overflow_V]
+    # data.overflow_W    = np.r_["0", data.overflow_W, data1.overflow_W]
     data.proc_param0   = np.r_["0", data.proc_param0, data1.proc_param0]
     data.proc_param1   = np.r_["0", data.proc_param1, data1.proc_param1]
     data.proc_param2   = np.r_["0", data.proc_param2, data1.proc_param2]
     data.proc_param3   = np.r_["0", data.proc_param3, data1.proc_param3]
-    data.freq_start    = np.r_["0", data.freq_start, data1.freq_start]
+    # data.freq_start    = np.r_["0", data.freq_start, data1.freq_start]
     # Header
     data.N_samp        = np.r_["0", data.N_samp, data1.N_samp]
     data.N_step        = np.r_["0", data.N_step, data1.N_step]
@@ -177,12 +178,12 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
         data.RFI_rejection = data.RFI_rejection[index[0]]
         data.Pol_sep_thres = data.Pol_sep_thres[index[0]]
         data.Pol_sep_SW  = data.Pol_sep_SW[index[0]]
-        data.overflow_U  = data.overflow_U[index[0]]
-        data.overflow_V  = data.overflow_V[index[0]]
-        data.overflow_W  = data.overflow_W[index[0]]
+        # data.overflow_U  = data.overflow_U[index[0]]
+        # data.overflow_V  = data.overflow_V[index[0]]
+        # data.overflow_W  = data.overflow_W[index[0]]
         data.proc_param0 = data.proc_param0[index[0]];  data.proc_param1 = data.proc_param1[index[0]]
         data.proc_param2 = data.proc_param2[index[0]];  data.proc_param3 = data.proc_param3[index[0]]
-        data.freq_start  = data.freq_start[index[0]]
+        # data.freq_start  = data.freq_start[index[0]]
         # Header
         data.N_samp      = data.N_samp    [index[0]]
         data.N_step      = data.N_step    [index[0]]
@@ -233,12 +234,14 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
     data.EwEw   [index[0]] = math.nan
     data.EvEw_re[index[0]] = math.nan; data.EwEu_re[index[0]] = math.nan; data.EvEw_im[index[0]] = math.nan; data.EwEu_im[index[0]] = math.nan
 
+    """
     # Masked
     for i in range(n_time):
         index = np.where(data.EuEu[i] < 1) 
         data.EuEu   [i][index[0]] = math.nan; data.EvEv   [i][index[0]] = math.nan; data.EwEw   [i][index[0]] = math.nan
         data.EuEv_re[i][index[0]] = math.nan; data.EvEw_re[i][index[0]] = math.nan; data.EwEu_re[i][index[0]] = math.nan 
         data.EuEv_im[i][index[0]] = math.nan; data.EvEw_im[i][index[0]] = math.nan; data.EwEu_im[i][index[0]] = math.nan
+    """
 
     # *** frequncy & width for spec cal
     data.freq   = data.frequency

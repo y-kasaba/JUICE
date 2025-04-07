@@ -253,8 +253,8 @@ def hf_sid20_shaping(data, sid, cal_mode, N_ch, comp_mode):
         data.N_step      = data.N_step    [index[0]]
         data.decimation  = data.decimation[index[0]]
         data.pol         = data.pol       [index[0]]
-        data.ADC_ovrflw  = data.ADC_ovrflw [index[0]]
-        data.ISW_ver     = data.ISW_ver    [index[0]]
+        data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
+        data.ISW_ver     = data.ISW_ver   [index[0]]
         data.B0_startf   = data.B0_startf [index[0]];  data.B0_stopf   = data.B0_stopf[index[0]];  data.B0_step = data.B0_step[index[0]]
         data.B0_repeat   = data.B0_repeat [index[0]];  data.B0_subdiv  = data.B0_subdiv[index[0]]
         if (sid==20):
