@@ -1,11 +1,11 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a data list -- 2024/10/11
+    JUICE RPWI HF SID6/22 (PSSR2): L1a data list -- 2025/6/24
 """
 import glob
 import os
 os.environ["CDF_LIB"] = "/Applications/cdf/cdf39_1-dist/lib"
 
-def datalist(date_str, ver_str):
+def datalist(date_str, ver_str, sid):
     """
     input:  date_str        yyyymmdd: group read    others: file list
     return: data_dir
@@ -18,11 +18,10 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
+        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
-        # if yr_str == '2023':
-        #    base_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'              # ASW1 -- DATA in IRFU's server has old format.
-        data_name = '*HF*SID21_*'+ver_str+'.cdf'
+        if sid == 6:  data_name = '*HF*SID6_*'+ver_str+'.cdf'
+        else:         data_name = '*HF*SID22_*'+ver_str+'.cdf'    
         cdf_file = data_dir + data_name
 
         data_name_list = glob.glob(cdf_file)
@@ -31,16 +30,33 @@ def datalist(date_str, ver_str):
         for i in range(num_list):
             data_name_list[i] = os.path.split(data_name_list[i])[1]
 
-    else:
-        # *** Ground Test - Ver.2 ***
-        # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample/cdf/'        # CDF data folder
-        data_name_list = ['SID21_20231024-0046.cdf']
+    elif sid == 22:
+		# <<< SID-22 test datas >>>
+        # *** Ground Test - Ver.3 ***
+        # 202411 -- SAMPLE
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
+        data_name_list = ['SID22_20241125-1325_PSSR2_asw3.ccs.cdf']     # SG - 1.5MHz 10mVpp 90/0/0deg
 
-        # 202310 -- FS
+        # *** Flight data: Ver.2 ***
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'        # CDF data folder
-        data_name_list = ['SID21_Seq05.cdf']
+        # 20240126
+        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
+        data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID22_20240126T091728_V01.cdf',
+                         ]
+        """
+
+    else:
+		# <<< SID-06 test datas >>>
+        # *** Ground Test - Ver.3 ***
+        # 202411 -- SAMPLE
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
+        data_name_list = ['SID06_20241125-1325_PSSR2_asw3.ccs.cdf']                   # SG - 1.5MHz 10mVpp 90/0/0deg
+
+        # *** Flight data: Ver.2 ***
+        # 20240126
+        """
+        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
+        data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID6_20240126T091728_V01.cdf']"
         """
 
     print(data_dir)

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/4/7
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/6/30
 """
 import numpy as np
 
@@ -33,15 +33,16 @@ def hf_sid5_read(cdf, RPWI_FSW_version):
     else:
         data.subdiv_reduction = cdf['subdiv_reduction'][...]
     #
-    data.T_RWI_CH1 = np.float64(cdf['T_RWI_CH1'][...])
-    data.T_RWI_CH2 = np.float64(cdf['T_RWI_CH2'][...])
-    data.T_HF_FPGA = np.float64(cdf['T_HF_FPGA'][...])
+    data.T_RWI_CH1 = np.float32(cdf['T_RWI_CH1'][...])
+    data.T_RWI_CH2 = np.float32(cdf['T_RWI_CH2'][...])
+    data.T_HF_FPGA = np.float32(cdf['T_HF_FPGA'][...])
 
     # Header
     data.N_samp      = np.int64(cdf['N_samp'][...])
     data.N_step      = np.int64(cdf['N_step'][...])
     data.decimation  = cdf['decimation'][...]; data.pol       = cdf['pol'][...]
-    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]; data.ISW_ver   = cdf['ISW_ver'][...]
+    if data.RPWI_FSW_version == '3.0':  ### tentative !!!!
+        data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]; data.ISW_ver   = cdf['ISW_ver'][...]
     data.B0_startf   = cdf['B0_startf'][...];  data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step   = cdf['B0_step'][...]
     data.B0_repeat   = cdf['B0_repeat'][...];  data.B0_subdiv = cdf['B0_subdiv'][...]
 
@@ -67,9 +68,6 @@ def hf_sid5_add(data, data1):
     data.sweep_table   = np.r_["0", data.sweep_table, data1.sweep_table]
     data.FFT_window    = np.r_["0", data.FFT_window, data1.FFT_window]
     data.RFI_rejection = np.r_["0", data.RFI_rejection, data1.RFI_rejection]
-    # data.N_freq        = np.r_["0", data.N_freq, data1.N_freq]
-    # data.freq_start    = np.r_["0", data.freq_start, data1.freq_start]
-    # data.freq_stop     = np.r_["0", data.freq_stop, data1.freq_stop]
     data.subdiv_reduction = np.r_["0", data.subdiv_reduction, data1.subdiv_reduction]
     data.T_RWI_CH1     = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
     data.T_RWI_CH2     = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
@@ -80,8 +78,9 @@ def hf_sid5_add(data, data1):
     data.N_step       = np.r_["0", data.N_step, data1.N_step]
     data.decimation   = np.r_["0", data.decimation, data1.decimation]
     data.pol          = np.r_["0", data.pol, data1.pol]
-    data.ADC_ovrflw   = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
-    data.ISW_ver      = np.r_["0", data.ISW_ver, data1.ISW_ver]
+    if data.RPWI_FSW_version == '3.0':  ### tentative !!!!
+        data.ADC_ovrflw   = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
+        data.ISW_ver      = np.r_["0", data.ISW_ver, data1.ISW_ver]
     data.B0_startf    = np.r_["0", data.B0_startf, data1.B0_startf]
     data.B0_stopf     = np.r_["0", data.B0_stopf, data1.B0_stopf]
     data.B0_step      = np.r_["0", data.B0_step, data1.B0_step]
@@ -119,9 +118,6 @@ def hf_sid5_shaping(data, cal_mode):
         data.sweep_table = data.sweep_table[index[0]]
         data.FFT_window  = data.FFT_window[index[0]]
         data.RFI_rejection = data.RFI_rejection[index[0]]
-        # data.N_freq      = data.N_freq    [index[0]]
-        # data.freq_start  = data.freq_start[index[0]]
-        # data.freq_stop   = data.freq_stop [index[0]]
         data.subdiv_reduction = data.subdiv_reduction[index[0]]
         data.T_RWI_CH1   = data.T_RWI_CH1 [index[0]]
         data.T_RWI_CH2   = data.T_RWI_CH2 [index[0]]
@@ -131,8 +127,9 @@ def hf_sid5_shaping(data, cal_mode):
         data.N_step      = data.N_step    [index[0]]
         data.decimation  = data.decimation[index[0]]
         data.pol         = data.pol       [index[0]]
-        data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
-        data.ISW_ver     = data.ISW_ver   [index[0]]
+        if data.RPWI_FSW_version == '3.0':  ### tentative !!!!
+            data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
+            data.ISW_ver     = data.ISW_ver   [index[0]]
         data.B0_startf   = data.B0_startf [index[0]];  data.B0_stopf   = data.B0_stopf[index[0]];  data.B0_step = data.B0_step[index[0]]
         data.B0_repeat   = data.B0_repeat [index[0]];  data.B0_subdiv  = data.B0_subdiv[index[0]]
         # Data

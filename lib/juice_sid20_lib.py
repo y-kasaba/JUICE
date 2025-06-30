@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/4/6
+    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/6/30
 """
 import numpy as np
 import math
@@ -34,16 +34,18 @@ def hf_sid20_read(cdf, sid, RPWI_FSW_version):
     data.proc_param2 = cdf['proc_param2'][...];  data.proc_param3 = cdf['proc_param3'][...]
     data.BG_downlink = cdf['BG_downlink'][...]
     data.N_block     = np.int64(cdf['N_block'][...])
-    data.Rich_flag   = np.int64(cdf['Rich_data_flag'][...])
-    data.T_RWI_CH1   = np.float64(cdf['T_RWI_CH1'][...])    
-    data.T_RWI_CH2   = np.float64(cdf['T_RWI_CH2'][...])  
-    data.T_HF_FPGA   = np.float64(cdf['T_HF_FPGA'][...])
+    if data.RPWI_FSW_version == '3.0':  ### tentative !!!!
+        data.Rich_flag   = np.int64(cdf['Rich_data_flag'][...])
+    data.T_RWI_CH1   = np.float32(cdf['T_RWI_CH1'][...])    
+    data.T_RWI_CH2   = np.float32(cdf['T_RWI_CH2'][...])  
+    data.T_HF_FPGA   = np.float32(cdf['T_HF_FPGA'][...])
 
     # Header
     data.N_samp      = np.int64(cdf['N_samp'][...])
     data.N_step      = np.int64(cdf['N_step'][...])
     data.decimation  = cdf['decimation'][...];   data.pol       = cdf['pol'][...]
-    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...];   data.ISW_ver   = cdf['ISW_ver'][...]
+    # ***tmp*** data.ADC_ovrflw  = cdf['ADC_ovrflw'][...];   
+    # ***tmp*** data.ISW_ver   = cdf['ISW_ver'][...]
     data.B0_startf   = cdf['B0_startf'][...];    data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...]
     data.B0_repeat   = cdf['B0_repeat'][...];    data.B0_subdiv = cdf['B0_subdiv'][...]
     if (sid==20):
@@ -109,7 +111,8 @@ def hf_sid20_add(data, data1, sid):
     data.proc_param3 = np.r_["0", data.proc_param3, data1.proc_param3]
     data.BG_downlink = np.r_["0", data.BG_downlink, data1.BG_downlink]
     data.N_block     = np.r_["0", data.N_block, data1.N_block]
-    data.Rich_flag   = np.r_["0", data.Rich_flag, data1.Rich_flag]
+    if data.RPWI_FSW_version == '3.0':  ### tentative !!!!
+        data.Rich_flag   = np.r_["0", data.Rich_flag, data1.Rich_flag]
     data.T_RWI_CH1   = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
     data.T_RWI_CH2   = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
     data.T_HF_FPGA   = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
@@ -244,7 +247,8 @@ def hf_sid20_shaping(data, sid, cal_mode, N_ch, comp_mode):
         data.proc_param2 = data.proc_param2[index[0]];  data.proc_param3 = data.proc_param3[index[0]]
         data.BG_downlink = data.BG_downlink[index[0]]
         data.N_block     = data.N_block    [index[0]]
-        data.Rich_flag   = data.Rich_flag  [index[0]]
+        if data.RPWI_FSW_version == '3.0':  ### tentative !!!!
+            data.Rich_flag   = data.Rich_flag  [index[0]]
         data.T_RWI_CH1   = data.T_RWI_CH1 [index[0]]
         data.T_RWI_CH2   = data.T_RWI_CH2 [index[0]]
         data.T_HF_FPGA   = data.T_HF_FPGA [index[0]]

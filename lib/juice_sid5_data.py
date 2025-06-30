@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 Surv): L1a data list -- 2025/4/7
+    JUICE RPWI HF SID5 (PSSR1 Surv): L1a data list -- 2025/4/9
 """
 import glob
 import os
@@ -18,7 +18,7 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
+        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID5_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -33,7 +33,7 @@ def datalist(date_str, ver_str):
         # *** Ground Test - Ver.3 ***
         # 202411 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID05_20241125-1341_PSSR1_comp0_asw3.ccs.cdf',
+        data_name_list = [#'SID05_20241125-1341_PSSR1_comp0_asw3.ccs.cdf',
                           'SID05_20241125-1335_PSSR1_comp1_asw3.ccs.cdf',
                           ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
 
@@ -41,8 +41,8 @@ def datalist(date_str, ver_str):
         # 202310 -- SAMPLE
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
-        data_name_list = ['SID05_20231024-0046.ccs.cdf',
-                          'SID05_20231117-1603.ccs.cdf',
+        data_name_list = [#'SID05_20231024-0046.ccs.cdf',
+                          #'SID05_20231117-1603.ccs.cdf',
                           'SID05_20231117-1611.ccs.cdf',
                           ]
         """

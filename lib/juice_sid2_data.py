@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a data list -- 2025/4/6
+    JUICE RPWI HF SID2 (RAW): L1a data list -- 2025/6/29
 """
 import glob
 import os
@@ -18,7 +18,7 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'         # ASW2
+        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID2_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -37,26 +37,31 @@ def datalist(date_str, ver_str):
 
         # *** Flight - Ver.2 ***
         """
-        data_dir = '/Users/user/Dropbox-Univ/data/data-JUICE/datasets/'
-        # 202401
-        data_name_list = ['2024/01/25/JUICE_L1a_RPWI-HF-SID2_20240125T112327_V01.cdf']     # 128   CAL
+        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
+        # 202503
+        data_name_list = ['2025/03/31/JUICE_L1a_RPWI-HF-SID2_20250331T005104_V01.cdf',     # 1st packet -- error
+                         ]
         # 202408
         data_name_list = [#'2024/08/22/JUICE_L1a_RPWI-HF-SID2_20240822T023129_V01.cdf',    # 128   1st packet -- error
                           '2024/08/22/JUICE_L1a_RPWI-HF-SID2_20240822T023715_V01.cdf',     # 128   CAL
                          ]
+        # 202401
+        data_name_list = ['2024/01/25/JUICE_L1a_RPWI-HF-SID2_20240125T112327_V01.cdf']     # 128   CAL
         """
 
         # *** Ground Test - Ver.2 ***
-        """
         # 202410 -- SAMPLE
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/'
         data_name_list = ['SID02_20241021-1026.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
                          ]
+        """
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
         data_name_list = ['SID02_20231007-0349.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
                           'SID02_20231117-1607.ccs.cdf',                       # SG - 1.5MHz 10mVpp 90/0/0deg 
                          ]
+        """
         """
 
         """
