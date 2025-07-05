@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a data list -- 2025/4/9
+    JUICE RPWI HF SID3 (Full): L1a data list -- 2025/7/4
 """
 import glob
 import os
@@ -31,21 +31,25 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID03_20241125-1349_RadioFull_comp2_table1_asw3.ccs.cdf',
-                          #'SID03_20241125-1405_RadioFull_comp1_table1_asw3.ccs.cdf',
-                          #'SID03_20241125-1413_RadioFull_comp3_table1_asw3.ccs.cdf',
-                          #'SID03_20241125-1421_RadioFull_comp0_table1_asw3.ccs.cdf',
-                          #'SID03_20241125-1457_RadioFull_comp1_table1_bg1_asw3.ccs.cdf',
-                          #'SID03_20241125-1502_RadioFull_comp1_table1_bg0_asw3.ccs.cdf',
-                          #'SID03_20241125-1506_RadioFull_comp2_table2_asw3.ccs.cdf',
-                          ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
+        # 202411 -- SAMPLE	    1.75MHz, 100mVpp    (0,0,0),(90,0,0),(0,90,0),(0,0,90) 
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_name_list = [#'JUICE_L1a_RPWI-HF-SID3_20000101T000113-20000101T000147_V01___SID03_20241125-1433_RadioFull_ch2_comp0_table1_asw3.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20000101T000100-20000101T000640_V01___SID03_20241125-1436_RadioFull_ch2_comp1_table1_asw3.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20000101T000116-20000101T000656_V01___SID03_20241125-1444_RadioFull_ch2_comp2_table1_asw3.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20000101T000103-20000101T000137_V01___SID03_20241125-1421_RadioFull_comp0_table1_asw3.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20000101T000317-20000101T000857_V01___SID03_20241125-1405_RadioFull_comp1_table1_asw3.ccs.cdf',
+                          'JUICE_L1a_RPWI-HF-SID3_20000101T000150-20000101T000406_V01___SID03_20241125-1502_RadioFull_comp1_table1_bg0_asw3.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20000101T000116-20000101T000258_V01___SID03_20241125-1457_RadioFull_comp1_table1_bg1_asw3.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20000101T000119-20000101T000153_V01___SID03_20241125-1506_RadioFull_comp2_table2_asw3.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20000101T000108-20000101T000648_V01___SID03_20241125-1413_RadioFull_comp3_table1_asw3.ccs.cdf',
+                         ]
 
         # *** Flight data: Ver.2 ***
         """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        """
+        """
         # 202401
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2024/01/26/'
         data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240126T083835_V01.cdf',
                         ]
         # 202407
@@ -56,21 +60,21 @@ def datalist(date_str, ver_str):
         data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240706T121009_V01.cdf',
                         'JUICE_L1a_RPWI-HF-SID3_20240706T175202_V01.cdf',
                         ]
+        """
         # 202408-09  LEGA
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/2024/08/19/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240819T202636_V01.cdf']
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/2024/08/20/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240820T180734_V01.cdf']
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/2024/08/22/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240822T095914_V01.cdf']         # all CAL
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/2024/08/23/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240823T035818_V01.cdf']
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/2024/09/09/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240909T093241_V01.cdf']
+        """
+        data_name_list = [#'JUICE_L1a_RPWI-HF-SID3_20240819T202636-20240819T221323_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20240820T180734-20240822T022254_V01___RPR1_52000003_2024.235.03.19.13.483.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20240822T095914-20240822T182844_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',
+                          'JUICE_L1a_RPWI-HF-SID3_20240823T035818-20240823T215457_V01___RPR1_52000005_2024.237.04.37.21.527.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20240909T093241-20240909T101941_V01___RPR1_52000005_2024.254.16.53.07.436.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID3_20250331T030012-20250331T201834_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
+        ]
         """
 
         # *** Ground Test - Ver.2 ***
         # 202410 -- SAMPLE
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/'
         data_name_list = [#'SID03_20241009-1806_RadioFull_comp2.ccs.cdf',                # 10/10/10mV, 90/0/0deg,  1.55MHz
                           #'SID03_20241009-1906_RadioFull_comp2_bg06dB.ccs.cdf',         # 10/10/10mV, 90/0/0deg,  1.55MHz
@@ -88,7 +92,6 @@ def datalist(date_str, ver_str):
                           'SID03_20241022-1915_complex2_bias3.ccs.cdf',                 # 10/10/10mV, 90/0/0deg,  1.55MHz
                           #'SID03_20241023-1850-polsep.ccs.cdf',                         # 10/10/10mV, 90/0/0deg,  1.55MHz
                          ]
-        """
         """
         # *** Ground Test - Ver.2 ***
         """

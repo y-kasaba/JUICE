@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID6/22 (PSSR2): L1a data list -- 2025/6/24
+    JUICE RPWI HF SID6/22 (PSSR2): L1a data list -- 2025/7/5
 """
 import glob
 import os
@@ -30,35 +30,19 @@ def datalist(date_str, ver_str, sid):
         for i in range(num_list):
             data_name_list[i] = os.path.split(data_name_list[i])[1]
 
-    elif sid == 22:
-		# <<< SID-22 test datas >>>
+    elif sid == 22: 	# <<< SID-22 test datas >>>
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID22_20241125-1325_PSSR2_asw3.ccs.cdf']     # SG - 1.5MHz 10mVpp 90/0/0deg
+        # 202411 -- SAMPLE -- 1.75MHz, 100mVpp
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID22_20000101T000055-20000101T000255_V01___SID06-22_20241125-1325_PSSR2_asw3.ccs.cdf']
+        # SG - 1.5MHz 10mVpp 90/0/0deg
 
-        # *** Flight data: Ver.2 ***
-        """
-        # 20240126
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
-        data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID22_20240126T091728_V01.cdf',
-                         ]
-        """
-
-    else:
-		# <<< SID-06 test datas >>>
+    else:               # <<< SID-06 test datas >>>
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID06_20241125-1325_PSSR2_asw3.ccs.cdf']                   # SG - 1.5MHz 10mVpp 90/0/0deg
-
-        # *** Flight data: Ver.2 ***
-        # 20240126
-        """
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
-        data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID6_20240126T091728_V01.cdf']"
-        """
-
+        # 202411 -- SAMPLE -- 1.75MHz, 100mVpp
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID6_20000101T000055-20000101T000255_V01___SID06-22_20241125-1325_PSSR2_asw3.ccs.cdf']
+    
     print(data_dir)
     print(data_name_list)
     return data_dir, data_name_list

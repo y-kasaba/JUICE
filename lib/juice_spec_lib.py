@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2024/10/16
+    JUICE RPWI HF: L1a spec -- 2025/7/5
 """
 import copy
 import math
@@ -198,6 +198,7 @@ def hf_getspec_sid2(data):
     spec.freq     = np.zeros(n_time * n_freq * n_samp);  spec.freq     = spec.freq.reshape  (n_time, n_freq, n_samp)
     spec.freq_w   = np.zeros(n_time * n_freq * n_samp);  spec.freq_w   = spec.freq_w.reshape(n_time, n_freq, n_samp)
     dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
+    # dt = data.time[0][0][1]
     freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
     d_freq = freq[1] - freq[0]
     freq = freq + d_freq/2.0
@@ -272,7 +273,7 @@ def hf_getspec_sid23(data):
     spec.freq_w   = np.zeros(n_time * n_block * n_samp);  spec.freq_w   = spec.freq_w.reshape(n_time, n_block, n_samp)
 
     # Frequency
-    dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
+    dt = data.time[0][0][1]  # 1.0 / juice_cdf._sample_rate(data.decimation[0])
     freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
     d_freq = freq[1] - freq[0]
     freq = freq + d_freq/2.0

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/6/30
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/7/4
 """
 import numpy as np
 import math
@@ -39,6 +39,7 @@ def hf_sid2_read(cdf, RPWI_FSW_version):
     data.time       = cdf['time'][...]
     #
     data.epoch       = cdf['Epoch'][...]
+    data.scet        = cdf['SCET'][...]
 
     # ### ASW1: SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
@@ -81,6 +82,7 @@ def hf_sid2_add(data, data1):
     data.time        = np.r_["0", data.time, data1.time]
     #
     data.epoch       = np.r_["0", data.epoch, data1.epoch]
+    data.scet        = np.r_["0", data.scet,  data1.scet]
     return data
 
 
@@ -154,6 +156,9 @@ def hf_sid2_shaping(data, cal_mode):
         else:             print("  cut:", data.Eu_i.shape, n_time, "x", n_freq, "x", n_samp, "  <only CAL>")
 
     # NAN -- no data channels
+    data.U_selected = (data.ch_selected & 0b1   ) 
+    data.V_selected = (data.ch_selected & 0b10  ) >> 1
+    data.W_selected = (data.ch_selected & 0b100 ) >> 2
     index = np.where(data.U_selected == 0);  data.Eu_i[index[0]] = math.nan;  data.Eu_q[index[0]] = math.nan
     index = np.where(data.V_selected == 0);  data.Ev_i[index[0]] = math.nan;  data.Ev_q[index[0]] = math.nan
     index = np.where(data.W_selected == 0);  data.Ew_i[index[0]] = math.nan;  data.Ew_q[index[0]] = math.nan
@@ -184,6 +189,7 @@ def hf_sid2_select_time(data, index):
     data.ISW_ver     = data.ISW_ver    [index[0]]
     # Data
     data.epoch       = data.epoch      [index[0]]
+    data.scet        = data.scet       [index[0]]
     data.Eu_i        = data.Eu_i       [index[0]];  data.Eu_q = data.Eu_q[index[0]]
     data.Ev_i        = data.Ev_i       [index[0]];  data.Ev_q = data.Ev_q[index[0]]
     data.Ew_i        = data.Ew_i       [index[0]];  data.Ew_q = data.Ew_q[index[0]]

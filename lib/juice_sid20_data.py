@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4/20 (Burst): L1a data list -- 2025/4/9
+    JUICE RPWI HF SID4/20 (Burst): L1a data list -- 2025/7/3
 """
 import glob
 import os
@@ -30,25 +30,31 @@ def datalist(date_str, ver_str, sid):
         for i in range(num_list):
             data_name_list[i] = os.path.split(data_name_list[i])[1]
 
-    elif sid == 20:  
+    elif sid == 20:     # <<< SID-20 test datas >>>
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
-                          'SID20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
+        # 202411 -- SAMPLE  0.2-2MHz, 10mVpp, 0/90/0deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_name_list = [#'JUICE_L1a_RPWI-HF-SID20_20000101T000057-20000101T000114_V01___SID04-20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
+                          'JUICE_L1a_RPWI-HF-SID20_20000101T000214-20000101T000228_V01___SID04-20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
                           ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
 
         # *** Flight data: Ver.2 ***
         """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        """
         # 20240126
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'
+        """
         data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID20_20240126T113714_V01.cdf',
                           '2024/01/26/JUICE_L1a_RPWI-HF-SID20_20240126T114800_V01.cdf',
                          ]
+        """
         # 202407 -- CO2
+        """
         data_name_list = ['2024/07/06/JUICE_L1a_RPWI-HF-SID20_20240706T121424_V01.cdf']
+        """
         # 202408 -- CO2
-        data_name_list = ['2024/08/19/JUICE_L1a_RPWI-HF-SID20_20240819T203013_V01.cdf']
+        """
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID20_20240819T203013-20240819T210936_V01___RPR2_62000004_2024.235.10.15.04.518.cdf']
         """
 
         # *** Ground Test - Ver.2 ***
@@ -83,25 +89,27 @@ def datalist(date_str, ver_str, sid):
                           'JUICE_L1a_RPWI-HF-SID20_20000108T061058-20000108T061531_V01___TMIDX_00000.bin.cdf',  # pc2_LGA-dryrun_RPW-SEQ-01a-2_2024_05_15_16_07_58
                          ]
         """
-    else:
+    else:     # <<< SID-4 test datas >>>
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID04_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
-                          'SID04_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
-                          ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
+        # 202411 -- SAMPLE  0.2-2MHz, 10mVpp, 0/90/0deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_name_list = [#'JUICE_L1a_RPWI-HF-SID4_20000101T000106-20000101T000106_V01___SID04-20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
+                          'JUICE_L1a_RPWI-HF-SID4_20000101T000226-20000101T000226_V01___SID04-20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
+                          ]
 
         # *** Flight data: Ver.2 ***
+        """
         # 20240126
-        """
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/'
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID4_20240126T113727_V01.cdf' ]
-        # 202407 -- CO2
-        data_name_list = ['2024/07/06/JUICE_L1a_RPWI-HF-SID4_20240706T121439_V01.cdf']
-        # 202408 -- CO2
-        data_name_list = ['2024/08/19/JUICE_L1a_RPWI-HF-SID4_20240819T203025_V01.cdf']
         """
-
+        # 202407 -- CO2
+        """
+        data_name_list = ['2024/07/06/JUICE_L1a_RPWI-HF-SID4_20240706T121439_V01.cdf']
+       # 202408 -- CO2
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID4_20240819T203025-20240819T210933_V01___RPR1_52000003_2024.233.02.43.43.102.cdf']
+        """
+ 
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
         """

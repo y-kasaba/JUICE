@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/6/30
+    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/7/4
 """
 import numpy as np
 import math
@@ -19,7 +19,7 @@ def hf_sid20_read(cdf, sid, RPWI_FSW_version):
     data.RPWI_FSW_version = RPWI_FSW_version
 
     # AUX
-    data.U_selected  = cdf['U_selected'][...];  data.V_selected = cdf['V_selected'][...];  data.W_selected = cdf['W_selected'][...]
+    data.ch_selected = cdf['ch_selected'][...]
     data.complex     = cdf['complex'][...]
     data.cal_signal  = cdf['cal_signal'][...]
     data.sweep_table = cdf['sweep_table'][...]  # (fixed: not defined in V.2)
@@ -44,19 +44,8 @@ def hf_sid20_read(cdf, sid, RPWI_FSW_version):
     data.N_samp      = np.int64(cdf['N_samp'][...])
     data.N_step      = np.int64(cdf['N_step'][...])
     data.decimation  = cdf['decimation'][...];   data.pol       = cdf['pol'][...]
-    # ***tmp*** data.ADC_ovrflw  = cdf['ADC_ovrflw'][...];   
-    # ***tmp*** data.ISW_ver   = cdf['ISW_ver'][...]
-    data.B0_startf   = cdf['B0_startf'][...];    data.B0_stopf  = cdf['B0_stopf'][...];  data.B0_step = cdf['B0_step'][...]
-    data.B0_repeat   = cdf['B0_repeat'][...];    data.B0_subdiv = cdf['B0_subdiv'][...]
-    if (sid==20):
-        data.B1_startf = cdf['B1_startf'][...];  data.B1_stopf  = cdf['B1_stopf'][...];  data.B1_step = cdf['B1_step'][...]
-        data.B1_repeat = cdf['B1_repeat'][...];  data.B1_subdiv = cdf['B1_subdiv'][...]
-        data.B2_startf = cdf['B2_startf'][...];  data.B2_stopf  = cdf['B2_stopf'][...];  data.B2_step = cdf['B2_step'][...]
-        data.B2_repeat = cdf['B2_repeat'][...];  data.B2_subdiv = cdf['B2_subdiv'][...]
-        data.B3_startf = cdf['B3_startf'][...];  data.B3_stopf  = cdf['B3_stopf'][...];  data.B3_step = cdf['B3_step'][...]
-        data.B3_repeat = cdf['B3_repeat'][...];  data.B3_subdiv = cdf['B3_subdiv'][...]
-        data.B4_startf = cdf['B4_startf'][...];  data.B4_stopf  = cdf['B4_stopf'][...];  data.B4_step = cdf['B4_step'][...]
-        data.B4_repeat = cdf['B4_repeat'][...];  data.B4_subdiv = cdf['B4_subdiv'][...]
+    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...];   
+    data.ISW_ver     = cdf['ISW_ver'][...]
 
     # Data
     data.frequency   = cdf['frequency'][...];    data.freq_step = cdf['freq_step'][...]; data.freq_width  = cdf['freq_width'][...]
@@ -89,9 +78,7 @@ def hf_sid20_add(data, data1, sid):
     return: data
     """
     # AUX
-    data.U_selected  = np.r_["0", data.U_selected, data1.U_selected]
-    data.V_selected  = np.r_["0", data.V_selected, data1.V_selected]
-    data.W_selected  = np.r_["0", data.W_selected, data1.W_selected]
+    data.ch_selected  = np.r_["0", data.ch_selected, data1.ch_selected]
     data.complex     = np.r_["0", data.complex, data1.complex]
     data.cal_signal  = np.r_["0", data.cal_signal, data1.cal_signal]
     data.sweep_table = np.r_["0", data.sweep_table, data1.sweep_table]
@@ -123,32 +110,6 @@ def hf_sid20_add(data, data1, sid):
     data.pol         = np.r_["0", data.pol, data1.pol]
     data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
     data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
-    data.B0_startf   = np.r_["0", data.B0_startf, data1.B0_startf]
-    data.B0_stopf    = np.r_["0", data.B0_stopf, data1.B0_stopf]
-    data.B0_step     = np.r_["0", data.B0_step, data1.B0_step]
-    data.B0_repeat   = np.r_["0", data.B0_repeat, data1.B0_repeat]
-    data.B0_subdiv   = np.r_["0", data.B0_subdiv, data1.B0_subdiv]
-    if (sid==20):
-        data.B1_startf = np.r_["0", data.B1_startf, data1.B1_startf]
-        data.B1_stopf  = np.r_["0", data.B1_stopf,  data1.B1_stopf]
-        data.B1_step   = np.r_["0", data.B1_step,   data1.B1_step]
-        data.B1_repeat = np.r_["0", data.B1_repeat, data1.B1_repeat]
-        data.B1_subdiv = np.r_["0", data.B1_subdiv, data1.B1_subdiv]
-        data.B2_startf = np.r_["0", data.B2_startf, data1.B2_startf]
-        data.B2_stopf  = np.r_["0", data.B2_stopf,  data1.B2_stopf]
-        data.B2_step   = np.r_["0", data.B2_step,   data1.B2_step]
-        data.B2_repeat = np.r_["0", data.B2_repeat, data1.B2_repeat]
-        data.B2_subdiv = np.r_["0", data.B2_subdiv, data1.B2_subdiv]
-        data.B3_startf = np.r_["0", data.B3_startf, data1.B3_startf]
-        data.B3_stopf  = np.r_["0", data.B3_stopf,  data1.B3_stopf]
-        data.B3_step   = np.r_["0", data.B3_step,   data1.B3_step]
-        data.B3_repeat = np.r_["0", data.B3_repeat, data1.B3_repeat]
-        data.B3_subdiv = np.r_["0", data.B3_subdiv, data1.B3_subdiv]
-        data.B4_startf = np.r_["0", data.B4_startf, data1.B4_startf]
-        data.B4_stopf  = np.r_["0", data.B4_stopf,  data1.B4_stopf]
-        data.B4_step   = np.r_["0", data.B4_step,   data1.B4_step]
-        data.B4_repeat = np.r_["0", data.B4_repeat, data1.B4_repeat]
-        data.B4_subdiv = np.r_["0", data.B4_subdiv, data1.B4_subdiv]
     # Data
     data.epoch       = np.r_["0", data.epoch,      data1.epoch]
     data.scet        = np.r_["0", data.scet,       data1.scet]
@@ -190,6 +151,10 @@ def hf_sid20_shaping(data, sid, cal_mode, N_ch, comp_mode):
             comp_mode   [Complex]   0: Poweer  1: Matrix   3: Matrix-2D    >3: any   
     return: data
     """
+    data.U_selected = (data.ch_selected & 0b1   ) 
+    data.V_selected = (data.ch_selected & 0b10  ) >> 1
+    data.W_selected = (data.ch_selected & 0b100 ) >> 2
+
     # Size
     n_time = data.EuEu.shape[0];  n_freq = data.EuEu.shape[1]
     print("  org:", data.EuEu.shape, n_time, "x", n_freq, "[", n_time*n_freq, "]")
@@ -259,17 +224,6 @@ def hf_sid20_shaping(data, sid, cal_mode, N_ch, comp_mode):
         data.pol         = data.pol       [index[0]]
         data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
         data.ISW_ver     = data.ISW_ver   [index[0]]
-        data.B0_startf   = data.B0_startf [index[0]];  data.B0_stopf   = data.B0_stopf[index[0]];  data.B0_step = data.B0_step[index[0]]
-        data.B0_repeat   = data.B0_repeat [index[0]];  data.B0_subdiv  = data.B0_subdiv[index[0]]
-        if (sid==20):
-            data.B1_startf = data.B1_startf[index[0]];  data.B1_stopf  = data.B1_stopf[index[0]];  data.B1_step = data.B1_step[index[0]]
-            data.B1_repeat = data.B1_repeat[index[0]];  data.B1_subdiv = data.B1_subdiv[index[0]]
-            data.B2_startf = data.B2_startf[index[0]];  data.B2_stopf  = data.B2_stopf[index[0]];  data.B2_step = data.B2_step[index[0]]
-            data.B2_repeat = data.B2_repeat[index[0]];  data.B2_subdiv = data.B2_subdiv[index[0]]
-            data.B3_startf = data.B3_startf[index[0]];  data.B3_stopf  = data.B3_stopf[index[0]];  data.B3_step = data.B3_step[index[0]]
-            data.B3_repeat = data.B3_repeat[index[0]];  data.B3_subdiv = data.B3_subdiv[index[0]]
-            data.B4_startf = data.B4_startf[index[0]];  data.B4_stopf  = data.B4_stopf[index[0]];  data.B4_step = data.B4_step[index[0]]
-            data.B4_repeat = data.B4_repeat[index[0]];  data.B4_subdiv = data.B4_subdiv[index[0]]
         # Data
         data.epoch       = data.epoch     [index[0]]
         data.scet        = data.scet      [index[0]]
@@ -346,6 +300,10 @@ def hf_sid20_shaping(data, sid, cal_mode, N_ch, comp_mode):
             data.EuEu[i]    =  data.EuiEui[i] + data.EuqEuq[i]; data.EvEv[i]    =  data.EviEvi[i] + data.EvqEvq[i]; data.EwEw[i]    =  data.EwiEwi[i] + data.EwqEwq[i]
             data.EuEv_re[i] =  data.EuiEvi[i] + data.EuqEvq[i]; data.EvEw_re[i] =  data.EviEwi[i] + data.EvqEwq[i]; data.EwEu_re[i] =  data.EwiEui[i] + data.EwqEuq[i]
             data.EuEv_im[i] = -data.EuiEvq[i] + data.EuqEvi[i]; data.EvEw_im[i] = -data.EviEwq[i] + data.EviEvq[i]; data.EwEu_im[i] = -data.EwiEuq[i] + data.EwqEui[i]
+
+    data.U_selected = (data.ch_selected & 0b1   ) 
+    data.V_selected = (data.ch_selected & 0b10  ) >> 1
+    data.W_selected = (data.ch_selected & 0b100 ) >> 2
 
     # *** frequncy & width for spec cal
     data.freq   = data.frequency

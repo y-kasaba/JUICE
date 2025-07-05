@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a data list -- 2025/6/29
+    JUICE RPWI HF SID2 (RAW): L1a data list -- 2025/7/5
 """
 import glob
 import os
@@ -31,9 +31,9 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = ['SID02_20241125-1316_asw3.ccs.cdf']                   # SG - 1.5MHz 10mVpp 90/0/0deg
+        # 202411 -- SAMPLE -- SG - 1.75MHz 100mVpp 90/0/0deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000129-20000101T000229_V01___SID02_20241125-1316_asw3.ccs.cdf']
 
         # *** Flight - Ver.2 ***
         """
@@ -56,28 +56,12 @@ def datalist(date_str, ver_str):
         data_name_list = ['SID02_20241021-1026.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
                          ]
         """
+        """
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
         data_name_list = ['SID02_20231007-0349.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
                           'SID02_20231117-1607.ccs.cdf',                       # SG - 1.5MHz 10mVpp 90/0/0deg 
                          ]
-        """
-        """
-
-        """
-        # 202312 -- Checkout
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202312_C/cdf/'
-        data_name_list = ['SID02_RPWI_HF_FFT_00000.cdf',
-                          'SID02_RPWI_HF_FFT_00001.cdf',
-                          'SID02_RPWI_HF_FFT_00002.cdf',                        # CAL
-                          'SID02_RPWI_HF_FFT_00003.cdf',                        # CAL
-                          'SID02_RPWI_HF_FFT_00004.cdf',
-                          'SID02_RPWI_S8_272.cdf',
-                        ]
-        # 202405 -- dryrun      [Num-Frequency: 202    Length: 128     Frequency, width, step (kHz): 191.0 - 44813.0 222.0 222.0]
-        data_dir = '/Users/user/0-python/JUICE_data/CCSDS_test_v2/test_TMIDX/2405_dryrun_test/1_first_parts/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID2_20000108T044504-20000108T044719_V01___TMIDX_00000.bin.cdf',
-                        ]
         """
 
         # [MEMO: ASW1 data]  *** Flight - Ver.1

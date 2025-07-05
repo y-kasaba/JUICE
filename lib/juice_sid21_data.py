@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a data list -- 2025/4/7
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a data list -- 2025/7/5
 """
 import glob
 import os
@@ -31,25 +31,27 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW3/cdf/'
-        data_name_list = [#'SID21_20241125-1341_PSSR1_comp0_asw3.ccs.cdf',
-                          'SID21_20241125-1335_PSSR1_comp1_asw3.ccs.cdf',
-                          ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
-
+        # 202411 -- SAMPLE -- SG 1.75MHz, 100mVpp  --- comp0 & comp1
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_name_list = [# 'JUICE_L1a_RPWI-HF-SID21_20000101T000149-20000101T000219_V01___SID05-21_20241125-1341_PSSR1_comp0_asw3.ccs.cdf',
+                          'JUICE_L1a_RPWI-HF-SID21_20000101T000100-20000101T000200_V01___SID05-21_20241125-1335_PSSR1_comp1_asw3.ccs.cdf',
+                          ] 
+        
         # *** Ground Test - Ver.2 ***
-        # 202311 -- SAMPLE
+        # 202311 -- SAMPLE -- SG 1.55MHz, 10mVpp, [90.0, 0.0, 0.0]    20231117-1611: with RFI-mitigation
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
-        data_name_list = [#'SID21_20231024-0046.ccs.cdf',
-                          #'SID21_20231117-1603.ccs.cdf',
-                          'SID21_20231117-1611.ccs.cdf',
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
+        data_name_list = [#'JUICE_L1a_RPWI-HF-SID21_20000101T002245-20000101T002330_V01___SID05-21_20231024-0046.ccs.cdf',
+                          'JUICE_L1a_RPWI-HF-SID21_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID21_20000101T000128-20000101T000213_V01___SID05-21_20231117-1603.ccs.cdf',
                         ]
         """
-        # 202310 -- FS
+
+        # 202503 -- Flight
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
-        data_name_list = ['SID21_Seq05.cdf']
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID21_20250331T033821-20250331T034222_V01___RPR2_62000007_2025.091.16.40.05.450.cdf',
+                        ]
         """
 
     print(data_dir)
