@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4/20 (Burst): L1a data list -- 2025/7/3
+    JUICE RPWI HF SID4/20 (Burst): L1a data list -- 2025/7/6
 """
 import glob
 import os
@@ -32,7 +32,7 @@ def datalist(date_str, ver_str, sid):
 
     elif sid == 20:     # <<< SID-20 test datas >>>
         # *** Ground Test - Ver.3 ***
-        # 202411 -- SAMPLE  0.2-2MHz, 10mVpp, 0/90/0deg
+        # 202411 -- SAMPLE  1.75MHz  (100mVpp, 10mVpp, 100mVpp, 10mVpp, 100mVpp)  (0,0,0),(90,0,0),(0,90,0),(0,0,90)
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_name_list = [#'JUICE_L1a_RPWI-HF-SID20_20000101T000057-20000101T000114_V01___SID04-20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
                           'JUICE_L1a_RPWI-HF-SID20_20000101T000214-20000101T000228_V01___SID04-20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
