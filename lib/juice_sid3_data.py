@@ -64,21 +64,15 @@ def datalist(date_str, ver_str):
                           'JUICE_L1a_RPWI-HF-SID3_20000101T000043-20000101T000731_V01___SID03_20241022-1915_complex2_bias3.ccs.cdf',
                           'JUICE_L1a_RPWI-HF-SID3_20000101T000046-20000101T000518_V01___SID03_20241015-2313_3ch-comp3.ccs.cdf',
                           'JUICE_L1a_RPWI-HF-SID3_20000101T000226-20000101T000334_V01___SID03_20241023-1850-polsep.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID3_20000101T001351-20000101T001607_V01___SID03_20231024-0036.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID3_20000101T000049-20000101T000231_V01___SID03-3ch-comp0-20231117-1424.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID3_20000101T000212-20000101T000428_V01___SID03-3ch-comp1-20231117-1418.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID3_20000101T000100-20000101T000242_V01___SID03-3ch-comp2-20231117-1429.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID3_20000101T000052-20000101T000200_V01___SID03-3ch-comp3-20231117-1432.ccs.cdf',
                          ]
-        """
-        # *** Ground Test - Ver.2 ***
-        """
-        # 202310 -- SAMPLE  10/10/10mV, 90/0/0deg,  1.55MHz
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20000101T001351-20000101T001607_V01___SID03_20231024-0036.ccs.cdf',
-                          'JUICE_L1a_RPWI-HF-SID3_20000101T000049-20000101T000231_V01___SID03-3ch-comp0-20231117-1424.ccs.cdf',
-                          'JUICE_L1a_RPWI-HF-SID3_20000101T000212-20000101T000428_V01___SID03-3ch-comp1-20231117-1418.ccs.cdf',
-                          'JUICE_L1a_RPWI-HF-SID3_20000101T000052-20000101T000200_V01___SID03-3ch-comp3-20231117-1432.ccs.cdf',
-                          'JUICE_L1a_RPWI-HF-SID3_20000101T000100-20000101T000242_V01___SID03-3ch-comp2-20231117-1429.ccs.cdf',
-                         ]
-        """
         """
         # *** Flight data: Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_name_list = ['JUICE_L1a_RPWI-HF-SID3_20240126T083835-20240126T113101_V01___RPR1_52000013_2024.026.13.22.14.423.cdf',
                           'JUICE_L1a_RPWI-HF-SID3_20240701T011127-20240701T011309_V01___RPR1_52000001_2024.183.15.43.53.614.cdf',

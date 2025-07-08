@@ -35,125 +35,57 @@ def datalist(date_str, ver_str):
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_name_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000129-20000101T000229_V01___SID02_20241125-1316_asw3.ccs.cdf']
 
-        # *** Flight - Ver.2 ***
+        # *** Ground Test - Ver.2 ***
         """
-        data_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
-        # 202503
-        data_name_list = ['2025/03/31/JUICE_L1a_RPWI-HF-SID2_20250331T005104_V01.cdf',     # 1st packet -- error
+        # 202410 -- SAMPLE -- SG - 1.0MHz 10mVpp 90/0/0deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000154-20000101T000454_V01___SID02_20241021-1026.ccs.cdf',                     
+                          'old/JUICE_L1a_RPWI-HF-SID2_20000101T000413-20000101T000513_V01___SID02_20231117-1607.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID2_20000101T001617-20000101T001647_V01___SID02_20231007-0349.ccs.cdf',
                          ]
-        # 202408
-        data_name_list = [#'2024/08/22/JUICE_L1a_RPWI-HF-SID2_20240822T023129_V01.cdf',    # 128   1st packet -- error
-                          '2024/08/22/JUICE_L1a_RPWI-HF-SID2_20240822T023715_V01.cdf',     # 128   CAL
-                         ]
-        # 202401
-        data_name_list = ['2024/01/25/JUICE_L1a_RPWI-HF-SID2_20240125T112327_V01.cdf']     # 128   CAL
         """
 
-        # *** Ground Test - Ver.2 ***
-        # 202410 -- SAMPLE
+        # *** Flight - Ver.2 ***
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/'
-        data_name_list = ['SID02_20241021-1026.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
-                         ]
-        """
-        """
-        # 202310 -- SAMPLE
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
-        data_name_list = ['SID02_20231007-0349.ccs.cdf',                       # SG - 1.0MHz 10mVpp 90/0/0deg
-                          'SID02_20231117-1607.ccs.cdf',                       # SG - 1.5MHz 10mVpp 90/0/0deg 
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID2_20240125T112327-20240125T113141_V01___RPR1_52000011_2024.025.15.57.21.441.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20240125T152238-20240125T152330_V01___RPR1_52000012_2024.025.16.07.08.425.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20240822T023129-20240822T023713_V01___RPR1_52000003_2024.235.03.19.13.483.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20240822T023715-20240822T023953_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20250331T005104-20250331T233757_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
                          ]
         """
 
         # [MEMO: ASW1 data]  *** Flight - Ver.1
-        """
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/2023/'
-        # *** 20230419 ***
-        data_name_list = ['04/19/JUICE_L1a_RPWI-HF-SID2_20230419T135855.cdf',
-                          '04/19/JUICE_L1a_RPWI-HF-SID2_20230419T141237.cdf',
-                        ]
-        # *** 202305-06 ***
-        data_name_list = ['05/30/JUICE_L1a_RPWI-HF-SID2_20230530T100330.cdf',     # CAL
-                          #'05/30/JUICE_L1a_RPWI-HF-SID2_20230530T100932.cdf',
-                          #'06/01/JUICE_L1a_RPWI-HF-SID2_20230601T120804.cdf',
-                          #'06/01/JUICE_L1a_RPWI-HF-SID2_20230601T121440.cdf',
-                          #'06/01/JUICE_L1a_RPWI-HF-SID2_20230601T122143.cdf',
-                          #'06/01/JUICE_L1a_RPWI-HF-SID2_20230601T122712.cdf',
-                          #'06/01/JUICE_L1a_RPWI-HF-SID2_20230601T123421.cdf',
-                         ]
-        # *** 20230712-13 ***
-        data_name_list = ['07/12/JUICE_L1a_RPWI-HF-SID2_20230712T090437.cdf',
-                          '07/12/JUICE_L1a_RPWI-HF-SID2_20230712T093945.cdf',
-                          '07/12/JUICE_L1a_RPWI-HF-SID2_20230712T101453.cdf',
-                          '07/12/JUICE_L1a_RPWI-HF-SID2_20230712T104153.cdf',
-                          '07/12/JUICE_L1a_RPWI-HF-SID2_20230712T232412.cdf',
-                          '07/12/JUICE_L1a_RPWI-HF-SID2_20230712T235202.cdf',     # type-III
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T001900.cdf',     # type-III
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T004652.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T011440.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T014140.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T020932.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T023723.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T030513.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T033213.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T040005.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T042757.cdf',
-                          '07/13/JUICE_L1a_RPWI-HF-SID2_20230713T045547.cdf',
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW1/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID2_20230419T135855-20230419T141235_V01___RPR1_52000000_2023.109.16.17.21.607.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230419T141237-20230419T141408_V01___RPR1_52000001_2023.109.17.51.54.600.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230530T100330-20230530T100930_V01___RPR1_52000010_2023.150.10.40.53.663.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230530T100932-20230530T100942_V01___RPR1_52000011_2023.150.10.41.53.508.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230601T120804-20230601T120902_V01___RPR1_52000015_2023.152.12.32.12.471.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230601T121440-20230601T121538_V01___RPR1_52000016_2023.152.13.14.38.473.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230601T122143-20230601T122241_V01___RPR1_52000017_2023.152.13.55.02.539.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230601T122712-20230601T122810_V01___RPR1_52000018_2023.152.14.35.37.467.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230601T123421-20230601T123519_V01___RPR1_52000019_2023.152.15.15.55.483.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230712T090437-20230712T093851_V01___RPR1_52000001_2023.193.10.24.57.479.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230712T093945-20230712T101359_V01___RPR1_52000002_2023.194.08.38.36.474.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230712T101453-20230712T104151_V01___RPR1_52000003_2023.194.10.18.44.478.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230712T104153-20230712T232410_V01___RPR1_52000004_2023.194.11.15.35.498.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230712T232412-20230712T235200_V01___RPR1_52000005_2023.195.09.10.17.486.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230712T235202-20230713T001858_V01___RPR1_52000006_2023.195.10.28.57.506.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T001900-20230713T004648_V01___RPR1_52000007_2023.195.11.42.37.540.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T004652-20230713T011346_V01___RPR1_52000008_2023.195.12.39.02.479.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T011440-20230713T014138_V01___RPR1_52000009_2023.195.13.03.08.470.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T014140-20230713T020928_V01___RPR1_5200000A_2023.195.13.25.22.477.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T020932-20230713T023721_V01___RPR1_5200000B_2023.195.13.47.46.500.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T023723-20230713T030419_V01___RPR1_5200000C_2023.195.14.10.35.574.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T030513-20230713T033211_V01___RPR1_5200000D_2023.195.14.33.20.470.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T033213-20230713T040003_V01___RPR1_5200000E_2023.195.14.55.41.474.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T040005-20230713T042755_V01___RPR1_5200000F_2023.195.15.18.00.472.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T042757-20230713T045453_V01___RPR1_52000010_2023.195.15.40.11.470.cdf',
+                          'JUICE_L1a_RPWI-HF-SID2_20230713T045547-20230713T050921_V01___RPR1_52000011_2023.195.16.14.20.468.cdf',
                          ]
         """
-
-        # [MEMO: ASW1 data]  *** Ground Test - Ver.1 ***
-        """
-        # *** 202105 ***
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202105/'
-        data_name_list = ['SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32770.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32774.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32775.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32776.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32777.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day3_xid32778.cdf',
-                        ]
-        data_name_list = ['SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32772.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32773.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32774.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32775.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32776.cdf',
-                        'SID2_20210531_SCPFM_PTR_RPWI_2_day5_xid32777.cdf',
-                        ]
-        # *** 202106 ***
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202106/'
-        data_name_list = ['SID2_SCTBTV_Phase11_xid32831.cdf',
-                        'SID2_SCTBTV_Phase11_xid32832.cdf',
-                        'SID2_SCTBTV_Phase11_xid32833.cdf',
-                        'SID2_SCTBTV_Phase11_xid32834.cdf',
-                        ]
-        data_name_list = ['SID2_SCTBTV_Phase13_xid32844.cdf',
-                        'SID2_SCTBTV_Phase13_xid32845.cdf',
-                        'SID2_SCTBTV_Phase13_xid32846.cdf',
-                        ]
-        # *** 202111 ***
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202111/'
-        data_name_list = ['SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32770.cdf',
-                        'SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32771.cdf',
-                        'SID2_SCPFM_PTR_RPWI_delta.RPWI_SCM_TEST_xid32772.cdf',
-                        ]
-        data_name_list = ['SID2_SCPFM_RPWI_30c_xid32776.cdf',
-                        'SID2_SCPFM_RPWI_30c_xid32777.cdf',
-                        'SID2_SCPFM_RPWI_30c_xid32778.cdf',
-                        'SID2_SCPFM_RPWI_30c_xid32779.cdf',
-                        ]
-        # *** 202207 ***
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202207/'
-        data_name_list = ['SID2_SCPFM_RPWI_30c_xid32776.cdf',
-                        'SID2_SCPFM_RPWI_30c_xid32777.cdf',
-                        'SID2_SCPFM_RPWI_30c_xid32778.cdf',
-                        'SID2_SCPFM_RPWI_30c_xid32779.cdf',
-                        ]
-        # *** 202208 ***
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/prelaunch/202208/'
-        data_name_list = ['SID2_20220824_HF-FFT-rerun_xid32791.cdf',
-                        'SID2_20220824_HF-FFT-rerun_xid32792.cdf',
-                        'SID2_20220824_HF-FFT-rerun_xid32793.cdf',
-                        ]
         """
 
     print(data_dir)

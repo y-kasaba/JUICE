@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4/20 (Burst): L1a data list -- 2025/7/6
+    JUICE RPWI HF SID4/20 (Burst): L1a data list -- 2025/7/8
 """
 import glob
 import os
@@ -37,58 +37,26 @@ def datalist(date_str, ver_str, sid):
         data_name_list = [#'JUICE_L1a_RPWI-HF-SID20_20000101T000057-20000101T000114_V01___SID04-20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
                           'JUICE_L1a_RPWI-HF-SID20_20000101T000214-20000101T000228_V01___SID04-20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
                           ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
-
-        # *** Flight data: Ver.2 ***
-        """
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
-        """
-        # 20240126
-        """
-        data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID20_20240126T113714_V01.cdf',
-                          '2024/01/26/JUICE_L1a_RPWI-HF-SID20_20240126T114800_V01.cdf',
-                         ]
-        """
-        # 202407 -- CO2
-        """
-        data_name_list = ['2024/07/06/JUICE_L1a_RPWI-HF-SID20_20240706T121424_V01.cdf']
-        """
-        # 202408 -- CO2
-        """
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID20_20240819T203013-20240819T210936_V01___RPR2_62000004_2024.235.10.15.04.518.cdf']
-        """
-
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
-        data_name_list = [#'SID20_20231024-0042.ccs.cdf',
-                          #'SID20-comp0-20231117-1529.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
-                          'SID20-comp1-20231117-1532.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID20_20000101T000102-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID20_20000101T001825-20000101T001852_V01___SID04-20_20231024-0042.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID20_20000101T000046-20000101T000127_V01___SID04-20-comp0-20231117-1529.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID20_20000101T000050-20000101T000147_V01___SID04-20-comp1-20231117-1532.ccs.cdf',
                          ]
         """
-        # 202310 -- FS
+        # *** Flight data: Ver.2 ***
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
-        data_name_list = ['SID20_Seq01.cdf',
-                          'SID20_Seq02.cdf',
-                          'SID20_Seq16.cdf',
-                          'SID20_Seq18.cdf',
-                          'SID20_Seq19.cdf',
-                          'SID20_Seq20.cdf',
-                         ]
-        # 202312 -- Checkout
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202312_C/cdf/'
-        data_name_list = ['SID20_RPWI_NEWv2_SCI.cdf']
-        # 202402 -- Ver.3
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/IRFU/cdf/'
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID20_20240201.cdf']
-        # 202405 -- dryrun check
-        data_dir = '/Users/user/0-python/JUICE_data/CCSDS_test_v2/test_TMIDX/2405_dryrun_test/2_LGA-dryrun/'   
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID20_20000108T053322-20000108T054141_V01___TMIDX_00000.bin.cdf',  # pc2_LGA-dryrun_RPW-SEQ-01a-1_2024_05_15_15_30_16/TM00
-                          'JUICE_L1a_RPWI-HF-SID20_20000108T054142-20000108T054318_V01___TMIDX_00001.bin.cdf',  # pc2_LGA-dryrun_RPW-SEQ-01a-1_2024_05_15_15_30_16/TM01
-                          'JUICE_L1a_RPWI-HF-SID20_20000108T061058-20000108T061531_V01___TMIDX_00000.bin.cdf',  # pc2_LGA-dryrun_RPW-SEQ-01a-2_2024_05_15_16_07_58
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID20_20240126T113714-20240126T114759_V01___RPR2_62000007_2024.026.12.58.18.441.cdf',
+                          'JUICE_L1a_RPWI-HF-SID20_20240126T114800-20240126T123719_V01___RPR2_62000008_2024.026.13.54.26.469.cdf',
+                          'JUICE_L1a_RPWI-HF-SID20_20240706T121424-20240706T125428_V01___RPR2_62000002_2024.190.19.50.21.637.cdf',
+                          'JUICE_L1a_RPWI-HF-SID20_20240819T203013-20240819T210936_V01___RPR2_62000004_2024.235.10.15.04.518.cdf',
                          ]
         """
+
     else:     # <<< SID-4 test datas >>>
         # *** Ground Test - Ver.3 ***
         # 202411 -- SAMPLE  0.2-2MHz, 10mVpp, 0/90/0deg
@@ -96,47 +64,22 @@ def datalist(date_str, ver_str, sid):
         data_name_list = [#'JUICE_L1a_RPWI-HF-SID4_20000101T000106-20000101T000106_V01___SID04-20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
                           'JUICE_L1a_RPWI-HF-SID4_20000101T000226-20000101T000226_V01___SID04-20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
                           ]
-
-        # *** Flight data: Ver.2 ***
-        """
-        # 20240126
-        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
-        data_name_list = ['2024/01/26/JUICE_L1a_RPWI-HF-SID4_20240126T113727_V01.cdf' ]
-        """
-        # 202407 -- CO2
-        """
-        data_name_list = ['2024/07/06/JUICE_L1a_RPWI-HF-SID4_20240706T121439_V01.cdf']
-       # 202408 -- CO2
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID4_20240819T203025-20240819T210933_V01___RPR1_52000003_2024.233.02.43.43.102.cdf']
-        """
- 
         # *** Ground Test - Ver.2 ***
         # 202310 -- SAMPLE
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/sample-ASW2/cdf/old/'
-        data_name_list = [#'SID04_20231024-0042.cdf',
-                          #'SID04-comp0-20231117-1529.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
-                          'SID04-comp1-20231117-1532.ccs.cdf',          # 10/10/0mVpp, 0/90/0deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID4_20000101T000112-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID4_20000101T000057-20000101T000119_V01___SID04-20-comp0-20231117-1529.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID4_20000101T000100-20000101T000144_V01___SID04-20-comp1-20231117-1532.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID4_20000101T001837-20000101T001848_V01___SID04-20_20231024-0042.ccs.cdf',
                          ]
         """
-        # 202310 -- FS
+        # *** Flight data: Ver.2 ***
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202311_FS/cdf/'
-        data_name_list = ['SID04_Seq01.cdf',
-                          'SID04_Seq02.cdf',
-                          'SID04_Seq16.cdf',
-                          'SID04_Seq18.cdf',
-                          'SID04_Seq19.cdf',
-                          'SID04_Seq20.cdf',
-                         ]
-        # 202312 -- Checkout
-        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/202312_C/cdf/'
-        data_name_list = ['SID4_RPWI_NEWv2_SCI.cdf']
-        # 202405 -- dryrun check
-        data_dir = '/Users/user/0-python/JUICE_data/CCSDS_test_v2/test_TMIDX/2405_dryrun_test/2_LGA-dryrun/'   
-        data_name_list = ['JUICE_L1a_RPWI-HF-SID4_20000108T053334-20000108T054137_V01___TMIDX_00000.bin.cdf',   # pc2_LGA-dryrun_RPW-SEQ-01a-1_2024_05_15_15_30_16/TM00
-                          'JUICE_L1a_RPWI-HF-SID4_20000108T054148-20000108T054316_V01___TMIDX_00001.bin.cdf',   # pc2_LGA-dryrun_RPW-SEQ-01a-1_2024_05_15_15_30_16/TM01
-                          'JUICE_L1a_RPWI-HF-SID4_20000108T061111-20000108T061524_V01___TMIDX_00000.bin.cdf',   # pc2_LGA-dryrun_RPW-SEQ-01a-2_2024_05_15_16_07_58
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_name_list = ['JUICE_L1a_RPWI-HF-SID4_20240126T113727-20240126T123719_V01___RPR1_52000013_2024.026.13.22.14.423.cdf',
+                          'JUICE_L1a_RPWI-HF-SID4_20240706T121439-20240706T125422_V01___RPR1_52000002_2024.190.14.59.43.630.cdf',
+                          'JUICE_L1a_RPWI-HF-SID4_20240819T203025-20240819T210933_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',
                          ]
         """
 
