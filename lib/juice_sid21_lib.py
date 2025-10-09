@@ -1,9 +1,10 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/7/5
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/9
 """
 import numpy as np
 import math
-import juice_spec_lib as juice_spec
+import juice_hf_hk_lib as hf_hk
+# import juice_cdf_lib   as hk_cdf
 
 class struct:
     pass
@@ -11,13 +12,12 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID21 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid21_read(cdf, RPWI_FSW_version):
+def hf_sid21_read(cdf): # RPWI_FSW_version):
     """
     input:  CDF, cf:conversion factor
     return: data
     """
     data = struct()
-    data.RPWI_FSW_version = RPWI_FSW_version
 
     # Data
     data.EuEu    = np.float64(cdf['EuEu'][...]);     data.EvEv = np.float64(cdf['EvEv'][...]);        data.EwEw = np.float64(cdf['EwEw'][...])
@@ -25,6 +25,11 @@ def hf_sid21_read(cdf, RPWI_FSW_version):
     data.EvEw_re = np.float64(cdf['EvEw_re'][...]);  data.EvEw_im = np.float64(cdf['EvEw_im'][...])  
     data.EwEu_re = np.float64(cdf['EwEu_re'][...]);  data.EwEu_im = np.float64(cdf['EwEu_im'][...])
     data.frequency  = cdf['frequency'][...];   data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
+
+    hf_hk.status_read(cdf, data, 21)
+    """
+    data.RPWI_FSW_version = cdf['ISW_ver'][...]
+    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
     data.epoch      = cdf['Epoch'][...];       data.scet      = cdf['SCET'][...]
     # AUX
     data.complex     = cdf['complex'][...]
@@ -39,6 +44,7 @@ def hf_sid21_read(cdf, RPWI_FSW_version):
     data.N_step      = np.int64(cdf['N_step'][...])
     data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]
     data.ISW_ver     = cdf['ISW_ver'][...]
+    """
 
     return data
 
@@ -58,6 +64,9 @@ def hf_sid21_add(data, data1):
     data.frequency     = np.r_["0", data.frequency, data1.frequency]
     data.freq_step     = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width    = np.r_["0", data.freq_width, data1.freq_width]
+
+    hf_hk.status_add(data, data1, 21)
+    """
     data.epoch         = np.r_["0", data.epoch, data1.epoch]
     data.scet          = np.r_["0", data.scet, data1.scet]
     # AUX
@@ -73,6 +82,7 @@ def hf_sid21_add(data, data1):
     data.N_step        = np.r_["0", data.N_step, data1.N_step]
     data.ADC_ovrflw    = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
     data.ISW_ver       = np.r_["0", data.ISW_ver, data1.ISW_ver]
+    """
     return data
 
 
@@ -136,6 +146,9 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
         data.frequency   = data.frequency [index[0]]
         data.freq_step   = data.freq_step [index[0]]
         data.freq_width  = data.freq_width[index[0]]
+
+        hf_hk.status_shaping(data, index[0], 21)
+        """
         data.epoch       = data.epoch     [index[0]]
         data.scet        = data.scet      [index[0]]
         # AUX
@@ -151,6 +164,7 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
         data.N_step      = data.N_step    [index[0]]
         data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
         data.ISW_ver     = data.ISW_ver   [index[0]]
+        """
 
         n_time = data.EuEu.shape[0]
         if cal_mode < 2:
@@ -210,3 +224,5 @@ def spec_nan(data, i):
     data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
     data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
     data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan
+
+    hf_hk.status_nan(data, i, 21)

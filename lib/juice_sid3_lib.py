@@ -1,8 +1,10 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2025/7/6
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2025/10/9
 """
 import numpy as np
 import math
+import juice_hf_hk_lib as hf_hk
+# import juice_cdf_lib   as hk_cdf
 
 class struct:
     pass
@@ -10,13 +12,12 @@ class struct:
 # ---------------------------------------------------------------------
 # --- HID3 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid3_read(cdf, RPWI_FSW_version):
+def hf_sid3_read(cdf): # RPWI_FSW_version):
     """
     input:  CDF, FSW version
     return: data
     """
     data = struct()
-    data.RPWI_FSW_version = RPWI_FSW_version
 
     # Data
     data.EuEu       = np.float64(cdf['EuEu'][...]);       data.EvEv       = np.float64(cdf['EvEv'][...]);       data.EwEw = np.float64(cdf['EwEw'][...])
@@ -33,6 +34,7 @@ def hf_sid3_read(cdf, RPWI_FSW_version):
     data.EuEv_re_LC = np.float64(cdf['EuEv_re_LC'][...]); data.EvEw_re_LC = np.float64(cdf['EvEw_re_LC'][...]); data.EwEu_re_LC = np.float64(cdf['EwEu_re_LC'][...])
     data.EuEv_im_LC = np.float64(cdf['EuEv_im_LC'][...]); data.EvEw_im_LC = np.float64(cdf['EvEw_im_LC'][...]); data.EwEu_im_LC = np.float64(cdf['EwEu_im_LC'][...])
     data.num_NC     = cdf['num_NC'][...];                 data.num_RC     = cdf['num_RC'][...];                 data.num_LC     = cdf['num_LC'][...]
+    """
     # complex == 3:    # 3D-matrix
     data.EuiEui     = np.float64(cdf['EuiEui'][...]);     data.EuqEuq     = np.float64(cdf['EuqEuq'][...])
     data.EviEvi     = np.float64(cdf['EviEvi'][...]);     data.EvqEvq     = np.float64(cdf['EvqEvq'][...])
@@ -44,11 +46,14 @@ def hf_sid3_read(cdf, RPWI_FSW_version):
     data.EviEwq     = np.float64(cdf['EviEwq'][...]);     data.EvqEwi     = np.float64(cdf['EvqEwi'][...])
     data.EwiEuq     = np.float64(cdf['EwiEuq'][...]);     data.EwqEui     = np.float64(cdf['EwqEui'][...])
     data.EuiEuq     = np.float64(cdf['EuiEuq'][...]);     data.EviEvq     = np.float64(cdf['EviEvq'][...]);    data.EwiEwq     = np.float64(cdf['EwiEwq'][...])
+    """
     #
     data.BG_Eu      = np.float64(cdf['BG_Eu'][...]);      data.BG_Ev      = np.float64(cdf['BG_Ev'][...]);     data.BG_Ew      = np.float64(cdf['BG_Ew'][...])
     #
     data.frequency  = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...];  data.freq_width  = cdf['freq_width'][...]
-    data.epoch      = cdf['Epoch'][...];      data.scet      = cdf['SCET'][...]
+
+    hf_hk.status_read(cdf, data, 3)
+    """
     # AUX
     data.ch_selected = cdf['ch_selected'][...]
     data.complex     = cdf['complex'][...]
@@ -65,7 +70,9 @@ def hf_sid3_read(cdf, RPWI_FSW_version):
     # Header
     data.N_step      = np.int64(cdf['N_step'][...])
     data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]; data.ISW_ver   = cdf['ISW_ver'][...]
-
+    data.HF_QF       = cdf['HF_QF'][...]    # Quality flag: b0:RWI-off b1:Cal b2-3:Ovrflw b4:RIME b5-7:n/a (b0-1=3:error)'
+    data.decimation  = cdf['decimation'][...]
+    """
     return data
 
 
@@ -103,6 +110,7 @@ def hf_sid3_add(data, data1):
     data.num_NC     = np.r_["0", data.num_NC, data1.num_NC]
     data.num_RC     = np.r_["0", data.num_RC, data1.num_RC]
     data.num_LC     = np.r_["0", data.num_LC, data1.num_LC]
+    """
     # complex == 3:    # 3D-matrix
     data.EuiEui     = np.r_["0", data.EuiEui, data1.EuiEui];         data.EuqEuq = np.r_["0", data.EuqEuq, data1.EuqEuq]
     data.EviEvi     = np.r_["0", data.EviEvi, data1.EviEvi];         data.EvqEvq = np.r_["0", data.EvqEvq, data1.EvqEvq]
@@ -116,6 +124,7 @@ def hf_sid3_add(data, data1):
     data.EuiEuq     = np.r_["0", data.EuiEuq, data1.EuiEuq]
     data.EviEvq     = np.r_["0", data.EviEvq, data1.EviEvq]
     data.EwiEwq     = np.r_["0", data.EwiEwq, data1.EwiEwq]
+    """
     #
     data.BG_Eu      = np.r_["0", data.BG_Eu, data1.BG_Eu]
     data.BG_Ev      = np.r_["0", data.BG_Ev, data1.BG_Ev]
@@ -124,8 +133,9 @@ def hf_sid3_add(data, data1):
     data.frequency  = np.r_["0", data.frequency, data1.frequency]
     data.freq_step  = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width = np.r_["0", data.freq_width, data1.freq_width]
-    data.epoch      = np.r_["0", data.epoch, data1.epoch]
-    data.scet       = np.r_["0", data.scet, data1.scet]
+
+    hf_hk.status_add(data, data1, 3)
+    """
     # AUX
     data.ch_selected  = np.r_["0", data.ch_selected, data1.ch_selected]
     data.complex     = np.r_["0", data.complex, data1.complex]
@@ -143,7 +153,8 @@ def hf_sid3_add(data, data1):
     data.N_step      = np.r_["0", data.N_step, data1.N_step]
     data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
     data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
-
+    data.HF_QF       = np.r_["0", data.HF_QF, data1.HF_QF]
+    """
     return data
 
 
@@ -207,6 +218,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
         data.EuEv_re_LC  = data.EuEv_re_LC [index[0]]; data.EvEw_re_LC = data.EvEw_re_LC[index[0]]; data.EwEu_re_LC = data.EwEu_re_LC[index[0]]
         data.EuEv_im_LC  = data.EuEv_im_LC [index[0]]; data.EvEw_im_LC = data.EvEw_im_LC[index[0]]; data.EwEu_im_LC = data.EwEu_im_LC[index[0]]
         data.num_NC      = data.num_NC     [index[0]]; data.num_RC     = data.num_RC    [index[0]]; data.num_LC     = data.num_LC    [index[0]]
+        """
         # complex == 3:    # 3D-matrix
         data.EuiEui      = data.EuiEui     [index[0]]; data.EviEvi     = data.EviEvi    [index[0]]; data.EwiEwi     = data.EwiEwi    [index[0]]
         data.EuqEuq      = data.EuqEuq     [index[0]]; data.EvqEvq     = data.EvqEvq    [index[0]]; data.EwqEwq     = data.EwqEwq    [index[0]]
@@ -215,12 +227,14 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
         data.EuiEvq      = data.EuiEvq     [index[0]]; data.EviEwq     = data.EviEwq    [index[0]]; data.EwiEuq     = data.EwiEuq    [index[0]]
         data.EuqEvi      = data.EuqEvi     [index[0]]; data.EvqEwi     = data.EvqEwi    [index[0]]; data.EwqEui     = data.EwqEui    [index[0]]
         data.EuiEuq      = data.EuiEuq     [index[0]]; data.EviEvq     = data.EviEvq    [index[0]]; data.EwiEwq     = data.EwiEwq    [index[0]]
+        """
         #
         data.BG_Eu       = data.BG_Eu      [index[0]]; data.BG_Ev      = data.BG_Ev     [index[0]]; data.BG_Ew      = data.BG_Ew     [index[0]]
         #
         data.frequency   = data.frequency  [index[0]]; data.freq_step  = data.freq_step [index[0]]; data.freq_width = data.freq_width[index[0]]
-        data.epoch       = data.epoch      [index[0]]
-        data.scet        = data.scet       [index[0]]
+
+        hf_hk.status_shaping(data, index[0], 3)
+        """
         # AUX
         data.ch_selected = data.ch_selected[index[0]]
         data.complex     = data.complex[index[0]]
@@ -238,7 +252,8 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
         data.N_step      = data.N_step     [index[0]]
         data.ADC_ovrflw  = data.ADC_ovrflw [index[0]]
         data.ISW_ver     = data.ISW_ver    [index[0]]
-
+        """
+        
         data.n_time = data.EuEu.shape[0]
         if cal_mode < 2:
             if N_ch < 4:
@@ -280,6 +295,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     data.EuEu_LC   [index[0]] = math.nan; data.EvEv_LC   [index[0]] = math.nan; data.EwEw_LC   [index[0]] = math.nan
     data.EuEv_re_LC[index[0]] = math.nan; data.EvEw_re_LC[index[0]] = math.nan; data.EwEu_re_LC[index[0]] = math.nan
     data.EuEv_im_LC[index[0]] = math.nan; data.EvEw_im_LC[index[0]] = math.nan; data.EwEu_im_LC[index[0]] = math.nan
+    """
     index = np.where(data.complex != 3)
     data.EuiEui    [index[0]] = math.nan; data.EviEvi    [index[0]] = math.nan; data.EwiEwi    [index[0]] = math.nan
     data.EuqEuq    [index[0]] = math.nan; data.EvqEvq    [index[0]] = math.nan; data.EwqEwq    [index[0]] = math.nan
@@ -288,6 +304,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     data.EuiEvq    [index[0]] = math.nan; data.EviEwq    [index[0]] = math.nan; data.EwiEuq    [index[0]] = math.nan
     data.EuqEvi    [index[0]] = math.nan; data.EvqEwi    [index[0]] = math.nan; data.EwqEui    [index[0]] = math.nan
     data.EuiEuq    [index[0]] = math.nan; data.EviEvq    [index[0]] = math.nan; data.EwiEwq    [index[0]] = math.nan
+    """
     #
     index = np.where(data.U_selected == 0) 
     data.EuEu      [index[0]] = math.nan; data.EuEu_NC   [index[0]] = math.nan; data.EuEu_RC   [index[0]] = math.nan; data.EuEu_LC   [index[0]] = math.nan
@@ -295,28 +312,43 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     data.EuEv_re_NC[index[0]] = math.nan; data.EwEu_re_NC[index[0]] = math.nan; data.EuEv_im_NC[index[0]] = math.nan; data.EwEu_im_NC[index[0]] = math.nan
     data.EuEv_re_RC[index[0]] = math.nan; data.EwEu_re_RC[index[0]] = math.nan; data.EuEv_im_RC[index[0]] = math.nan; data.EwEu_im_RC[index[0]] = math.nan
     data.EuEv_re_LC[index[0]] = math.nan; data.EwEu_re_LC[index[0]] = math.nan; data.EuEv_im_LC[index[0]] = math.nan; data.EwEu_im_LC[index[0]] = math.nan
+    """
     data.EuiEui    [index[0]] = math.nan; data.EuqEuq    [index[0]] = math.nan; data.EuiEuq    [index[0]] = math.nan
     data.EuiEvi    [index[0]] = math.nan; data.EwiEui    [index[0]] = math.nan; data.EuqEvq    [index[0]] = math.nan; data.EwqEuq    [index[0]] = math.nan
     data.EuiEvq    [index[0]] = math.nan; data.EwiEuq    [index[0]] = math.nan; data.EuqEvi    [index[0]] = math.nan; data.EwqEui    [index[0]] = math.nan
+    """
     index = np.where(data.V_selected == 0)
     data.EvEv      [index[0]] = math.nan; data.EvEv_NC   [index[0]] = math.nan; data.EvEv_RC   [index[0]] = math.nan; data.EvEv_LC   [index[0]] = math.nan 
     data.EvEw_re   [index[0]] = math.nan; data.EwEu_re   [index[0]] = math.nan; data.EvEw_im   [index[0]] = math.nan; data.EwEu_im   [index[0]] = math.nan
     data.EuEv_re_NC[index[0]] = math.nan; data.EvEw_re_NC[index[0]] = math.nan; data.EuEv_im_NC[index[0]] = math.nan; data.EvEw_im_NC[index[0]] = math.nan
     data.EuEv_re_RC[index[0]] = math.nan; data.EvEw_re_RC[index[0]] = math.nan; data.EuEv_im_RC[index[0]] = math.nan; data.EvEw_im_RC[index[0]] = math.nan
     data.EuEv_re_LC[index[0]] = math.nan; data.EvEw_re_LC[index[0]] = math.nan; data.EuEv_im_LC[index[0]] = math.nan; data.EvEw_im_LC[index[0]] = math.nan
+    """
     data.EviEvi    [index[0]] = math.nan; data.EvqEvq    [index[0]] = math.nan; data.EviEvq    [index[0]] = math.nan
     data.EuiEvi    [index[0]] = math.nan; data.EviEwi    [index[0]] = math.nan; data.EuqEvq    [index[0]] = math.nan; data.EvqEwq    [index[0]] = math.nan
     data.EuiEvq    [index[0]] = math.nan; data.EviEwq    [index[0]] = math.nan; data.EuqEvi    [index[0]] = math.nan; data.EvqEwi    [index[0]] = math.nan
+    """
     index = np.where(data.W_selected == 0)
     data.EwEw      [index[0]] = math.nan; data.EwEw_NC   [index[0]] = math.nan; data.EwEw_RC   [index[0]] = math.nan; data.EwEw_LC   [index[0]] = math.nan
     data.EvEw_re   [index[0]] = math.nan; data.EwEu_re   [index[0]] = math.nan; data.EvEw_im   [index[0]] = math.nan; data.EwEu_im   [index[0]] = math.nan
     data.EvEw_re_NC[index[0]] = math.nan; data.EwEu_re_NC[index[0]] = math.nan; data.EvEw_im_NC[index[0]] = math.nan; data.EwEu_im_NC[index[0]] = math.nan    
     data.EvEw_re_RC[index[0]] = math.nan; data.EwEu_re_RC[index[0]] = math.nan; data.EvEw_im_RC[index[0]] = math.nan; data.EwEu_im_RC[index[0]] = math.nan
     data.EvEw_re_LC[index[0]] = math.nan; data.EwEu_re_LC[index[0]] = math.nan; data.EvEw_im_LC[index[0]] = math.nan; data.EwEu_im_LC[index[0]] = math.nan
+    """
     data.EwiEwi    [index[0]] = math.nan; data.EwqEwq    [index[0]] = math.nan; data.EwiEwq    [index[0]] = math.nan
     data.EviEwi    [index[0]] = math.nan; data.EwiEui    [index[0]] = math.nan; data.EvqEwq    [index[0]] = math.nan; data.EwqEuq    [index[0]] = math.nan
     data.EviEwq    [index[0]] = math.nan; data.EwiEuq    [index[0]] = math.nan; data.EvqEwi    [index[0]] = math.nan; data.EwqEui    [index[0]] = math.nan
+    """
     
+    # MIN: cut
+    data.EuEu = np.ravel(data.EuEu);  data.EvEv = np.ravel(data.EvEv);  data.EwEw = np.ravel(data.EwEw)
+    index = np.where(data.EuEu < 1e-9);  data.EuEu[index[0]] = math.nan
+    index = np.where(data.EvEv < 1e-9);  data.EvEv[index[0]] = math.nan
+    index = np.where(data.EwEw < 1e-9);  data.EwEw[index[0]] = math.nan
+    data.EuEu = data.EuEu.reshape(data.n_time, data.n_freq)
+    data.EvEv = data.EvEv.reshape(data.n_time, data.n_freq)
+    data.EwEw = data.EwEw.reshape(data.n_time, data.n_freq)
+
     return data
 
 
@@ -333,6 +365,7 @@ def spec_nan(data, i):
     data.EuEu_LC   [i] = math.nan; data.EvEv_LC   [i] = math.nan; data.EwEw_LC   [i] = math.nan
     data.EuEv_re_LC[i] = math.nan; data.EvEw_re_LC[i] = math.nan; data.EwEu_re_LC[i] = math.nan
     data.EuEv_im_LC[i] = math.nan; data.EvEw_im_LC[i] = math.nan; data.EwEu_im_LC[i] = math.nan
+    """
     data.EuiEui    [i] = math.nan; data.EviEvi    [i] = math.nan; data.EwiEwi    [i] = math.nan
     data.EuqEuq    [i] = math.nan; data.EvqEvq    [i] = math.nan; data.EwqEwq    [i] = math.nan
     data.EuiEvi    [i] = math.nan; data.EviEwi    [i] = math.nan; data.EwiEui    [i] = math.nan
@@ -340,3 +373,6 @@ def spec_nan(data, i):
     data.EuiEvq    [i] = math.nan; data.EviEwq    [i] = math.nan; data.EwiEuq    [i] = math.nan
     data.EuqEvi    [i] = math.nan; data.EvqEwi    [i] = math.nan; data.EwqEui    [i] = math.nan
     data.EuiEuq    [i] = math.nan; data.EviEvq    [i] = math.nan; data.EwiEwq    [i] = math.nan
+    """
+
+    hf_hk.status_nan(data, i, 3)

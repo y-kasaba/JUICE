@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2025/6/5
+# JUICE RPWI HF CAL lib -- 2025/10/9
 
 import copy
 import csv
@@ -130,21 +130,25 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
 
     freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
 
-    # BUG correction in ASW2 SID-3
+    # Amplitude correction
     cal_factor = 1.0
     if unit_mode > 0:
-        if sid==3 and spec.RPWI_FSW_version == '2.0':
+        if   sid==3 and spec.RPWI_FSW_version == 2: # '2.0':
             cal_factor = 0.1                            # ASW2 --- bug
+        elif sid==3 and spec.RPWI_FSW_version == 3: #'3.0':
+            cal_factor = 100.                           # ASW3 --- ASW2 x 1000
     
-    # Spectral CAL parameters from Ground + Onboard Test
+    # Band width correction
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
     if band_mode > 0:
         # BUG correction in ASW2 SID-3
-        if sid==3 and spec.RPWI_FSW_version == '2.0':
+        if sid==3 and spec.RPWI_FSW_version == 2: # '2.0':
             CAL_f_gain = CAL_f_gain / 289.              # ASW2 --- bug
+        elif sid==3 and spec.RPWI_FSW_version == 3: # '3.0':
+            CAL_f_gain = CAL_f_gain / 289.              # ASW3 --- ASW2
         else:
             CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
-
+ 
     # Complex CAL parameters
     CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
     CAL_f_gainC  = CAL_f_gainC * cal_factor

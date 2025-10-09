@@ -1,7 +1,10 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/7/4
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/10/9
 """
+import math
 import numpy as np
+import juice_hf_hk_lib as hf_hk
+# import juice_cdf_lib   as hk_cdf
 
 
 class struct:
@@ -11,17 +14,21 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID5 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid5_read(cdf, RPWI_FSW_version):
+def hf_sid5_read(cdf): # RPWI_FSW_version):
     """
     Input:  cdf
     Output: data
     """
     data = struct()
-    data.RPWI_FSW_version = RPWI_FSW_version
 
     # Data
     data.EE         = np.float64(cdf['EE'][...])
     data.frequency  = cdf['frequency'][...];   data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
+
+    hf_hk.status_read(cdf, data, 5)
+    """
+    data.RPWI_FSW_version = cdf['ISW_ver'][...]
+    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
     data.epoch       = cdf['Epoch'][...];      data.scet      = cdf['SCET'][...]
     # AUX
     data.ch_selected = cdf['ch_selected'][...]      # [0:U  1:V  2:W]
@@ -35,6 +42,7 @@ def hf_sid5_read(cdf, RPWI_FSW_version):
     data.N_step      = np.int64(cdf['N_step'][...])
     data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]
     data.ISW_ver     = cdf['ISW_ver'][...]
+    """
     return data
 
 
@@ -48,6 +56,9 @@ def hf_sid5_add(data, data1):
     data.frequency    = np.r_["0", data.frequency, data1.frequency]
     data.freq_step    = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width   = np.r_["0", data.freq_width, data1.freq_width]
+
+    hf_hk.status_add(data, data1, 5)
+    """
     data.epoch        = np.r_["0", data.epoch, data1.epoch]
     data.scet         = np.r_["0", data.scet, data1.scet]
     # AUX
@@ -62,6 +73,7 @@ def hf_sid5_add(data, data1):
     data.N_step       = np.r_["0", data.N_step, data1.N_step]
     data.ADC_ovrflw   = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
     data.ISW_ver      = np.r_["0", data.ISW_ver, data1.ISW_ver]
+    """
     return data
 
 
@@ -83,6 +95,9 @@ def hf_sid5_shaping(data, cal_mode):
         data.frequency   = data.frequency [index[0]]
         data.freq_step   = data.freq_step [index[0]]
         data.freq_width  = data.freq_width[index[0]]
+
+        hf_hk.status_shaping(data, index[0], 5)
+        """
         data.epoch       = data.epoch     [index[0]]
         data.scet        = data.scet      [index[0]]
         # AUX
@@ -97,6 +112,7 @@ def hf_sid5_shaping(data, cal_mode):
         data.N_samp      = data.N_samp    [index[0]]
         data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
         data.ISW_ver     = data.ISW_ver   [index[0]]
+        """
     
         n_time = data.EE.shape[0]
         if cal_mode < 2:
@@ -115,3 +131,5 @@ def hf_sid5_shaping(data, cal_mode):
 
 def spec_nan(data, i):
     data.EE[i] = math.nan
+
+    hf_hk.status_nan(data, i, 5)

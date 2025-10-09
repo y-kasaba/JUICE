@@ -1,8 +1,10 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/7/8
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/10/9
 """
 import numpy as np
 import math
+import juice_hf_hk_lib as hf_hk
+# import juice_cdf_lib   as hk_cdf
 
 class struct:
     pass
@@ -11,20 +13,25 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID2 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid2_read(cdf, RPWI_FSW_version):
+def hf_sid2_read(cdf): # RPWI_FSW_version):
     """
     input:  CDF, FSW version
     return: data
     """
     data = struct()
-    data.RPWI_FSW_version = RPWI_FSW_version
+    # data.RPWI_FSW_version = cdf['ISW_ver'][...]
+    # data.RPWI_FSW_version = data.RPWI_FSW_version[0]
 
     # Data
     data.Eu_i      = np.float64(cdf['Eu_i'][...]);  data.Eu_q = np.float64(cdf['Eu_q'][...])
     data.Ev_i      = np.float64(cdf['Ev_i'][...]);  data.Ev_q = np.float64(cdf['Ev_q'][...])
     data.Ew_i      = np.float64(cdf['Ew_i'][...]);  data.Ew_q = np.float64(cdf['Ew_q'][...])
     data.frequency = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
-    data.time      = cdf['time'][...];       data.epoch     = cdf['Epoch'][...];     data.scet      = cdf['SCET'][...]
+    data.time      = cdf['time'][...];       
+
+    hf_hk.status_read(cdf, data, 2)
+    """
+    data.epoch     = cdf['Epoch'][...];     data.scet      = cdf['SCET'][...]
     # AUX
     data.ch_selected = cdf['ch_selected'][...]
     data.cal_signal  = cdf['cal_signal'][...]
@@ -37,6 +44,8 @@ def hf_sid2_read(cdf, RPWI_FSW_version):
     data.decimation  = cdf['decimation'][...]
     data.ADC_ovrflw  = cdf['ADC_ovrflw'][...] 
     data.ISW_ver     = cdf['ISW_ver'][...]
+    data.HF_QF       = cdf['HF_QF'][...]    # Quality flag: b0:RWI-off b1:Cal b2-3:Ovrflw b4:RIME b5-7:n/a (b0-1=3:error)'
+    """
 
     # ### ASW1: SPECIAL: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
@@ -49,22 +58,6 @@ def hf_sid2_read(cdf, RPWI_FSW_version):
 
 
 def hf_sid2_add(data, data1):
-    """
-    input:  data, data1
-    return: data
-    """
-    # AUX
-    data.ch_selected = np.r_["0", data.ch_selected, data1.ch_selected]
-    data.cal_signal  = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.T_RWI_CH1   = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
-    data.T_RWI_CH2   = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
-    data.T_HF_FPGA   = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
-    # Header
-    data.N_samp      = np.r_["0", data.N_samp, data1.N_samp]
-    data.N_step      = np.r_["0", data.N_step, data1.N_step]
-    data.decimation  = np.r_["0", data.decimation, data1.decimation]
-    data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
-    data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
     # Data
     data.Eu_i        = np.r_["0", data.Eu_i, data1.Eu_i]
     data.Eu_q        = np.r_["0", data.Eu_q, data1.Eu_q]
@@ -77,9 +70,25 @@ def hf_sid2_add(data, data1):
     data.freq_step   = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width  = np.r_["0", data.freq_width, data1.freq_width]
     data.time        = np.r_["0", data.time, data1.time]
-    #
+
+    hf_hk.status_add(data, data1, 2)
+    """
     data.epoch       = np.r_["0", data.epoch, data1.epoch]
     data.scet        = np.r_["0", data.scet,  data1.scet]
+    # AUX
+    data.ch_selected = np.r_["0", data.ch_selected, data1.ch_selected]
+    data.cal_signal  = np.r_["0", data.cal_signal, data1.cal_signal]
+    data.T_RWI_CH1   = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
+    data.T_RWI_CH2   = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
+    data.T_HF_FPGA   = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
+    # Header
+    data.N_samp      = np.r_["0", data.N_samp, data1.N_samp]
+    data.N_step      = np.r_["0", data.N_step, data1.N_step]
+    data.decimation  = np.r_["0", data.decimation, data1.decimation]
+    data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
+    data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
+    data.HF_QF       = np.r_["0", data.HF_QF, data1.HF_QF]
+    """
     return data
 
 
@@ -91,7 +100,7 @@ def hf_sid2_shaping(data, cal_mode):
     data.n_time = data.Eu_i.shape[0]
     data.n_step = data.N_step[data.n_time//2]
     data.n_samp = data.N_samp[data.n_time//2]
-    n_num  = data.n_step * data.n_samp
+    n_num = data.n_step * data.n_samp
     print("  org:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "[", n_num, "]")
 
     # N_step selection
@@ -147,12 +156,9 @@ def hf_sid2_shaping(data, cal_mode):
         else:             print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only CAL>")
 
     # NAN -- no data channels
-    data.U_selected = (data.ch_selected & 0b1   ) 
-    data.V_selected = (data.ch_selected & 0b10  ) >> 1
-    data.W_selected = (data.ch_selected & 0b100 ) >> 2
-    index = np.where(data.U_selected == 0);  data.Eu_i[index[0]] = math.nan;  data.Eu_q[index[0]] = math.nan
-    index = np.where(data.V_selected == 0);  data.Ev_i[index[0]] = math.nan;  data.Ev_q[index[0]] = math.nan
-    index = np.where(data.W_selected == 0);  data.Ew_i[index[0]] = math.nan;  data.Ew_q[index[0]] = math.nan
+    index = np.where(data.ch_selected & 0b1   == 0);  data.Eu_i[index[0]] = math.nan;  data.Eu_q[index[0]] = math.nan
+    index = np.where(data.ch_selected & 0b10  == 0);  data.Ev_i[index[0]] = math.nan;  data.Ev_q[index[0]] = math.nan
+    index = np.where(data.ch_selected & 0b100 == 0);  data.Ew_i[index[0]] = math.nan;  data.Ew_q[index[0]] = math.nan
 
     return data
 
@@ -163,7 +169,11 @@ def hf_sid2_select_time(data, index):
     data.Ev_i      = data.Ev_i     [index[0]];   data.Ev_q = data.Ev_q[index[0]]
     data.Ew_i      = data.Ew_i     [index[0]];   data.Ew_q = data.Ew_q[index[0]]
     data.frequency = data.frequency[index[0]];   data.freq_step = data.freq_step[index[0]];  data.freq_width = data.freq_width[index[0]]
-    data.time      = data.time     [index[0]];   data.epoch     = data.epoch    [index[0]];  data.scet       = data.scet      [index[0]]
+    data.time      = data.time     [index[0]]
+    # data.epoch     = data.epoch    [index[0]];  data.scet       = data.scet      [index[0]]
+
+    hf_hk.status_shaping(data, index[0], 2)
+    """
     # AUX
     data.T_RWI_CH1 = data.T_RWI_CH1[index[0]];   data.T_RWI_CH2 = data.T_RWI_CH2[index[0]];  data.T_HF_FPGA  = data.T_HF_FPGA [index[0]]
     data.ch_selected = data.ch_selected[index[0]]; data.cal_signal= data.cal_signal [index[0]]
@@ -171,7 +181,7 @@ def hf_sid2_select_time(data, index):
     data.N_step    = data.N_step    [index[0]];  data.N_samp  = data.N_samp [index[0]]; 
     data.decimation= data.decimation[index[0]]
     data.ADC_ovrflw= data.ADC_ovrflw[index[0]];  data.ISW_ver = data.ISW_ver[index[0]]
-
+    """
     return data
 
 
@@ -180,6 +190,8 @@ def hf_sid2_spec_nan(data, i):
     data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
     data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
     data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan
+
+    hf_hk.status_nan(data, i, 2)
 
 
 """

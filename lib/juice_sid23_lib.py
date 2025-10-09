@@ -1,8 +1,10 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/7/5
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/10/9
 """
 import numpy          as np
 import scipy.stats    as stats
+import juice_hf_hk_lib as hf_hk
+import juice_cdf_lib   as hk_cdf
 
 class struct:
     pass
@@ -10,19 +12,23 @@ class struct:
 # ---------------------------------------------------------------------
 # --- SID23 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid23_read(cdf, RPWI_FSW_version):
+def hf_sid23_read(cdf): # RPWI_FSW_version):
     """
     input:  CDF
     return: data
     """
     data = struct()
-    data.RPWI_FSW_version = RPWI_FSW_version
+    data.RPWI_FSW_version = cdf['ISW_ver'][...]
+    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
 
     # Data
     data.Eu_i        = np.float64(cdf['Eu_i'][...]);       data.Eu_q = np.float64(cdf['Eu_q'][...])
     data.Ev_i        = np.float64(cdf['Ev_i'][...]);       data.Ev_q = np.float64(cdf['Ev_q'][...])
     data.Ew_i        = np.float64(cdf['Ew_i'][...]);       data.Ew_q = np.float64(cdf['Ew_q'][...])
     data.time_block  = np.float64(cdf['time_block'][...]); data.time = np.float64(cdf['time'][...])
+
+    hf_hk.status_read(cdf, data, 23)
+    """
     data.epoch       = cdf['Epoch'][...];                  data.scet = cdf['SCET'][...]
     # AUX
     data.N_block     = np.int16(cdf['N_block'][...])
@@ -36,6 +42,8 @@ def hf_sid23_read(cdf, RPWI_FSW_version):
     # Header
     data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]
     data.ISW_ver     = cdf['ISW_ver'][...]
+    data.HF_QF       = cdf['HF_QF'][...]    # Quality flag: b0:RWI-off b1:Cal b2-3:Ovrflw b4:RIME b5-7:n/a (b0-1=3:error)'
+    """
 
     return data
 
@@ -50,6 +58,9 @@ def hf_sid23_add(data, data1):
     data.Ev_i        = np.r_["0", data.Ev_i, data1.Ev_i];              data.Ev_q = np.r_["0", data.Ev_q, data1.Ev_q]
     data.Ew_i        = np.r_["0", data.Ew_i, data1.Ew_i];              data.Ew_q = np.r_["0", data.Ew_q, data1.Ew_q]
     data.time_block  = np.r_["0", data.time_block, data1.time_block];  data.time        = np.r_["0", data.time, data1.time]
+
+    hf_hk.status_add(data, data1, 23)
+    """
     data.epoch       = np.r_["0", data.epoch, data1.epoch];            data.scet = np.r_["0", data.scet, data1.scet]
     # AUX
     data.N_block     = np.r_["0", data.N_block, data1.N_block]
@@ -63,6 +74,8 @@ def hf_sid23_add(data, data1):
     # Header
     data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
     data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
+    data.HF_QF       = np.r_["0", data.HF_QF, data1.HF_QF]
+    """
     return data
 
 
@@ -86,6 +99,9 @@ def hf_sid23_shaping(data, f_max, f_min):
     data.Ev_i        = data.Ev_i [index[0]];       data.Ev_q = data.Ev_q [index[0]]
     data.Ew_i        = data.Ew_i [index[0]];       data.Ew_q = data.Ew_q [index[0]]
     data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
+
+    hf_hk.status_shaping(data, index[0], 23)
+    """
     data.epoch       = data.epoch[index[0]];       data.scet = data.scet[index[0]]
     # AUX
     data.N_block     = data.N_block [index[0]]
@@ -99,6 +115,7 @@ def hf_sid23_shaping(data, f_max, f_min):
     # Header
     data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
     data.ISW_ver     = data.ISW_ver   [index[0]]
+    """
     #
     # Size - after frequency selection
     data.n_time = data.Eu_i.shape[0]
@@ -115,6 +132,9 @@ def hf_sid23_shaping(data, f_max, f_min):
     data.Ev_i        = data.Ev_i [index[0]];       data.Ev_q = data.Ev_q [index[0]]
     data.Ew_i        = data.Ew_i [index[0]];       data.Ew_q = data.Ew_q [index[0]]
     data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
+
+    hf_hk.status_shaping(data, index[0], 23)
+    """
     data.epoch       = data.epoch[index[0]];       data.scet = data.scet[index[0]]
     # AUX
     data.N_block     = data.N_block [index[0]]
@@ -128,6 +148,7 @@ def hf_sid23_shaping(data, f_max, f_min):
     # Header
     data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
     data.ISW_ver     = data.ISW_ver   [index[0]]
+    """
     #
     # Size - after frequency selection
     data.n_time = data.Eu_i.shape[0]

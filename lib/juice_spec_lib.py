@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2025/7/5
+    JUICE RPWI HF: L1a spec -- 2025/10/9
 """
 import copy
 import math
@@ -84,11 +84,8 @@ def hf_getspec_stokes(spec, sid):
     return spec
 
 
+"""
 def hf_getspec_stokes_3d(spec):
-    """
-    input:  spec
-    return: spec
-    """
     spec.E_I_3d  = spec.EuiEui + spec.EuqEuq + spec.EviEvi + spec.EvqEvq + spec.EwiEwi + spec.EwqEwq
     spec.E_Q_3d  = spec.EuiEvi - spec.EuqEuq + spec.EviEvi - spec.EvqEvq + spec.EwiEwi - spec.EwqEwq
     spec.E_U_3d  =  2. * (spec.EuiEuq + spec.EviEvq + spec.EwiEwq)
@@ -98,7 +95,7 @@ def hf_getspec_stokes_3d(spec):
     spec.E_DoP_3d, spec.E_DoL_3d, spec.E_DoC_3d, spec.E_ANG_3d, spec.E_k_lon, spec.E_k_lat = \
         get_pol_3D(spec.E_I_3d, spec.E_Q_3d, spec.E_U_3d, spec.E_Vu_3d, spec.E_Vv_3d, spec.E_Vw_3d)
     return spec
-
+"""
 
 def get_stokes(p1, p2, re, im):
     """
@@ -195,8 +192,8 @@ def hf_getspec_sid2(data):
     n_samp = data.Eu_i.shape[2]
 
     # Frequency
-    spec.freq     = np.zeros(n_time * n_freq * n_samp);  spec.freq     = spec.freq.reshape  (n_time, n_freq, n_samp)
-    spec.freq_w   = np.zeros(n_time * n_freq * n_samp);  spec.freq_w   = spec.freq_w.reshape(n_time, n_freq, n_samp)
+    spec.freq   = np.zeros(n_time * n_freq * n_samp);  spec.freq   = spec.freq.reshape  (n_time, n_freq, n_samp)
+    spec.freq_w = np.zeros(n_time * n_freq * n_samp);  spec.freq_w = spec.freq_w.reshape(n_time, n_freq, n_samp)
     dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
     # dt = data.time[0][0][1]
     freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
@@ -208,8 +205,10 @@ def hf_getspec_sid2(data):
             spec.freq_w[i][j] = d_freq
 
     # FFT
-    window = np.hanning(n_samp*1.0)
-    acf = 1.0/(sum(window)/n_samp) # / 1.23
+    # window = np.hanning (n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.00 -> 4.00
+    # window = np.blackman(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
+    from scipy.signal import windows
+    window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
 
     # -- auto  (rms)
     s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EuEu = np.fft.fftshift(s, axes=(2,))
@@ -285,8 +284,11 @@ def hf_getspec_sid23(data):
     print("freq:", spec.freq[0][0], spec.freq_w[0][0])
 
     # FFT
-    window = np.hanning(n_samp)
-    acf = 1/(sum(window)/n_samp)
+    # window = np.hanning (n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.00 -> 4.00
+    # window = np.blackman(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
+    from scipy.signal import windows
+    window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.79 -> 7.78
+
     #
     # -- auto
     s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EuEu = np.fft.fftshift(s, axes=(2,))
