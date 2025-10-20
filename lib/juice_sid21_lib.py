@@ -1,13 +1,75 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/9
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/20
 """
+import glob
 import numpy as np
 import math
 import juice_hf_hk_lib as hf_hk
-# import juice_cdf_lib   as hk_cdf
-
 class struct:
     pass
+
+
+def datalist(date_str, ver_str):
+    """
+    input:  date_str        yyyymmdd: group read    others: file list
+    return: data_dir
+            data_list
+    """
+    yr_format = date_str[0:2]
+    yr_str    = date_str[0:4]
+    mn_str    = date_str[4:6]
+    dy_str    = date_str[6:8]
+    
+    # *** Group read
+    if yr_format=='20':
+        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
+        data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
+        data_name = '*HF*SID21_*'+ver_str+'.cdf'
+        cdf_file = data_dir + data_name
+
+        data_list = glob.glob(cdf_file)
+        num_list = len(data_list)
+        data_list.sort()
+        for i in range(num_list):
+            data_list[i] = os.path.split(data_list[i])[1]
+
+    else:
+
+        # *** Ground Test - Ver.3 ***
+        # 202509 -- SAMPLE
+        #	(1) Freq=1.5MHz                                       Vin = [0.01 0.02 0.05 0.1 0.2 0.5 1 2 5 10 20 50 100 200 500] mVpp
+	    #   (2) Freq=[0.02 0.05 0.1 0.2 0.5 1.1 2.1 5.1 9.1] MHz  Vin=10mVpp
+	    #   (3) Freq=1.5MHz                                       Vin=10mVpp, Phase (y ch) = [0 45 90 135 180 225 270 315 0] deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID21_20000101T002153-20000101T004523_V01___SID05-21_20250926-0820_10mVpp.ccs.cdf', ]
+        # 202411 -- SAMPLE -- SG 1.75MHz, 100mVpp  --- comp0 & comp1
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID21_20000101T000149-20000101T000219_V01___SID05-21_20241125-1341_PSSR1_comp0_asw3.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID21_20000101T000100-20000101T000200_V01___SID05-21_20241125-1335_PSSR1_comp1_asw3.ccs.cdf',
+                    ] 
+        """
+        # *** Ground Test - Ver.2 ***
+        # 202311 -- SAMPLE -- SG 1.55MHz, 10mVpp, [90.0, 0.0, 0.0]    20231117-1611: with RFI-mitigation
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID21_20000101T002245-20000101T002330_V01___SID05-21_20231024-0046.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID21_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID21_20000101T000128-20000101T000213_V01___SID05-21_20231117-1603.ccs.cdf',
+                    ]
+        """
+
+        # 202503 -- Flight
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID21_20250331T033821-20250331T034222_V01___RPR2_62000007_2025.091.16.40.05.450.cdf',
+                        ]
+        """
+
+    print(data_dir)
+    print(data_list)
+    return data_dir, data_list
+
 
 # ---------------------------------------------------------------------
 # --- SID21 ------------------------------------------------------------
@@ -65,7 +127,7 @@ def hf_sid21_add(data, data1):
     data.freq_step     = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width    = np.r_["0", data.freq_width, data1.freq_width]
 
-    hf_hk.status_add(data, data1, 21)
+    hf_hk.status_add(data, data1)
     """
     data.epoch         = np.r_["0", data.epoch, data1.epoch]
     data.scet          = np.r_["0", data.scet, data1.scet]
@@ -147,7 +209,7 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
         data.freq_step   = data.freq_step [index[0]]
         data.freq_width  = data.freq_width[index[0]]
 
-        hf_hk.status_shaping(data, index[0], 21)
+        hf_hk.status_shaping(data, index[0])
         """
         data.epoch       = data.epoch     [index[0]]
         data.scet        = data.scet      [index[0]]
@@ -174,13 +236,13 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
             else:
                 if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
                 else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
+            if cal_mode == 0:     print("<only BG>")
+            else:                 print("<only CAL>")
         else:
             if N_ch < 4:
                 if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch, " comp_mode:", comp_mode)
                 else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch)
             else:                 print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
-        if cal_mode == 0:         print("<only BG>")
-        else:                     print("<only CAL>")
 
     data.U_selected = (data.ch_selected & 0b1   ) 
     data.V_selected = (data.ch_selected & 0b10  ) >> 1

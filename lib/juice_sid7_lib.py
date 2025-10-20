@@ -1,17 +1,56 @@
 """
-    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2025/10/9
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2025/10/20
 """
+import glob
 import numpy as np
 import juice_hf_hk_lib as hf_hk
 import juice_cdf_lib   as hk_cdf
-
 class struct:
     pass
+
+def datalist(date_str, ver_str):
+    """
+    input:  date_str        yyyymmdd: group read    others: file list
+    return: data_dir
+            data_list
+    """
+    yr_format = date_str[0:2]
+    yr_str    = date_str[0:4]
+    mn_str    = date_str[4:6]
+    dy_str    = date_str[6:8]
+    
+    # *** Group read
+    if yr_format=='20':
+        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
+        data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
+        data_name = '*HF*SID07_*'+ver_str+'.cdf'
+        cdf_file = data_dir + data_name
+
+        data_list = glob.glob(cdf_file)
+        num_list = len(data_list)
+        data_list.sort()
+        for i in range(num_list):
+            data_list[i] = os.path.split(data_list[i])[1]
+
+    else:
+        # *** Ground Test - Ver.3 ***
+        # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID7_20000101T064546-20000101T064910_V01___SID07-23_20250925-1722_10mVpp.ccs.cdf']
+        # 202411 -- SAMPLE -- SG: 1.75MHz 100mVpp 90/0/0deg
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID7_20000101T000512-20000101T000512_V01___SID07-23_20241125-1321_PSSR3_asw3.ccs.cdf']    
+        """
+    print(data_dir)
+    print(data_list)
+    return data_dir, data_list
+
 
 # ---------------------------------------------------------------------
 # --- SID7 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid7_read(cdf): # RPWI_FSW_version):
+def hf_sid7_read(cdf):
     """
     input:  CDF
     return: data
@@ -96,7 +135,7 @@ def hf_sid7_shaping(data, f_max, f_min):
     data.E_i         = data.E_i [index[0]];        data.E_q = data.E_q [index[0]]
     data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
 
-    hf_hk.status_shaping(data, index[0], 7)
+    hf_hk.status_shaping(data, index[0])
     """
     data.epoch       = data.epoch[index[0]];       data.scet = data.scet[index[0]]
     # AUX
@@ -128,7 +167,7 @@ def hf_sid7_shaping(data, f_max, f_min):
     data.E_i         = data.E_i [index[0]];        data.E_q = data.E_q [index[0]]
     data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
 
-    hf_hk.status_shaping(data, index[0], 7)
+    hf_hk.status_shaping(data, index[0])
     """
     data.epoch       = data.epoch[index[0]];       data.scet = data.scet[index[0]]
     # AUX

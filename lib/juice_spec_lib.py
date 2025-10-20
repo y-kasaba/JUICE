@@ -1,10 +1,11 @@
 """
-    JUICE RPWI HF: L1a spec -- 2025/10/9
+    JUICE RPWI HF: L1a spec -- 2025/10/11
 """
 import copy
 import math
 import numpy as np
 import juice_cdf_lib as juice_cdf
+from scipy.signal import windows
 
 class struct_hf:
     pass
@@ -205,11 +206,10 @@ def hf_getspec_sid2(data):
             spec.freq_w[i][j] = d_freq
 
     # FFT
-    # window = np.hanning (n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.00 -> 4.00
-    # window = np.blackman(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
-    from scipy.signal import windows
+    #window = 1;  acf = 1.0
+    #window = np.hanning (n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.00 -> 4.00
+    #window = np.blackman(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
     window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
-
     # -- auto  (rms)
     s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EuEu = np.fft.fftshift(s, axes=(2,))
     s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EvEv = np.fft.fftshift(s, axes=(2,))
@@ -225,12 +225,10 @@ def hf_getspec_sid2(data):
     # Cut: 75%
     samp1 = n_samp//8           # 0
     samp2 = n_samp - n_samp//8  # n_samp
-
-    # for i in range(data.n_freq - 1):
     i = 0
     while (spec.freq[0][i][samp2] > spec.freq[0][i+1][samp1]):
         samp1 += 1; samp2 -= 1
-    print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%") 
+    print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%", spec.freq.shape, n_samp//8, samp1, n_samp - n_samp//8, samp2)
     n_samp = samp2 - samp1
     #
     spec.freq     = spec.freq   [:, :, samp1:samp2];     spec.freq    = np.array(spec.freq).reshape   (n_time, n_freq * n_samp)
@@ -246,7 +244,8 @@ def hf_getspec_sid2(data):
     spec.EuEv_im  = spec.EuEv_im[:, :, samp1:samp2];     spec.EuEv_im = np.array(spec.EuEv_im).reshape(n_time, n_freq * n_samp)
     spec.EvEw_im  = spec.EvEw_im[:, :, samp1:samp2];     spec.EvEw_im = np.array(spec.EvEw_im).reshape(n_time, n_freq * n_samp)
     spec.EwEu_im  = spec.EwEu_im[:, :, samp1:samp2];     spec.EwEu_im = np.array(spec.EwEu_im).reshape(n_time, n_freq * n_samp)
-    #
+    
+    # Epoch
     spec.epoch    = data.epoch[:]
     return spec
 
@@ -284,12 +283,10 @@ def hf_getspec_sid23(data):
     print("freq:", spec.freq[0][0], spec.freq_w[0][0])
 
     # FFT
-    # window = np.hanning (n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.00 -> 4.00
-    # window = np.blackman(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
-    from scipy.signal import windows
-    window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.79 -> 7.78
-
-    #
+    #window = 1;  acf = 1.0
+    #window = np.hanning (n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.00 -> 4.00
+    #window = np.blackman(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
+    window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
     # -- auto
     s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EuEu = np.fft.fftshift(s, axes=(2,))
     s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf; spec.EvEv = np.fft.fftshift(s, axes=(2,))

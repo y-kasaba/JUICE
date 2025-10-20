@@ -1,25 +1,123 @@
 """
-    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/10/9
+    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/10/20
 """
+import glob
 import numpy as np
 import math
 import juice_hf_hk_lib as hf_hk
-# import juice_cdf_lib   as hk_cdf
-
 class struct:
     pass
+
+def datalist(date_str, ver_str, sid):
+    """
+    input:  date_str        yyyymmdd: group read    others: file list
+    return: data_dir
+            data_list
+    """
+    yr_format = date_str[0:2]
+    yr_str    = date_str[0:4]
+    mn_str    = date_str[4:6]
+    dy_str    = date_str[6:8]
+    
+    # *** Group read
+    if yr_format=='20':
+        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
+        data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
+        if sid == 4:  data_name = '*HF*SID4_*'+ver_str+'.cdf'
+        else:         data_name = '*HF*SID20_*'+ver_str+'.cdf'    
+        cdf_file = data_dir + data_name
+
+        data_list = glob.glob(cdf_file)
+        num_list = len(data_list)
+        data_list.sort()
+        for i in range(num_list):
+            data_list[i] = os.path.split(data_list[i])[1]
+
+    elif sid == 20:     # <<< SID-20 test datas >>>
+        # *** Ground Test - Ver.3 ***
+        # 202509 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID20_20000101T031404-20000101T031417_V01___SID04-20_0.2s_20250925-1500_10mVpp.ccs.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID20_20000101T051458-20000101T051512_V01___SID04-20_0.5s_20250925-1701_10mVpp.ccs.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID20_20000101T051753-20000101T051806_V01___SID04-20_1.0s_20250925-1704_10mVpp.ccs.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID20_20000101T052137-20000101T052201_V01___SID04-20_2.0s_20250925-1708_10mVpp.ccs.cdf',
+                    ]
+        # 202411 -- SAMPLE  1.75MHz  (100mVpp, 10mVpp, 100mVpp, 10mVpp, 100mVpp)  (0,0,0),(90,0,0),(0,90,0),(0,0,90)
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID20_20000101T000057-20000101T000114_V01___SID04-20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID20_20000101T000214-20000101T000228_V01___SID04-20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
+                    ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
+        """
+        # *** Ground Test - Ver.2 ***
+        # 202310 -- SAMPLE
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID20_20000101T000102-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf',
+                     #'old/JUICE_L1a_RPWI-HF-SID20_20000101T001825-20000101T001852_V01___SID04-20_20231024-0042.ccs.cdf',
+                     #'old/JUICE_L1a_RPWI-HF-SID20_20000101T000046-20000101T000127_V01___SID04-20-comp0-20231117-1529.ccs.cdf',
+                     #'old/JUICE_L1a_RPWI-HF-SID20_20000101T000050-20000101T000147_V01___SID04-20-comp1-20231117-1532.ccs.cdf',
+                    ]
+        """
+        # *** Flight data: Ver.2 ***
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID20_20240126T113714-20240126T114759_V01___RPR2_62000007_2024.026.12.58.18.441.cdf',
+                          'JUICE_L1a_RPWI-HF-SID20_20240126T114800-20240126T123719_V01___RPR2_62000008_2024.026.13.54.26.469.cdf',
+                          'JUICE_L1a_RPWI-HF-SID20_20240706T121424-20240706T125428_V01___RPR2_62000002_2024.190.19.50.21.637.cdf',
+                          'JUICE_L1a_RPWI-HF-SID20_20240819T203013-20240819T210936_V01___RPR2_62000004_2024.235.10.15.04.518.cdf',
+                         ]
+        """
+
+    else:     # <<< SID-4 test datas >>>
+        # *** Ground Test - Ver.3 ***
+        # 202509 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20000101T031404-20000101T031414_V01___SID04-20_0.2s_20250925-1500_10mVpp.ccs.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID4_20000101T051505-20000101T051505_V01___SID04-20_0.5s_20250925-1701_10mVpp.ccs.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID4_20000101T051756-20000101T051756_V01___SID04-20_1.0s_20250925-1704_10mVpp.ccs.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID4_20000101T052137-20000101T052159_V01___SID04-20_2.0s_20250925-1708_10mVpp.ccs.cdf',
+                    ]
+        # 202411 -- SAMPLE  0.2-2MHz, 10mVpp, 0/90/0deg
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID4_20000101T000106-20000101T000106_V01___SID04-20_20241125-1517_RadioBurst_comp0_asw3.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20000101T000226-20000101T000226_V01___SID04-20_20241125-1520_RadioBurst_comp1_asw3.ccs.cdf',
+                    ]
+        """
+        # *** Ground Test - Ver.2 ***
+        """
+        # 202310 -- SAMPLE
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20000101T000112-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID4_20000101T000057-20000101T000119_V01___SID04-20-comp0-20231117-1529.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID4_20000101T000100-20000101T000144_V01___SID04-20-comp1-20231117-1532.ccs.cdf',
+                          'old/JUICE_L1a_RPWI-HF-SID4_20000101T001837-20000101T001848_V01___SID04-20_20231024-0042.ccs.cdf',
+                         ]
+        """
+        # *** Flight data: Ver.2 ***
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20240126T113727-20240126T123719_V01___RPR1_52000013_2024.026.13.22.14.423.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20240706T121439-20240706T125422_V01___RPR1_52000002_2024.190.14.59.43.630.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20240819T203025-20240819T210933_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',
+                    ]
+        """
+
+    print(data_dir)
+    print(data_list)
+    return data_dir, data_list
+
 
 # ---------------------------------------------------------------------
 # --- SID20 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid20_read(cdf, sid): # RPWI_FSW_version):
+def hf_sid20_read(cdf, sid):
     """
     input:  cdf, sid, FSW version
     return: data
     """
     data = struct()
-    data.RPWI_FSW_version = cdf['ISW_ver'][...]
-    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
 
     # Data
     # complex < 2:     # Power
@@ -60,7 +158,7 @@ def hf_sid20_read(cdf, sid): # RPWI_FSW_version):
     return data
 
 
-def hf_sid20_add(data, data1, sid):
+def hf_sid20_add(data, data1):
     """
     input:  data, data1, sid
     return: data
@@ -97,7 +195,7 @@ def hf_sid20_add(data, data1, sid):
     data.freq_step   = np.r_["0", data.freq_step,  data1.freq_step]
     data.freq_width  = np.r_["0", data.freq_width, data1.freq_width]
 
-    hf_hk.status_add(data, data1, sid)
+    hf_hk.status_add(data, data1)
     """
     data.epoch       = np.r_["0", data.epoch,      data1.epoch]
     data.scet        = np.r_["0", data.scet,       data1.scet]
@@ -118,7 +216,7 @@ def hf_sid20_add(data, data1, sid):
     return data
 
 
-def hf_sid20_shaping(data, sid, cal_mode, comp_mode):
+def hf_sid20_shaping(data, cal_mode, comp_mode):
     """
     input:  data, sid
             cal_mode    [Power]     0: background          1: CAL           2: all
@@ -131,14 +229,31 @@ def hf_sid20_shaping(data, sid, cal_mode, comp_mode):
     data.n_freq  = data.EuEu.shape[1]
     data.n_step  = data.N_step [data.n_time//2]
     data.n_block = data.N_block[data.n_time//2]
+    n_num = data.n_step * data.n_block
 
-    print("  org:", data.EuEu.shape, data.n_time, "x", data.n_freq, "[", data.n_time*data.n_freq, "]")
-    if   data.n_freq != 72  and sid == 4:
-        print("      [SID]", sid, "  *** size error ***", data.n_freq, ", not 72")
-    elif data.n_freq != 360 and sid == 20:
-        print("      [SID]", sid, "  *** size error ***", data.n_freq, ", not 360")
-    else:
-        print("  org:[SID]", sid, "  size:", data.EuEu.shape, data.n_time, "x", data.n_freq, "[", data.n_time*data.n_freq, "]")
+    if   data.n_freq != 72  and data.sid == 4:
+        print("      [SID]", data.sid, "  *** size error ***", data.n_freq, ", not 72")
+    elif data.n_freq != 360 and data.sid == 20:
+        print("      [SID]", data.sid, "  *** size error ***", data.n_freq, ", not 360")
+    print("  org:[SID]", data.sid, "  size:", data.EuEu.shape, data.n_time, "x", data.n_freq, "[", data.n_time*data.n_freq, "]", 
+        data.n_time, "x", data.n_block, "x", data.n_step, "[", data.n_time*data.n_block*data.n_step, "]")
+    if data.n_freq != n_num:
+        data.EuEu    = data.EuEu   [:, 0:n_num]; data.EvEv    = data.EvEv   [:, 0:n_num]; data.EwEw    = data.EwEw   [:, 0:n_num]
+        data.EuEv_re = data.EuEv_re[:, 0:n_num]; data.EvEw_re = data.EvEw_re[:, 0:n_num]; data.EwEu_re = data.EwEu_re[:, 0:n_num]
+        data.EuEv_im = data.EuEv_im[:, 0:n_num]; data.EvEw_im = data.EvEw_im[:, 0:n_num]; data.EwEu_im = data.EwEu_im[:, 0:n_num]
+        data.frequency  = data.frequency [:, 0:n_num]
+        data.freq_step  = data.freq_step [:, 0:n_num]
+        data.freq_width = data.freq_width[:, 0:n_num]
+        #
+        data.n_time  = data.EuEu.shape[0]
+        data.n_freq  = data.EuEu.shape[1]
+        data.n_step  = data.N_step [data.n_time//2]
+        data.n_block = data.N_block[data.n_time//2]
+        n_num = data.n_step * data.n_block
+        print("  cut:[SID]", data.sid, "  size:", data.EuEu.shape, data.n_time, "x", data.n_freq, "[", data.n_time*data.n_freq, "]", 
+            data.n_time, "x", data.n_block, "x", data.n_step, "[", data.n_time*data.n_block*data.n_step, "]")
+
+    # CAL & COMP
     if cal_mode < 2 or comp_mode < 4:
         if cal_mode < 2:
             if comp_mode < 4:
@@ -170,7 +285,7 @@ def hf_sid20_shaping(data, sid, cal_mode, comp_mode):
         data.EuiEuq  = data.EuiEuq [index[0]]; data.EviEvq  = data.EviEvq [index[0]]; data.EwiEwq  = data.EwiEwq [index[0]]
         """
 
-        hf_hk.status_shaping(data, index[0], sid)
+        hf_hk.status_shaping(data, index[0])
         """
         # AUX
         data.ch_selected = data.ch_selected[index[0]]; data.complex    = data.complex   [index[0]]
@@ -183,11 +298,11 @@ def hf_sid20_shaping(data, sid, cal_mode, comp_mode):
 
         n_time = data.EuEu.shape[0]
         if cal_mode < 2:
-            if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
-            else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
-        else:                 print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
-        if cal_mode == 0:     print("<only BG>")
-        else:                 print("<only CAL>")
+            if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
+            else:             print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", cal_mode)
+            if cal_mode == 0: print("<only BG>")
+            else:             print("<only CAL>")
+        else:                 print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> comp_mode:", comp_mode)
 
     # NAN
     index = np.where(data.complex == 0)
@@ -218,7 +333,7 @@ def hf_sid20_shaping(data, sid, cal_mode, comp_mode):
     return data
 
 
-def spec_nan(data, i, sid):
+def spec_nan(data, i):
     data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
     data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
     data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan
@@ -232,4 +347,4 @@ def spec_nan(data, i, sid):
     data.EuiEuq    [i] = math.nan; data.EviEvq    [i] = math.nan; data.EwiEwq    [i] = math.nan
     """
     
-    hf_hk.status_nan(data, i, sid)
+    hf_hk.status_nan(data, i)

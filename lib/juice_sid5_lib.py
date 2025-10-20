@@ -1,20 +1,77 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/10/9
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/10/20
 """
+import glob
 import math
 import numpy as np
 import juice_hf_hk_lib as hf_hk
-# import juice_cdf_lib   as hk_cdf
-
-
 class struct:
     pass
+
+
+def datalist(date_str, ver_str):
+    """
+    input:  date_str        yyyymmdd: group read    others: file list
+    return: data_dir
+            data_list
+    """
+    yr_format = date_str[0:2]
+    yr_str    = date_str[0:4]
+    mn_str    = date_str[4:6]
+    dy_str    = date_str[6:8]
+    
+    # *** Group read
+    if yr_format=='20':
+        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
+        data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
+        data_name = '*HF*SID5_*'+ver_str+'.cdf'
+        cdf_file = data_dir + data_name
+
+        data_list = glob.glob(cdf_file)
+        num_list = len(data_list)
+        data_list.sort()
+        for i in range(num_list):
+            data_list[i] = os.path.split(data_list[i])[1]
+
+    else:
+        # *** Ground Test - Ver.3 ***
+        # 202509 -- SAMPLE
+        #	(1) Freq=1.5MHz                                       Vin = [0.01 0.02 0.05 0.1 0.2 0.5 1 2 5 10 20 50 100 200 500] mVpp
+	    #   (2) Freq=[0.02 0.05 0.1 0.2 0.5 1.1 2.1 5.1 9.1] MHz  Vin=10mVpp
+	    #   (3) Freq=1.5MHz                                       Vin=10mVpp, Phase (y ch) = [0 45 90 135 180 225 270 315 0] deg
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20000101T002153-20000101T004523_V01___SID05-21_20250926-0820_10mVpp.ccs.cdf', ]
+        # 202411 -- SAMPLE -- SG 1.75MHz, 100mVpp  --- comp0 & comp1
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID5_20000101T000119-20000101T000149_V01___SID05-21_20241125-1341_PSSR1_comp0_asw3.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID5_20000101T000100-20000101T000200_V01___SID05-21_20241125-1335_PSSR1_comp1_asw3.ccs.cdf',
+                    ]
+        """
+        # *** Ground Test - Ver.2 ***
+        """
+        # 202310 -- SAMPLE -- 1.55MHz, 10mVpp, 90/0/0deg -- 1611 - wo RF, 1603 -- with RFI
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID5_20000101T002245-20000101T002315_V01___SID05-21_20231024-0046.ccs.cdf',
+                          #'JUICE_L1a_RPWI-HF-SID5_20000101T000128-20000101T000213_V01___SID05-21_20231117-1603.ccs.cdf',
+                          'JUICE_L1a_RPWI-HF-SID5_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf',
+                    ]
+        """
+        # 202503 -- Flight
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20250331T033821-20250331T034222_V01___RPR2_62000007_2025.091.16.40.05.450.cdf']
+        """
+
+    print(data_dir)
+    print(data_list)
+    return data_dir, data_list
 
 
 # ---------------------------------------------------------------------
 # --- SID5 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid5_read(cdf): # RPWI_FSW_version):
+def hf_sid5_read(cdf):
     """
     Input:  cdf
     Output: data
@@ -22,7 +79,7 @@ def hf_sid5_read(cdf): # RPWI_FSW_version):
     data = struct()
 
     # Data
-    data.EE         = np.float64(cdf['EE'][...])
+    data.EE = np.float64(cdf['EE'][...])
     data.frequency  = cdf['frequency'][...];   data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
 
     hf_hk.status_read(cdf, data, 5)
@@ -117,8 +174,8 @@ def hf_sid5_shaping(data, cal_mode):
         n_time = data.EE.shape[0]
         if cal_mode < 2:
             print("  cut:", data.EE.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
-        if cal_mode == 0:         print("<only BG>")
-        else:                     print("<only CAL>")
+            if cal_mode == 0:   print("<only BG>")
+            else:               print("<only CAL>")
 
     data.n_time = data.EE.shape[0]
     data.n_step = data.N_step[data.n_time//2]
