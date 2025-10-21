@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2025/10/20
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2025/10/21
 """
 import glob
 import numpy as np
@@ -145,7 +145,7 @@ def datalist(date_str, ver_str):
 # ---------------------------------------------------------------------
 def hf_sid3_read(cdf):
     """
-    input:  CDF, FSW version
+    input:  CDF
     return: data
     """
     data = struct()
@@ -183,7 +183,7 @@ def hf_sid3_read(cdf):
     #
     data.frequency  = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...];  data.freq_width  = cdf['freq_width'][...]
 
-    hf_hk.status_read(cdf, data, 3)
+    hf_hk.status_read(cdf, data)
     """
     # AUX
     data.ch_selected = cdf['ch_selected'][...]

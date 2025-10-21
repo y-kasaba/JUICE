@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF Status -- 2025/10/20
+    JUICE RPWI HF Status -- 2025/10/21
 """
 import numpy as np
 import math
@@ -11,8 +11,12 @@ class struct:
 # ---------------------------------------------------------------------
 # --- AUX and Header --------------------------------------------------
 # ---------------------------------------------------------------------
-def status_read(cdf, data, sid):
-    data.sid         = sid
+def status_read(cdf, data):
+    # HF-ID
+    data.HF_ID            = cdf['HF_ID'][...]                   # all
+    data.sid              = (data.HF_ID[0] >> 8) & 0xFF
+    data.RPWI_FSW_version = (data.HF_ID[0] >> 4) & 0xF
+    data.HF_config        =  data.HF_ID[0]       & 0xF
 
     # Common
     data.epoch       = cdf['Epoch'][...]                        # all
@@ -55,15 +59,13 @@ def status_read(cdf, data, sid):
     if data.sid in [7, 23]:
         data.freq_center = cdf['freq_center'][...]              # SID-7/23
         data.N_block     = np.int16(cdf['N_block'][...])        # SID-7/23
-        if sid in [7]:
+        if data.sid in [7]:
             data.N_lag       = np.int16(cdf['N_lag'][...])      # SID-7
-        if sid in [23]:
+        if data.sid in [23]:
             data.N_feed      = np.int16(cdf['N_feed'][...])     # SID-23
         #    cdf['N_skip']
 
     # Header ##
-    data.RPWI_FSW_version = cdf['ISW_ver'][...]                 # all
-    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
     data.HF_QF       = cdf['HF_QF'][...]                        # all
     data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]                   # SID-2,3,4/20,5/21,6/22,7/23
     #       cdf['pol']

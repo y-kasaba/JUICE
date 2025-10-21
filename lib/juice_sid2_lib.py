@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/10/20
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/10/21
 """
 import glob
 import numpy as np
@@ -106,7 +106,7 @@ def datalist(date_str, ver_str):
 # ---------------------------------------------------------------------
 def hf_sid2_read(cdf):
     """
-    input:  CDF, FSW version
+    input:  CDF
     return: data
     """
     data = struct()
@@ -118,7 +118,7 @@ def hf_sid2_read(cdf):
     data.frequency = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
     data.time      = cdf['time'][...];       
 
-    hf_hk.status_read(cdf, data, 2)
+    hf_hk.status_read(cdf, data)
     """
     data.epoch     = cdf['Epoch'][...];     data.scet      = cdf['SCET'][...]
     # AUX

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2025/10/20
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2025/10/21
 """
 import glob
 import numpy as np
@@ -62,7 +62,7 @@ def hf_sid7_read(cdf):
     data.E_i         = np.float64(cdf['E_i'][...]);  data.E_q         = np.float64(cdf['E_q'][...])
     data.time_block  = cdf['time_block'][...];       data.time        = np.float64(cdf['time'][...])
 
-    hf_hk.status_read(cdf, data, 7)
+    hf_hk.status_read(cdf, data)
     """
     data.RPWI_FSW_version = cdf['ISW_ver'][...]
     data.RPWI_FSW_version = data.RPWI_FSW_version[0]

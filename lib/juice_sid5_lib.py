@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/10/20
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/10/21
 """
 import glob
 import math
@@ -82,7 +82,7 @@ def hf_sid5_read(cdf):
     data.EE = np.float64(cdf['EE'][...])
     data.frequency  = cdf['frequency'][...];   data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
 
-    hf_hk.status_read(cdf, data, 5)
+    hf_hk.status_read(cdf, data)
     """
     data.RPWI_FSW_version = cdf['ISW_ver'][...]
     data.RPWI_FSW_version = data.RPWI_FSW_version[0]

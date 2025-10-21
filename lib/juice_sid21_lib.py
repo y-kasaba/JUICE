@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/20
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/21
 """
 import glob
 import numpy as np
@@ -74,9 +74,9 @@ def datalist(date_str, ver_str):
 # ---------------------------------------------------------------------
 # --- SID21 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid21_read(cdf): # RPWI_FSW_version):
+def hf_sid21_read(cdf):
     """
-    input:  CDF, cf:conversion factor
+    input:  CDF
     return: data
     """
     data = struct()
@@ -88,7 +88,7 @@ def hf_sid21_read(cdf): # RPWI_FSW_version):
     data.EwEu_re = np.float64(cdf['EwEu_re'][...]);  data.EwEu_im = np.float64(cdf['EwEu_im'][...])
     data.frequency  = cdf['frequency'][...];   data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
 
-    hf_hk.status_read(cdf, data, 21)
+    hf_hk.status_read(cdf, data)
     """
     data.RPWI_FSW_version = cdf['ISW_ver'][...]
     data.RPWI_FSW_version = data.RPWI_FSW_version[0]

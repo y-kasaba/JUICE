@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/10/20
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/10/21
 """
 import glob
 import numpy          as np
@@ -39,9 +39,9 @@ def datalist(date_str, ver_str):
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T064546-20000101T064910_V01___SID07-23_20250925-1722_10mVpp.ccs.cdf']
         # 202411 -- SAMPLE -- SG: 1.75MHz 100mVpp 90/0/0deg
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
         data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T000512-20000101T000512_V01___SID07-23_20241125-1321_PSSR3_asw3.ccs.cdf']    
-        """
         """
 
         # *** Ground Test - Ver.2 ***
@@ -55,6 +55,7 @@ def datalist(date_str, ver_str):
         """
 
         # *** Flight - Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID23_20240126T092930-20240126T094732_V01___RPR2_62000006_2024.026.11.53.48.449.cdf',
                      #'JUICE_L1a_RPWI-HF-SID23_20240126T094802-20240126T100504_V01___RPR2_62000007_2024.026.12.58.18.441.cdf',
@@ -66,7 +67,6 @@ def datalist(date_str, ver_str):
                      #'JUICE_L1a_RPWI-HF-SID23_20240822T024109-20240822T024134_V01___RPR2_62000006_2024.236.10.07.45.514.cdf',
                     ]
         """
-        """
 
     print(data_dir)
     print(data_list)
@@ -76,14 +76,14 @@ def datalist(date_str, ver_str):
 # ---------------------------------------------------------------------
 # --- SID23 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid23_read(cdf): # RPWI_FSW_version):
+def hf_sid23_read(cdf):
     """
     input:  CDF
     return: data
     """
     data = struct()
-    data.RPWI_FSW_version = cdf['ISW_ver'][...]
-    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
+    #data.RPWI_FSW_version = cdf['ISW_ver'][...]
+    #data.RPWI_FSW_version = data.RPWI_FSW_version[0]
 
     # Data
     data.Eu_i        = np.float64(cdf['Eu_i'][...]);       data.Eu_q = np.float64(cdf['Eu_q'][...])
@@ -91,7 +91,7 @@ def hf_sid23_read(cdf): # RPWI_FSW_version):
     data.Ew_i        = np.float64(cdf['Ew_i'][...]);       data.Ew_q = np.float64(cdf['Ew_q'][...])
     data.time_block  = np.float64(cdf['time_block'][...]); data.time = np.float64(cdf['time'][...])
 
-    hf_hk.status_read(cdf, data, 23)
+    hf_hk.status_read(cdf, data)
     """
     data.epoch       = cdf['Epoch'][...];                  data.scet = cdf['SCET'][...]
     # AUX
