@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/10/21
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/10/24
 """
 import glob
 import numpy          as np
@@ -123,7 +123,7 @@ def hf_sid23_add(data, data1):
     data.Ew_i        = np.r_["0", data.Ew_i, data1.Ew_i];              data.Ew_q = np.r_["0", data.Ew_q, data1.Ew_q]
     data.time_block  = np.r_["0", data.time_block, data1.time_block];  data.time        = np.r_["0", data.time, data1.time]
 
-    hf_hk.status_add(data, data1, 23)
+    hf_hk.status_add(data, data1)
     """
     data.epoch       = np.r_["0", data.epoch, data1.epoch];            data.scet = np.r_["0", data.scet, data1.scet]
     # AUX

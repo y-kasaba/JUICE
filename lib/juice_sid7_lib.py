@@ -38,9 +38,9 @@ def datalist(date_str, ver_str):
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID7_20000101T064546-20000101T064910_V01___SID07-23_20250925-1722_10mVpp.ccs.cdf']
         # 202411 -- SAMPLE -- SG: 1.75MHz 100mVpp 90/0/0deg
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
         data_list = ['JUICE_L1a_RPWI-HF-SID7_20000101T000512-20000101T000512_V01___SID07-23_20241125-1321_PSSR3_asw3.ccs.cdf']    
+        """
         """
     print(data_dir)
     print(data_list)
@@ -95,7 +95,7 @@ def hf_sid7_add(data, data1):
     data.E_i         = np.r_["0", data.E_i, data1.E_i];               data.E_q  = np.r_["0", data.E_q, data1.E_q]
     data.time_block  = np.r_["0", data.time_block, data1.time_block]; data.time = np.r_["0", data.time, data1.time]
 
-    hf_hk.status_add(data, data1, 7)
+    hf_hk.status_add(data, data1)
     """
     data.epoch      = np.r_["0", data.epoch, data1.epoch];            data.scet = np.r_["0", data.scet, data1.scet]
     # AUX

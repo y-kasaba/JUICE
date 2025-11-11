@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/10/21
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/10/24
 """
 import glob
 import numpy as np
@@ -44,6 +44,9 @@ def datalist(date_str, ver_str):
         """
 
         # *** Ground Test - Ver.2 ***
+        # 202510 -- PCW4 emulation
+        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID2_20251003T080233-20251003T080516_V01___TMIDX_00000.bin.cdf']
         # 202410 -- SAMPLE -- SG - 1.0MHz 10mVpp 90/0/0deg
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
@@ -65,11 +68,10 @@ def datalist(date_str, ver_str):
         """
 
         # [MEMO: ASW1 data]  *** Flight - Ver.1
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW1/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID2_20230419T135855-20230419T141235_V01___RPR1_52000000_2023.109.16.17.21.607.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230419T141237-20230419T141408_V01___RPR1_52000001_2023.109.17.51.54.600.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID2_20230530T100330-20230530T100930_V01___RPR1_52000010_2023.150.10.40.53.663.cdf',
+                     'JUICE_L1a_RPWI-HF-SID2_20230530T100330-20230530T100930_V01___RPR1_52000010_2023.150.10.40.53.663.cdf',    # background & CAL
                      #'JUICE_L1a_RPWI-HF-SID2_20230530T100932-20230530T100942_V01___RPR1_52000011_2023.150.10.41.53.508.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230601T120804-20230601T120902_V01___RPR1_52000015_2023.152.12.32.12.471.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230601T121440-20230601T121538_V01___RPR1_52000016_2023.152.13.14.38.473.cdf',
@@ -87,13 +89,14 @@ def datalist(date_str, ver_str):
                      #'JUICE_L1a_RPWI-HF-SID2_20230713T011440-20230713T014138_V01___RPR1_52000009_2023.195.13.03.08.470.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230713T014140-20230713T020928_V01___RPR1_5200000A_2023.195.13.25.22.477.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230713T020932-20230713T023721_V01___RPR1_5200000B_2023.195.13.47.46.500.cdf',
-                     # 'JUICE_L1a_RPWI-HF-SID2_20230713T023723-20230713T030419_V01___RPR1_5200000C_2023.195.14.10.35.574.cdf',
-                     'JUICE_L1a_RPWI-HF-SID2_20230713T030513-20230713T033211_V01___RPR1_5200000D_2023.195.14.33.20.470.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID2_20230713T023723-20230713T030419_V01___RPR1_5200000C_2023.195.14.10.35.574.cdf',    # background
+                     #'JUICE_L1a_RPWI-HF-SID2_20230713T030513-20230713T033211_V01___RPR1_5200000D_2023.195.14.33.20.470.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230713T033213-20230713T040003_V01___RPR1_5200000E_2023.195.14.55.41.474.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230713T040005-20230713T042755_V01___RPR1_5200000F_2023.195.15.18.00.472.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230713T042757-20230713T045453_V01___RPR1_52000010_2023.195.15.40.11.470.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20230713T045547-20230713T050921_V01___RPR1_52000011_2023.195.16.14.20.468.cdf',
                     ]
+        """
         """
 
     print(data_dir)
@@ -160,7 +163,7 @@ def hf_sid2_add(data, data1):
     data.freq_width  = np.r_["0", data.freq_width, data1.freq_width]
     data.time        = np.r_["0", data.time, data1.time]
 
-    hf_hk.status_add(data, data1, 2)
+    hf_hk.status_add(data, data1)
     """
     data.epoch       = np.r_["0", data.epoch, data1.epoch]
     data.scet        = np.r_["0", data.scet,  data1.scet]
@@ -193,11 +196,13 @@ def hf_sid2_shaping(data, cal_mode):
     print("  org:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "[", n_num, "]")
 
     # N_step selection
-    index = np.where(data.N_step != data.n_step);  print(" [error packets]", index[0], data.N_step[index[0]], data.epoch[index[0]])
+    index = np.where(data.N_step != data.n_step);  
+    if not index: print(" [error packets]", index[0], data.N_step[index[0]], data.epoch[index[0]])
     index = np.where(data.N_step == data.n_step);  data = hf_sid2_select_time(data, index);  data.n_time = data.Eu_i.shape[0]
     print(" cut0:", data.Eu_i.shape, data.n_time, "  <n_step selection>")
     # N_samp selection
-    index = np.where(data.N_samp != data.n_samp);  print(" [error packets]", index[0], data.N_step[index[0]], data.epoch[index[0]])
+    index = np.where(data.N_samp != data.n_samp);  
+    if not index: print(" [error packets]", index[0], data.N_step[index[0]], data.epoch[index[0]])
     index = np.where(data.N_samp == data.n_samp);  data = hf_sid2_select_time(data, index);  data.n_time = data.Eu_i.shape[0]
     print(" cut0:", data.Eu_i.shape, data.n_time, "  <n_samp selection>")
 

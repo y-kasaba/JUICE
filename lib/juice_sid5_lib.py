@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/10/21
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/10/24
 """
 import glob
 import math
@@ -49,6 +49,9 @@ def datalist(date_str, ver_str):
                     ]
         """
         # *** Ground Test - Ver.2 ***
+        # 202510 -- PCW4 emulation
+        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20251003T080925-20251003T081100_V01___TMIDX_00001.bin.cdf']
         """
         # 202310 -- SAMPLE -- 1.55MHz, 10mVpp, 90/0/0deg -- 1611 - wo RF, 1603 -- with RFI
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
@@ -114,7 +117,7 @@ def hf_sid5_add(data, data1):
     data.freq_step    = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width   = np.r_["0", data.freq_width, data1.freq_width]
 
-    hf_hk.status_add(data, data1, 5)
+    hf_hk.status_add(data, data1)
     """
     data.epoch        = np.r_["0", data.epoch, data1.epoch]
     data.scet         = np.r_["0", data.scet, data1.scet]
@@ -153,7 +156,7 @@ def hf_sid5_shaping(data, cal_mode):
         data.freq_step   = data.freq_step [index[0]]
         data.freq_width  = data.freq_width[index[0]]
 
-        hf_hk.status_shaping(data, index[0], 5)
+        hf_hk.status_shaping(data, index[0])
         """
         data.epoch       = data.epoch     [index[0]]
         data.scet        = data.scet      [index[0]]

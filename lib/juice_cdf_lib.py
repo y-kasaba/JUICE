@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2025/10/10
+# JUICE RPWI HF CDF lib -- 2025/10/26
 
 # import glob
 # import spacepy.pycdf
@@ -24,7 +24,7 @@ def _RPWI_FSW_version(cdf_file):
 
 
 # ---------------------------------------------------------------------
-# --- QL --------------------------------------------------------------
+# --- Frequency -------------------------------------------------------
 # ---------------------------------------------------------------------
 # Sampling rate [Hz]
 def _sample_rate(decimation):
@@ -34,9 +34,42 @@ def _sample_rate(decimation):
     return ret
 
 
-# ---------------------------------------------------------------------
-# --- Frequency -------------------------------------------------------
-# ---------------------------------------------------------------------
+# Bandwidth in original (kHz)
+def _df_org(HF_ID):
+    sid = HF_ID[0] >> 8
+    asw = (HF_ID[0] >> 4) & 0xF
+    config = HF_ID[0] & 0xF
+
+    ret = 0
+    if sid in [4, 20]:
+        ret = 37            # SID-4/20: 37kHz simple sum
+    elif sid in [7]:
+        ret = 296           # SID-7: 296 kHz
+    elif sid in [6, 22]:
+        if config == 9 or asw < 3:
+           ret = 296        # SID-6/22: 296 or 148 kHz
+        elif config == 11:
+           ret = 148        # SID-6/22: 296 or 148 kHz
+    elif sid in [5, 21]:
+        ret = 2.3125        # SID-5/21: 296kHz/128(N_samp)
+    elif sid in [3]:
+        if asw == 1:
+            ret = 296       # SID-3: 296kHz simple sum
+        elif asw in [2, 3]:
+            ret = 2.3125    # SID-3: 296kHz/128(N_samp)
+    elif sid in [2]:
+        if asw == 1:
+            ret = 4.625     # SID-2: 148kHz/32(N_samp)
+        else:
+            ret = 2.3125    # SID-2: 296kHz/128(N_samp)
+    elif sid in [23]:
+        ret = 0.08894231    # SID-23: 296kHz/128(N_samp)/26(N_feed)
+
+    if ret == 0:
+        raise ValueError(f"proc._df_org: SID error:{sid}")
+    return ret
+
+
 # Frequency: linear [kHz]
 # output:    freq, f_step, f_width
 def _get_frequencies(sample_rate, n_freq, samp):

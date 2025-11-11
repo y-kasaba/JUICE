@@ -43,15 +43,15 @@ def status_read(cdf, data):
     if data.sid in [3, 5, 21]:
         data.RFI_rejection = cdf['RFI_rejection'][...]          # SID-  3,     5/21
     if data.sid in [3, 4, 20, 21]:
-        data.complex     = cdf['complex'][...]              # SID-  3,4/20,  21,
+        data.complex     = cdf['complex'][...]                  # SID-  3,4/20,  21,
     if data.sid in [3]:
-        data.BG_subtract = cdf['BG_subtract'][...]          # SID-3    
-        data.BG_select   = cdf['BG_select'][...]            # SID-3
-        data.BG_downlink = cdf['BG_downlink'][...]          # SID-3
-        data.Pol_sep_thres = cdf['Pol_sep_thres'][...]      # SID-3
-        data.Pol_sep_SW  = cdf['Pol_sep_SW'][...]           # SID-3
+        data.BG_subtract = cdf['BG_subtract'][...]              # SID-3    
+        data.BG_select   = cdf['BG_select'][...]                # SID-3
+        data.BG_downlink = cdf['BG_downlink'][...]              # SID-3
+        data.Pol_sep_thres = cdf['Pol_sep_thres'][...]          # SID-3
+        data.Pol_sep_SW  = cdf['Pol_sep_SW'][...]               # SID-3
     if data.sid in [4, 20]:
-        data.N_block     = np.int64(cdf['N_block'][...])    # SID-4/20       
+        data.N_block     = np.int64(cdf['N_block'][...])        # SID-4/20       
     if data.sid in [6, 22]:
         data.N_lag       = np.int64(cdf['N_lag'][...])          # SID-6/22
         #   cdf['sweep_table']

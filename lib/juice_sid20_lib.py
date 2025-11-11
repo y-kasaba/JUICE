@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/10/21
+    JUICE RPWI HF SID4 & 20: L1a QL -- 2025/10/24
 """
 import glob
 import numpy as np
@@ -50,6 +50,9 @@ def datalist(date_str, ver_str, sid):
                     ]                   # SG - 1.5MHz 10mVpp 90/0/0deg
         """
         # *** Ground Test - Ver.2 ***
+        # 202510 -- PCW4 emulation
+        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID20_20251003T080724-20251003T080912_V01___TMIDX_00001.bin.cdf']
         # 202310 -- SAMPLE
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
@@ -60,13 +63,13 @@ def datalist(date_str, ver_str, sid):
                     ]
         """
         # *** Flight data: Ver.2 ***
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = ['JUICE_L1a_RPWI-HF-SID20_20240126T113714-20240126T114759_V01___RPR2_62000007_2024.026.12.58.18.441.cdf',
-                          'JUICE_L1a_RPWI-HF-SID20_20240126T114800-20240126T123719_V01___RPR2_62000008_2024.026.13.54.26.469.cdf',
-                          'JUICE_L1a_RPWI-HF-SID20_20240706T121424-20240706T125428_V01___RPR2_62000002_2024.190.19.50.21.637.cdf',
-                          'JUICE_L1a_RPWI-HF-SID20_20240819T203013-20240819T210936_V01___RPR2_62000004_2024.235.10.15.04.518.cdf',
-                         ]
+                     'JUICE_L1a_RPWI-HF-SID20_20240126T114800-20240126T123719_V01___RPR2_62000008_2024.026.13.54.26.469.cdf',
+                     'JUICE_L1a_RPWI-HF-SID20_20240706T121424-20240706T125428_V01___RPR2_62000002_2024.190.19.50.21.637.cdf',
+                     'JUICE_L1a_RPWI-HF-SID20_20240819T203013-20240819T210936_V01___RPR2_62000004_2024.235.10.15.04.518.cdf',
+                    ]
+        """
         """
 
     else:     # <<< SID-4 test datas >>>
@@ -86,6 +89,9 @@ def datalist(date_str, ver_str, sid):
                     ]
         """
         # *** Ground Test - Ver.2 ***
+        # 202510 -- PCW4 emulation
+        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20251003T080734-20251003T080910_V01___TMIDX_00001.bin.cdf']
         """
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'

@@ -32,16 +32,16 @@ def datalist(date_str, ver_str, sid):
         for i in range(num_list):
             data_list[i] = os.path.split(data_list[i])[1]
 
-    elif sid == 6: 	# <<< SID-22 test datas >>>
+    elif sid == 22: 	# <<< SID-22 test datas >>>
         # *** Ground Test - Ver.3 ***
         # 202509 -- SAMPLE  Freq = 0.3, 0.35, 0.4, 0.45 MHz       Vin = 10mVpp
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID22_20000101T065212-20000101T065612_V01___SID06-22_20250925-1838_10mVpp.ccs.cdf', ]
-        """
         # 202411 -- SAMPLE -- 1.75MHz, 100mVpp
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
         data_list = ['JUICE_L1a_RPWI-HF-SID22_20000101T000055-20000101T000255_V01___SID06-22_20241125-1325_PSSR2_asw3.ccs.cdf']
         # SG - 1.5MHz 10mVpp 90/0/0deg
+        """
         """
 
     else:               # <<< SID-06 test datas >>>
@@ -49,10 +49,10 @@ def datalist(date_str, ver_str, sid):
         # 202509 -- SAMPLE  Freq = 0.3, 0.35, 0.4, 0.45 MHz       Vin = 10mVpp
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID6_20000101T065212-20000101T065612_V01___SID06-22_20250925-1838_10mVpp.ccs.cdf']
-        """
         # 202411 -- SAMPLE -- 1.75MHz, 100mVpp
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
         data_list = ['JUICE_L1a_RPWI-HF-SID6_20000101T000055-20000101T000255_V01___SID06-22_20241125-1325_PSSR2_asw3.ccs.cdf']
+        """
         """
     print(data_dir)
     print(data_list)

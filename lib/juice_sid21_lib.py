@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/21
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/24
 """
 import glob
 import numpy as np
@@ -50,6 +50,9 @@ def datalist(date_str, ver_str):
                     ] 
         """
         # *** Ground Test - Ver.2 ***
+        # 202510 -- PCW4 emulation
+        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID21_20251003T080925-20251003T081100_V01___TMIDX_00001.bin.cdf']
         # 202311 -- SAMPLE -- SG 1.55MHz, 10mVpp, [90.0, 0.0, 0.0]    20231117-1611: with RFI-mitigation
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
