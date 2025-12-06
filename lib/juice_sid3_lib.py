@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2025/10/24
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2025/11/23
 """
 import glob
 import numpy as np
@@ -36,8 +36,24 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202509 -- SAMPLE
+        # 202511 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID3_20000101T001555-20000101T002925_V01___SID3_C1_20251123-1021.ccs.cdf',
+                            # (2d matix, RFI rejection OFF), new sweep table (Beff=62.5%)
+                            # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
+                     #'JUICE_L1a_RPWI-HF-SID3_20000101T003123-20000101T004453_V01___SID3_C2_20251123-1037.ccs.cdf',
+                            # (polariztion separation, RFI rejection OFF, noise floor subtraction OFF), new sweep table (Beff=62.5%)
+	                        # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
+                     #'JUICE_L1a_RPWI-HF-SID3_20000101T001750-20000101T003120_V01___SID3_C1_20251113-1557.ccs.cdf',
+                            # (2d matix, RFI rejection OFF), new sweep table (Beff=62.5%)
+	                        # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
+                     'JUICE_L1a_RPWI-HF-SID3_20000101T000043-20000101T001343_V01___SID3_C2_20251113-1715.ccs.cdf',  
+                            # (polariztion separation, RFI rejection OFF, noise floor subtraction OFF), new sweep table (Beff=62.5%)
+	                        # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
+                    ]
+        # 202509 -- SAMPLE
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID3_20000101T000109-20000101T001049_V01___SID03-comp1_20250925-0949.ccs.cdf',
                      	    # Freq=1.5MHz       Vin=0.01-100mVpp Phase=0deg (X, Y & Z)
                      'JUICE_L1a_RPWI-HF-SID3_20000101T000151-20000101T000731_V01___SID03-comp1_20250925-1148_10mVpp.ccs.cdf',
@@ -58,7 +74,6 @@ def datalist(date_str, ver_str):
                             # (5) Freq=1.5MHz   Vin =10mVpp      Phase (z ch) = [0 45 90 135 180 225 270 315 0] deg
                     ]
         # 202411 -- SAMPLE	    1.75MHz, 100mVpp    (0,0,0),(90,0,0),(0,90,0),(0,0,90) 
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
         data_list = [##'JUICE_L1a_RPWI-HF-SID3_20000101T000103-20000101T000137_V01___SID03_20241125-1421_RadioFull_comp0_table1_asw3.ccs.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20000101T000317-20000101T000857_V01___SID03_20241125-1405_RadioFull_comp1_table1_asw3.ccs.cdf',
@@ -73,13 +88,13 @@ def datalist(date_str, ver_str):
                     ]
         """
         # *** Ground Test - Ver.2 ***
+        """
         # 202510 -- PCW4 emulation
         data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID3_20251003T080527-20251003T080527_V01___TMIDX_00000.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID3_20251003T080550-20251003T080700_V01___TMIDX_00001.bin.cdf',
                      ]
         # 202410 -- SAMPLE    10/10/10mV, 90/0/0deg,  1.55MHz
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID3_20000101T000319-20000101T000621_V01___SID03_20241009-1915_RadioFull_comp1.ccs.cdf',          # saturated
                      #'JUICE_L1a_RPWI-HF-SID3_20000101T000055-20000101T001033_V01___SID03_20241010-1027_RadioFull_comp1.ccs.cdf',           # saturated 
@@ -119,6 +134,7 @@ def datalist(date_str, ver_str):
         ]
         """
         # *** Flight - Ver.1 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW1/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID3_20230420T103604-20230420T103806_V01___RPR1_52000002_2023.110.10.48.51.475.cdf',   # before MAG-BOOM deployment
                      #'JUICE_L1a_RPWI-HF-SID3_20230523T090038-20230523T091026_V01___RPR1_52000000_2023.143.09.24.44.467.cdf',
@@ -137,8 +153,7 @@ def datalist(date_str, ver_str):
                      #'JUICE_L1a_RPWI-HF-SID3_20230525T150440-20230525T151428_V01___RPR1_52000006_2023.145.15.46.34.503.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20230525T165318-20230525T170306_V01___RPR1_52000006_2023.145.17.20.46.547.cdf',
                     ]
-        """
-        """
+x        """
 
     print(data_dir)
     print(data_list)

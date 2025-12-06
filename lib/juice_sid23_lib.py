@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/10/24
+    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/12/6
 """
 import glob
 import numpy          as np
@@ -35,9 +35,20 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
+        # 202511 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
+        #   C1  2d matix    RFI rejection OFF,                                  new sweep table (Beff=62.5%)
+	    #   C2  pol-sep     RFI rejection OFF, noise floor subtraction OFF,     new sweep table (Beff=62.5%)
+        #	interval=40s	freq_set = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T000155-20000101T000503_V01___SID7-23_P0_20251113-2224.ccs.cdf',
+                    ]        
+        """
+        """
+        # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old2/'
         data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T064546-20000101T064910_V01___SID07-23_20250925-1722_10mVpp.ccs.cdf']
+        """
         # 202411 -- SAMPLE -- SG: 1.75MHz 100mVpp 90/0/0deg
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'

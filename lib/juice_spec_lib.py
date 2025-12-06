@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2025/11/11
+    JUICE RPWI HF: L1a spec -- 2025/11/13
 """
 import copy
 import math
@@ -179,7 +179,7 @@ def get_pol_3D(I, Q, U, Vu, Vv, Vw):
 # ---------------------------------------------------------------------
 # --- SID-2
 # ---------------------------------------------------------------------
-def hf_getspec_sid2(data):
+def hf_getspec_sid2_FFT(data):
     """
     input:  data
     return: spec
@@ -231,22 +231,50 @@ def hf_getspec_sid2(data):
     print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%", spec.freq.shape, n_samp//8, samp1, n_samp - n_samp//8, samp2)
     n_samp = samp2 - samp1
     #
-    spec.freq     = spec.freq   [:, :, samp1:samp2];     spec.freq    = np.array(spec.freq).reshape   (n_time, n_freq * n_samp)
-    spec.freq_w   = spec.freq_w [:, :, samp1:samp2];     spec.freq_w  = np.array(spec.freq_w).reshape (n_time, n_freq * n_samp)
+    spec.freq     = spec.freq   [:, :, samp1:samp2];     #spec.freq    = np.array(spec.freq).reshape   (n_time, n_freq * n_samp)
+    spec.freq_w   = spec.freq_w [:, :, samp1:samp2];     #spec.freq_w  = np.array(spec.freq_w).reshape (n_time, n_freq * n_samp)
     # 
-    spec.EuEu     = spec.EuEu   [:, :, samp1:samp2];     spec.EuEu    = np.array(spec.EuEu).reshape   (n_time, n_freq * n_samp)
-    spec.EvEv     = spec.EvEv   [:, :, samp1:samp2];     spec.EvEv    = np.array(spec.EvEv).reshape   (n_time, n_freq * n_samp)
-    spec.EwEw     = spec.EwEw   [:, :, samp1:samp2];     spec.EwEw    = np.array(spec.EwEw).reshape   (n_time, n_freq * n_samp)
+    spec.EuEu     = spec.EuEu   [:, :, samp1:samp2];     #spec.EuEu    = np.array(spec.EuEu).reshape   (n_time, n_freq * n_samp)
+    spec.EvEv     = spec.EvEv   [:, :, samp1:samp2];     #spec.EvEv    = np.array(spec.EvEv).reshape   (n_time, n_freq * n_samp)
+    spec.EwEw     = spec.EwEw   [:, :, samp1:samp2];     #spec.EwEw    = np.array(spec.EwEw).reshape   (n_time, n_freq * n_samp)
     #
-    spec.EuEv_re  = spec.EuEv_re[:, :, samp1:samp2];     spec.EuEv_re = np.array(spec.EuEv_re).reshape(n_time, n_freq * n_samp)
-    spec.EvEw_re  = spec.EvEw_re[:, :, samp1:samp2];     spec.EvEw_re = np.array(spec.EvEw_re).reshape(n_time, n_freq * n_samp)
-    spec.EwEu_re  = spec.EwEu_re[:, :, samp1:samp2];     spec.EwEu_re = np.array(spec.EwEu_re).reshape(n_time, n_freq * n_samp)
-    spec.EuEv_im  = spec.EuEv_im[:, :, samp1:samp2];     spec.EuEv_im = np.array(spec.EuEv_im).reshape(n_time, n_freq * n_samp)
-    spec.EvEw_im  = spec.EvEw_im[:, :, samp1:samp2];     spec.EvEw_im = np.array(spec.EvEw_im).reshape(n_time, n_freq * n_samp)
-    spec.EwEu_im  = spec.EwEu_im[:, :, samp1:samp2];     spec.EwEu_im = np.array(spec.EwEu_im).reshape(n_time, n_freq * n_samp)
+    spec.EuEv_re  = spec.EuEv_re[:, :, samp1:samp2];     #spec.EuEv_re = np.array(spec.EuEv_re).reshape(n_time, n_freq * n_samp)
+    spec.EvEw_re  = spec.EvEw_re[:, :, samp1:samp2];     #spec.EvEw_re = np.array(spec.EvEw_re).reshape(n_time, n_freq * n_samp)
+    spec.EwEu_re  = spec.EwEu_re[:, :, samp1:samp2];     #spec.EwEu_re = np.array(spec.EwEu_re).reshape(n_time, n_freq * n_samp)
+    spec.EuEv_im  = spec.EuEv_im[:, :, samp1:samp2];     #spec.EuEv_im = np.array(spec.EuEv_im).reshape(n_time, n_freq * n_samp)
+    spec.EvEw_im  = spec.EvEw_im[:, :, samp1:samp2];     #spec.EvEw_im = np.array(spec.EvEw_im).reshape(n_time, n_freq * n_samp)
+    spec.EwEu_im  = spec.EwEu_im[:, :, samp1:samp2];     #spec.EwEu_im = np.array(spec.EwEu_im).reshape(n_time, n_freq * n_samp)
     
     # Epoch
     spec.epoch    = data.epoch[:]
+    return spec
+
+
+def hf_getspec_sid2(data):
+    """
+    input:  data
+    return: spec
+    """
+    spec = hf_getspec_sid2_FFT(data)
+
+    n_time = spec.EuEu.shape[0]
+    n_freq = spec.EuEu.shape[1]
+    n_samp = spec.EuEu.shape[2]
+
+    spec.freq    = np.array(spec.freq).reshape   (n_time, n_freq * n_samp)
+    spec.freq_w  = np.array(spec.freq_w).reshape (n_time, n_freq * n_samp)
+    # 
+    spec.EuEu    = np.array(spec.EuEu).reshape   (n_time, n_freq * n_samp)
+    spec.EvEv    = np.array(spec.EvEv).reshape   (n_time, n_freq * n_samp)
+    spec.EwEw    = np.array(spec.EwEw).reshape   (n_time, n_freq * n_samp)
+    #
+    spec.EuEv_re = np.array(spec.EuEv_re).reshape(n_time, n_freq * n_samp)
+    spec.EvEw_re = np.array(spec.EvEw_re).reshape(n_time, n_freq * n_samp)
+    spec.EwEu_re = np.array(spec.EwEu_re).reshape(n_time, n_freq * n_samp)
+    spec.EuEv_im = np.array(spec.EuEv_im).reshape(n_time, n_freq * n_samp)
+    spec.EvEw_im = np.array(spec.EvEw_im).reshape(n_time, n_freq * n_samp)
+    spec.EwEu_im = np.array(spec.EwEu_im).reshape(n_time, n_freq * n_samp)
+    
     return spec
 
 
@@ -255,69 +283,25 @@ def hf_getspec_sid2_Fsum(data):
     input:  data
     return: spec
     """
-    # Spec formation
-    spec = struct_hf()
-    spec.RPWI_FSW_version = data.RPWI_FSW_version
-
-    n_time = data.Eu_i.shape[0]
-    n_freq = data.Eu_i.shape[1]
-    n_samp = data.Eu_i.shape[2]
+    spec = hf_getspec_sid2_FFT(data)
 
     # Frequency
-    spec.freq   = np.zeros(n_time * n_freq * n_samp);  spec.freq   = spec.freq.reshape  (n_time, n_freq, n_samp)
-    spec.freq_w = np.zeros(n_time * n_freq * n_samp);  spec.freq_w = spec.freq_w.reshape(n_time, n_freq, n_samp)
-    dt = 1.0 / juice_cdf._sample_rate(data.decimation[0])
-    # dt = data.time[0][0][1]
-    freq = np.fft.fftshift(np.fft.fftfreq(n_samp, d=dt)) / 1000.
-    d_freq = freq[1] - freq[0]
-    freq = freq + d_freq/2.0
-    for i in range(n_time):
-        for j in range(n_freq):
-            spec.freq[i][j]   = data.frequency[i][j] + freq
-            spec.freq_w[i][j] = d_freq
-
-    # FFT
-    #window = 1;  acf = 1.0
-    #window = np.hanning (n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.00 -> 4.00
-    #window = np.blackman(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
-    window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp) # / 2.38 -> 5.67
-    # -- auto  (rms)
-    s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EuEu = np.fft.fftshift(s, axes=(2,))
-    s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EvEv = np.fft.fftshift(s, axes=(2,))
-    s = np.fft.fft((data.Ew_i - data.Ew_q * 1j) * window);  s_w_re = s.real; s_w_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EwEw = np.fft.fftshift(s, axes=(2,))
-    # -- cross (rms)
-    s = s_u_re * s_v_re + s_u_im * s_v_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EuEv_re = np.fft.fftshift(s, axes=(2,))
-    s = s_v_re * s_w_re + s_v_im * s_w_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EvEw_re = np.fft.fftshift(s, axes=(2,))
-    s = s_w_re * s_u_re + s_w_im * s_u_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EwEu_re = np.fft.fftshift(s, axes=(2,))
-    s = s_u_im * s_v_re - s_u_re * s_v_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EuEv_im = np.fft.fftshift(s, axes=(2,))
-    s = s_v_im * s_w_re - s_v_re * s_w_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EvEw_im = np.fft.fftshift(s, axes=(2,))
-    s = s_w_im * s_u_re - s_w_re * s_u_im;  s = s / n_samp / n_samp * acf * acf / 2.0;  spec.EwEu_im = np.fft.fftshift(s, axes=(2,))
-
-    # Cut: 75%
-    samp1 = n_samp//8           # 0
-    samp2 = n_samp - n_samp//8  # n_samp
-    i = 0
-    while (spec.freq[0][i][samp2] > spec.freq[0][i+1][samp1]):
-        samp1 += 1; samp2 -= 1
-    print("cut: 1st-start/end 2nd-first-end:", spec.freq[0][i][samp2], spec.freq[0][i+1][samp1], 100*(samp2-samp1)/n_samp, "%", spec.freq.shape, n_samp//8, samp1, n_samp - n_samp//8, samp2)
-    n_samp = samp2 - samp1
-    #
-    spec.freq     = spec.freq   [:, :, samp1:samp2];     spec.freq    = np.array(spec.freq).reshape   (n_time, n_freq * n_samp)
-    spec.freq_w   = spec.freq_w [:, :, samp1:samp2];     spec.freq_w  = np.array(spec.freq_w).reshape (n_time, n_freq * n_samp)
-    # 
-    spec.EuEu     = spec.EuEu   [:, :, samp1:samp2];     spec.EuEu    = np.array(spec.EuEu).reshape   (n_time, n_freq * n_samp)
-    spec.EvEv     = spec.EvEv   [:, :, samp1:samp2];     spec.EvEv    = np.array(spec.EvEv).reshape   (n_time, n_freq * n_samp)
-    spec.EwEw     = spec.EwEw   [:, :, samp1:samp2];     spec.EwEw    = np.array(spec.EwEw).reshape   (n_time, n_freq * n_samp)
-    #
-    spec.EuEv_re  = spec.EuEv_re[:, :, samp1:samp2];     spec.EuEv_re = np.array(spec.EuEv_re).reshape(n_time, n_freq * n_samp)
-    spec.EvEw_re  = spec.EvEw_re[:, :, samp1:samp2];     spec.EvEw_re = np.array(spec.EvEw_re).reshape(n_time, n_freq * n_samp)
-    spec.EwEu_re  = spec.EwEu_re[:, :, samp1:samp2];     spec.EwEu_re = np.array(spec.EwEu_re).reshape(n_time, n_freq * n_samp)
-    spec.EuEv_im  = spec.EuEv_im[:, :, samp1:samp2];     spec.EuEv_im = np.array(spec.EuEv_im).reshape(n_time, n_freq * n_samp)
-    spec.EvEw_im  = spec.EvEw_im[:, :, samp1:samp2];     spec.EvEw_im = np.array(spec.EvEw_im).reshape(n_time, n_freq * n_samp)
-    spec.EwEu_im  = spec.EwEu_im[:, :, samp1:samp2];     spec.EwEu_im = np.array(spec.EwEu_im).reshape(n_time, n_freq * n_samp)
+    spec.freq   = data.frequency[:, :, 0]
+    spec.freq_w = data.freq_width[:, :, 0]
     
-    # Epoch
-    spec.epoch    = data.epoch[:]
+    # Sum
+    spec.EuEu = np.sum(spec.EuEu, axis=2)
+    spec.EvEv = np.sum(spec.EvEv, axis=2)
+    spec.EwEw = np.sum(spec.EwEw, axis=2)
+    print("spec.EuEu:", data.Eu_i.shape, spec.EuEu.shape)
+    # -- cross (rms)
+    spec.EuEv_re = np.sum(spec.EuEv_re, axis=1)
+    spec.EvEw_re = np.sum(spec.EvEw_re, axis=1)
+    spec.EwEu_re = np.sum(spec.EwEu_re, axis=1)
+    spec.EuEv_im = np.sum(spec.EuEv_im, axis=1)
+    spec.EvEw_im = np.sum(spec.EvEw_im, axis=1)
+    spec.EwEu_im = np.sum(spec.EwEu_im, axis=1)
+
     return spec
 
 
@@ -336,20 +320,17 @@ def hf_getspec_sid2_Wsum(data):
     spec.freq_w[:][:] = juice_cdf._sample_rate(data.decimation[0]) / 1000.
     
     # Sum
-    spec.EuEu = np.sum(data.Eu_i**2 + data.Eu_q**2, axis=2)
-    spec.EvEv = np.sum(data.Ev_i**2 + data.Ev_q**2, axis=2)
-    spec.EwEw = np.sum(data.Ew_i**2 + data.Ew_q**2, axis=2)
     spec.EuEu = np.mean(data.Eu_i**2 + data.Eu_q**2, axis=2)
     spec.EvEv = np.mean(data.Ev_i**2 + data.Ev_q**2, axis=2)
     spec.EwEw = np.mean(data.Ew_i**2 + data.Ew_q**2, axis=2)
     print("spec.EuEu:", data.Eu_i.shape, spec.EuEu.shape)
     # -- cross (rms)
-    spec.EuEv_re = np.sum(data.Eu_i*data.Ev_i + data.Eu_q*data.Ev_q, axis=1)
-    spec.EvEw_re = np.sum(data.Ev_i*data.Ew_i + data.Ev_q*data.Ew_q, axis=1)
-    spec.EwEu_re = np.sum(data.Ew_i*data.Eu_i + data.Ew_q*data.Eu_q, axis=1)
-    spec.EuEv_im = np.sum(data.Eu_q*data.Ev_i - data.Eu_i*data.Ev_q, axis=1)
-    spec.EvEw_im = np.sum(data.Ev_q*data.Ew_i - data.Ev_i*data.Ew_q, axis=1)
-    spec.EwEu_im = np.sum(data.Ew_q*data.Eu_i - data.Ew_i*data.Eu_q, axis=1)
+    spec.EuEv_re = np.mean(data.Eu_i*data.Ev_i + data.Eu_q*data.Ev_q, axis=1)
+    spec.EvEw_re = np.mean(data.Ev_i*data.Ew_i + data.Ev_q*data.Ew_q, axis=1)
+    spec.EwEu_re = np.mean(data.Ew_i*data.Eu_i + data.Ew_q*data.Eu_q, axis=1)
+    spec.EuEv_im = np.mean(data.Eu_q*data.Ev_i - data.Eu_i*data.Ev_q, axis=1)
+    spec.EvEw_im = np.mean(data.Ev_q*data.Ew_i - data.Ev_i*data.Ew_q, axis=1)
+    spec.EwEu_im = np.mean(data.Ew_q*data.Eu_i - data.Ew_i*data.Eu_q, axis=1)
     
     # Epoch
     spec.epoch    = data.epoch[:]

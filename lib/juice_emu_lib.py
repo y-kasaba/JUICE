@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF Emulation and Comparison: L1a for all SIDs -- 2025/11/11
+    JUICE RPWI HF Emulation and Comparison: L1a for all SIDs -- 2025/12/6
 """
 # import copy
 import matplotlib.pyplot as plt
@@ -12,18 +12,19 @@ def datalist(asw, space, cal_mode):
     if asw == 3:
         if space == 0:
             # *** Ground Test - Ver.3 ***
-            # SID-2    ASW3        20251010    1.5MHz  OFF->10mVpp->100mVpp->500mVpp->OFF (500mVpp - saturated)
-            cdf_sid2 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID2_20000101T000327-20000101T000857_V01___SID02_20251010-1729.ccs.cdf'
-            # SID-3    ASW3  COMP-1 20250925    1.5MHz  Vin=10mVpp  Phase=[0 45 90 135 180 225 270 315 0] deg (V-ch)
-            cdf_sid3 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID3_20000101T000151-20000101T000731_V01___SID03-comp1_20250925-1148_10mVpp.ccs.cdf'
-            # SID-20   ASW3  COMP-1 20250925    0.02-2MHz 5s  Vin=10 mVpp
-            cdf_sid20= '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID20_20000101T031404-20000101T031417_V01___SID04-20_0.2s_20250925-1500_10mVpp.ccs.cdf'
-            # SID-20   ASW3  COMP-1 20250925    0.02-2MHz 5s	 Vin=10 mVpp
-            cdf_sid4 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID4_20000101T031404-20000101T031414_V01___SID04-20_0.2s_20250925-1500_10mVpp.ccs.cdf'
+            # SID-2    ASW3        20251123     10mV, interval=40 [s]  freq_set = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
+            cdf_sid2 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID2_20000101T000043-20000101T001413_V01___SID2_20251123-1005.ccs.cdf'
+            # cdf_sid2 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID2_20000101T000226-20000101T001610_V01___SID2_20251113-1351.ccs.cdf'
+            # SID-3    ASW3         20251123
+            cdf_sid3 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID3_20000101T001555-20000101T002925_V01___SID3_C1_20251123-1021.ccs.cdf'
+            # cdf_sid3 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID3_20000101T003123-20000101T004453_V01___SID3_C2_20251123-1037.ccs.cdf'
+            # SID-20   ASW3         20251123    sweep 0.02-2MHz 5s		Vin=10 mVpp     .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  f = 1.8 [MHz]
+            cdf_sid20= '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID20_20000101T000046-20000101T000506_V01___SID4-20_20251123-1107.ccs.cdf'
+            cdf_sid4 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID4_20000101T000046-20000101T000420_V01___SID4-20_20251123-1107.ccs.cdf'
             # SID-21   ASW3  COMP-1 20250926    1.5MHz  Vin=10mVpp, Phase=[0 45 90 135 180 225 270 315 0] deg (V-ch) 
-            cdf_sid21= '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID21_20000101T002153-20000101T004523_V01___SID05-21_20250926-0820_10mVpp.ccs.cdf'
+            cdf_sid21= '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID21_20000101T002158-20000101T002658_V01___SID5-21_20251123-1129.ccs.cdf'
             # SID-5    ASW3         20250926    1.5MHz  Vin=10mVpp, Phase=[0 45 90 135 180 225 270 315 0] deg (V-ch) 
-            cdf_sid5 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID5_20000101T002153-20000101T004523_V01___SID05-21_20250926-0820_10mVpp.ccs.cdf'
+            cdf_sid5 = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/JUICE_L1a_RPWI-HF-SID5_20000101T002158-20000101T002628_V01___SID5-21_20251123-1129.ccs.cdf'
 
     if asw == 2:
         if space == 1:
@@ -91,7 +92,8 @@ def wave_shaping_EuEu(data_sid, str_SID, n_sweep1, n_sweep2):
     wave_sid.HF_ID  = data_sid.HF_ID
     wave_sid.sid    = data_sid.sid
 
-    peak = np.ravel(wave_sid.EuEu); wave_sid.peak = np.nanmax(peak)
+    peak = np.ravel(wave_sid.EuEu)
+    wave_sid.peak = np.nanmax(peak)
     print('[Peak - '+str_SID+' Wave in RAW^2   ]  EuEu:', '                       -- (peak) {:.2e} '.format(wave_sid.peak), '{:.2e}'.format(wave_sid.peak**.5))
     return wave_sid
 

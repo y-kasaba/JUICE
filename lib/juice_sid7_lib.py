@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2025/10/21
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2025/12/6
 """
 import glob
 import numpy as np
@@ -34,13 +34,18 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
+        # 202511 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID7_20000101T000155-20000101T000430_V01___SID7-23_P0_20251113-2224.ccs.cdf']                      
+        # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old2/'
         data_list = ['JUICE_L1a_RPWI-HF-SID7_20000101T064546-20000101T064910_V01___SID07-23_20250925-1722_10mVpp.ccs.cdf']
+        """
         # 202411 -- SAMPLE -- SG: 1.75MHz 100mVpp 90/0/0deg
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
         data_list = ['JUICE_L1a_RPWI-HF-SID7_20000101T000512-20000101T000512_V01___SID07-23_20241125-1321_PSSR3_asw3.ccs.cdf']    
-        """
         """
     print(data_dir)
     print(data_list)
@@ -59,7 +64,7 @@ def hf_sid7_read(cdf):
 
     # Data
     data.auto_corr   = np.float64(cdf['auto_corr'][...])
-    data.E_i         = np.float64(cdf['E_i'][...]);  data.E_q         = np.float64(cdf['E_q'][...])
+    data.EE          = np.float64(cdf['EE'][...])
     data.time_block  = cdf['time_block'][...];       data.time        = np.float64(cdf['time'][...])
 
     hf_hk.status_read(cdf, data)
@@ -92,7 +97,7 @@ def hf_sid7_add(data, data1):
     """
     # Data
     data.auto_corr   = np.r_["0", data.auto_corr, data1.auto_corr]
-    data.E_i         = np.r_["0", data.E_i, data1.E_i];               data.E_q  = np.r_["0", data.E_q, data1.E_q]
+    data.EE          = np.r_["0", data.EE, data1.EE]
     data.time_block  = np.r_["0", data.time_block, data1.time_block]; data.time = np.r_["0", data.time, data1.time]
 
     hf_hk.status_add(data, data1)
@@ -132,8 +137,8 @@ def hf_sid7_shaping(data, f_max, f_min):
     index = np.where( (data.N_block == data.n_block) & (data.N_lag == data.n_lag) )
     # Data
     data.auto_corr   = data.auto_corr [index[0]]
-    data.E_i         = data.E_i [index[0]];        data.E_q = data.E_q [index[0]]
-    data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
+    data.EE          = data.EE        [index[0]]
+    data.time_block  = data.time_block[index[0]]; data.time        = data.time [index[0]]
 
     hf_hk.status_shaping(data, index[0])
     """
@@ -164,8 +169,8 @@ def hf_sid7_shaping(data, f_max, f_min):
     index = np.where( (data.freq_center > f_min) & (data.freq_center < f_max) )
     # Data
     data.auto_corr   = data.auto_corr [index[0]]
-    data.E_i         = data.E_i [index[0]];        data.E_q = data.E_q [index[0]]
-    data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
+    data.EE          = data.EE        [index[0]]
+    data.time_block  = data.time_block[index[0]]; data.time        = data.time [index[0]]
 
     hf_hk.status_shaping(data, index[0])
     """

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/10/24
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/12/1
 """
 import glob
 import numpy as np
@@ -36,30 +36,27 @@ def datalist(date_str, ver_str):
     else:
 
         # *** Ground Test - Ver.3 ***
-        # 202509 -- SAMPLE
-        #	(1) Freq=1.5MHz                                       Vin = [0.01 0.02 0.05 0.1 0.2 0.5 1 2 5 10 20 50 100 200 500] mVpp
-	    #   (2) Freq=[0.02 0.05 0.1 0.2 0.5 1.1 2.1 5.1 9.1] MHz  Vin=10mVpp
-	    #   (3) Freq=1.5MHz                                       Vin=10mVpp, Phase (y ch) = [0 45 90 135 180 225 270 315 0] deg
+        # 202511 -- SAMPLE  Vin=10 mVpp     	interval=40 [s]			freq_set = [1.1 1.2 1.4 1.6 1.8] [MHz]
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID21_20000101T002153-20000101T004523_V01___SID05-21_20250926-0820_10mVpp.ccs.cdf', ]
-        # 202411 -- SAMPLE -- SG 1.75MHz, 100mVpp  --- comp0 & comp1
+        data_list = ['JUICE_L1a_RPWI-HF-SID21_20000101T002158-20000101T002658_V01___SID5-21_20251123-1129.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID21_20000101T003031-20000101T003642_V01___SID5-21_20251113-1746.ccs.cdf',
+                      ]
         """
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
-        data_list = [#'JUICE_L1a_RPWI-HF-SID21_20000101T000149-20000101T000219_V01___SID05-21_20241125-1341_PSSR1_comp0_asw3.ccs.cdf',
-                     'JUICE_L1a_RPWI-HF-SID21_20000101T000100-20000101T000200_V01___SID05-21_20241125-1335_PSSR1_comp1_asw3.ccs.cdf',
-                    ] 
         """
+
         # *** Ground Test - Ver.2 ***
+        """
         # 202510 -- PCW4 emulation
         data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID21_20251003T080925-20251003T081100_V01___TMIDX_00001.bin.cdf']
+        """
         # 202311 -- SAMPLE -- SG 1.55MHz, 10mVpp, [90.0, 0.0, 0.0]    20231117-1611: with RFI-mitigation
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID21_20000101T002245-20000101T002330_V01___SID05-21_20231024-0046.ccs.cdf',
-                     'JUICE_L1a_RPWI-HF-SID21_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf',
                      #'JUICE_L1a_RPWI-HF-SID21_20000101T000128-20000101T000213_V01___SID05-21_20231117-1603.ccs.cdf',
-                    ]
+                     'JUICE_L1a_RPWI-HF-SID21_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf',
+                     ]
         """
 
         # 202503 -- Flight
