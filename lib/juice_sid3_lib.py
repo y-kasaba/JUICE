@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2025/11/23
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2026/3/4
 """
 import glob
 import numpy as np
@@ -23,7 +23,7 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
+        base_dir = '/Users/D-Univ/data/data-JUICE/datasets/'
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID3_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -36,21 +36,35 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202511 -- SAMPLE
+        # 202601-- ASW3 test
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID3_20260109T162606-20260109T162606_V01___Sec03_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T164153-20260109T165023_V01___Sec04_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T181819-20260109T182649_V01___Sec10_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T210405-20260109T211235_V01___Sec11_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T211904-20260109T212734_V01___Sec12_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T213707-20260109T213707_V01___Sec13_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T214925-20260109T215755_V01___Sec14_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T225315-20260109T230145_V01___Sec15_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260109T232303-20260109T233133_V01___Sec17_260118.bin.cdf',
+                    ]
+        # 202511 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID3_20000101T001555-20000101T002925_V01___SID3_C1_20251123-1021.ccs.cdf',
                             # (2d matix, RFI rejection OFF), new sweep table (Beff=62.5%)
                             # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
-                     #'JUICE_L1a_RPWI-HF-SID3_20000101T003123-20000101T004453_V01___SID3_C2_20251123-1037.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20000101T003123-20000101T004453_V01___SID3_C2_20251123-1037.ccs.cdf',
                             # (polariztion separation, RFI rejection OFF, noise floor subtraction OFF), new sweep table (Beff=62.5%)
 	                        # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
-                     #'JUICE_L1a_RPWI-HF-SID3_20000101T001750-20000101T003120_V01___SID3_C1_20251113-1557.ccs.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20000101T001750-20000101T003120_V01___SID3_C1_20251113-1557.ccs.cdf',
                             # (2d matix, RFI rejection OFF), new sweep table (Beff=62.5%)
 	                        # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
                      'JUICE_L1a_RPWI-HF-SID3_20000101T000043-20000101T001343_V01___SID3_C2_20251113-1715.ccs.cdf',  
                             # (polariztion separation, RFI rejection OFF, noise floor subtraction OFF), new sweep table (Beff=62.5%)
 	                        # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
                     ]
+        """
         # 202509 -- SAMPLE
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old2/'
@@ -72,19 +86,6 @@ def datalist(date_str, ver_str):
                             # (3) Freq=1.5MHz   Vin =10mVpp      Phase (x ch) = [0 45 90 135 180 225 270 315 0] deg
                             # (4) Freq=1.5MHz   Vin =10mVpp      Phase (y ch) = [0 45 90 135 180 225 270 315 0] deg
                             # (5) Freq=1.5MHz   Vin =10mVpp      Phase (z ch) = [0 45 90 135 180 225 270 315 0] deg
-                    ]
-        # 202411 -- SAMPLE	    1.75MHz, 100mVpp    (0,0,0),(90,0,0),(0,90,0),(0,0,90) 
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
-        data_list = [##'JUICE_L1a_RPWI-HF-SID3_20000101T000103-20000101T000137_V01___SID03_20241125-1421_RadioFull_comp0_table1_asw3.ccs.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20000101T000317-20000101T000857_V01___SID03_20241125-1405_RadioFull_comp1_table1_asw3.ccs.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20000101T000150-20000101T000406_V01___SID03_20241125-1502_RadioFull_comp1_table1_bg0_asw3.ccs.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20000101T000116-20000101T000258_V01___SID03_20241125-1457_RadioFull_comp1_table1_bg1_asw3.ccs.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20000101T000457-20000101T001111_V01___SID03_20241125-1349_RadioFull_comp2_table1_asw3.ccs.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20000101T000119-20000101T000153_V01___SID03_20241125-1506_RadioFull_comp2_table2_asw3.ccs.cdf',
-                     'JUICE_L1a_RPWI-HF-SID3_20000101T000108-20000101T000648_V01___SID03_20241125-1413_RadioFull_comp3_table1_asw3.ccs.cdf',
-                     ##'JUICE_L1a_RPWI-HF-SID3_20000101T000113-20000101T000147_V01___SID03_20241125-1433_RadioFull_ch2_comp0_table1_asw3.ccs.cdf',
-                     ##'JUICE_L1a_RPWI-HF-SID3_20000101T000100-20000101T000640_V01___SID03_20241125-1436_RadioFull_ch2_comp1_table1_asw3.ccs.cdf',
-                     ##'JUICE_L1a_RPWI-HF-SID3_20000101T000116-20000101T000656_V01___SID03_20241125-1444_RadioFull_ch2_comp2_table1_asw3.ccs.cdf',
                     ]
         """
         # *** Ground Test - Ver.2 ***
@@ -125,9 +126,9 @@ def datalist(date_str, ver_str):
                      #'JUICE_L1a_RPWI-HF-SID3_20240701T011127-20240701T011309_V01___RPR1_52000001_2024.183.15.43.53.614.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240706T121009-20240706T131448_V01___RPR1_52000002_2024.190.14.59.43.630.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240706T175202-20240706T183012_V01___RPR1_52000003_2024.190.15.33.44.638.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20240819T202636-20240819T221323_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20240819T202636-20240819T221323_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240820T180734-20240822T022254_V01___RPR1_52000003_2024.235.03.19.13.483.cdf',
-                     'JUICE_L1a_RPWI-HF-SID3_20240822T095914-20240822T182844_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',    # CAL
+                     #'JUICE_L1a_RPWI-HF-SID3_20240822T095914-20240822T182844_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',    # CAL
                      #'JUICE_L1a_RPWI-HF-SID3_20240823T035818-20240823T215457_V01___RPR1_52000005_2024.237.04.37.21.527.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240909T093241-20240909T101941_V01___RPR1_52000005_2024.254.16.53.07.436.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20250331T030012-20250331T201834_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
@@ -153,7 +154,7 @@ def datalist(date_str, ver_str):
                      #'JUICE_L1a_RPWI-HF-SID3_20230525T150440-20230525T151428_V01___RPR1_52000006_2023.145.15.46.34.503.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20230525T165318-20230525T170306_V01___RPR1_52000006_2023.145.17.20.46.547.cdf',
                     ]
-x        """
+        """
 
     print(data_dir)
     print(data_list)
@@ -185,45 +186,17 @@ def hf_sid3_read(cdf):
     data.EuEv_re_LC = np.float64(cdf['EuEv_re_LC'][...]); data.EvEw_re_LC = np.float64(cdf['EvEw_re_LC'][...]); data.EwEu_re_LC = np.float64(cdf['EwEu_re_LC'][...])
     data.EuEv_im_LC = np.float64(cdf['EuEv_im_LC'][...]); data.EvEw_im_LC = np.float64(cdf['EvEw_im_LC'][...]); data.EwEu_im_LC = np.float64(cdf['EwEu_im_LC'][...])
     data.num_NC     = cdf['num_NC'][...];                 data.num_RC     = cdf['num_RC'][...];                 data.num_LC     = cdf['num_LC'][...]
-    """
-    # complex == 3:    # 3D-matrix
-    data.EuiEui     = np.float64(cdf['EuiEui'][...]);     data.EuqEuq     = np.float64(cdf['EuqEuq'][...])
-    data.EviEvi     = np.float64(cdf['EviEvi'][...]);     data.EvqEvq     = np.float64(cdf['EvqEvq'][...])
-    data.EwiEwi     = np.float64(cdf['EwiEwi'][...]);     data.EwqEwq     = np.float64(cdf['EwqEwq'][...])
-    data.EuiEvi     = np.float64(cdf['EuiEvi'][...]);     data.EviEwi     = np.float64(cdf['EviEwi'][...])
-    data.EwiEui     = np.float64(cdf['EwiEui'][...]);     data.EuqEvq     = np.float64(cdf['EuqEvq'][...])
-    data.EvqEwq     = np.float64(cdf['EvqEwq'][...]);     data.EwqEuq     = np.float64(cdf['EwqEuq'][...])
-    data.EuiEvq     = np.float64(cdf['EuiEvq'][...]);     data.EuqEvi     = np.float64(cdf['EuqEvi'][...])
-    data.EviEwq     = np.float64(cdf['EviEwq'][...]);     data.EvqEwi     = np.float64(cdf['EvqEwi'][...])
-    data.EwiEuq     = np.float64(cdf['EwiEuq'][...]);     data.EwqEui     = np.float64(cdf['EwqEui'][...])
-    data.EuiEuq     = np.float64(cdf['EuiEuq'][...]);     data.EviEvq     = np.float64(cdf['EviEvq'][...]);    data.EwiEwq     = np.float64(cdf['EwiEwq'][...])
-    """
+    #
+    data.EuEu_amp = np.float64(cdf['EuEu_amp'][...]);   data.EuEu_raw = np.float64(cdf['EuEu_raw'][...])
+    data.EvEv_amp = np.float64(cdf['EvEv_amp'][...]);   data.EvEv_raw = np.float64(cdf['EvEv_raw'][...])
+    data.EwEw_amp = np.float64(cdf['EwEw_amp'][...]);   data.EwEw_raw = np.float64(cdf['EwEw_raw'][...])
+    data.gain_raw = cdf['gain_raw'][...];               data.df_raw   = cdf['df_raw'][...]
     #
     data.BG_Eu      = np.float64(cdf['BG_Eu'][...]);      data.BG_Ev      = np.float64(cdf['BG_Ev'][...]);     data.BG_Ew      = np.float64(cdf['BG_Ew'][...])
     #
     data.frequency  = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...];  data.freq_width  = cdf['freq_width'][...]
 
     hf_hk.status_read(cdf, data)
-    """
-    # AUX
-    data.ch_selected = cdf['ch_selected'][...]
-    data.complex     = cdf['complex'][...]
-    data.cal_signal  = cdf['cal_signal'][...]
-    data.BG_downlink = cdf['BG_downlink'][...]
-    data.BG_subtract = cdf['BG_subtract'][...]
-    data.BG_select   = cdf['BG_select'][...]
-    data.RFI_rejection = cdf['RFI_rejection'][...]
-    data.Pol_sep_thres = cdf['Pol_sep_thres'][...]
-    data.Pol_sep_SW  = cdf['Pol_sep_SW'][...]
-    data.T_RWI_CH1   = np.float32(cdf['T_RWI_CH1'][...])
-    data.T_RWI_CH2   = np.float32(cdf['T_RWI_CH2'][...])
-    data.T_HF_FPGA   = np.float32(cdf['T_HF_FPGA'][...])
-    # Header
-    data.N_step      = np.int64(cdf['N_step'][...])
-    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]; data.ISW_ver   = cdf['ISW_ver'][...]
-    data.HF_QF       = cdf['HF_QF'][...]    # Quality flag: b0:RWI-off b1:Cal b2-3:Ovrflw b4:RIME b5-7:n/a (b0-1=3:error)'
-    data.decimation  = cdf['decimation'][...]
-    """
     return data
 
 
@@ -261,21 +234,15 @@ def hf_sid3_add(data, data1):
     data.num_NC     = np.r_["0", data.num_NC, data1.num_NC]
     data.num_RC     = np.r_["0", data.num_RC, data1.num_RC]
     data.num_LC     = np.r_["0", data.num_LC, data1.num_LC]
-    """
-    # complex == 3:    # 3D-matrix
-    data.EuiEui     = np.r_["0", data.EuiEui, data1.EuiEui];         data.EuqEuq = np.r_["0", data.EuqEuq, data1.EuqEuq]
-    data.EviEvi     = np.r_["0", data.EviEvi, data1.EviEvi];         data.EvqEvq = np.r_["0", data.EvqEvq, data1.EvqEvq]
-    data.EwiEwi     = np.r_["0", data.EwiEwi, data1.EwiEwi];         data.EwqEwq = np.r_["0", data.EwqEwq, data1.EwqEwq]
-    data.EuiEvi     = np.r_["0", data.EuiEvi, data1.EuiEvi];         data.EviEwi = np.r_["0", data.EviEwi, data1.EviEwi]
-    data.EwiEui     = np.r_["0", data.EwiEui, data1.EwiEui];         data.EuqEvq = np.r_["0", data.EuqEvq, data1.EuqEvq]
-    data.EvqEwq     = np.r_["0", data.EvqEwq, data1.EvqEwq];         data.EwqEuq = np.r_["0", data.EwqEuq, data1.EwqEuq]
-    data.EuiEvq     = np.r_["0", data.EuiEvq, data1.EuiEvq];         data.EuqEvi = np.r_["0", data.EuqEvi, data1.EuqEvi]
-    data.EviEwq     = np.r_["0", data.EviEwq, data1.EviEwq];         data.EvqEwi = np.r_["0", data.EvqEwi, data1.EvqEwi]
-    data.EwiEuq     = np.r_["0", data.EwiEuq, data1.EwiEuq];         data.EwqEui = np.r_["0", data.EwqEui, data1.EwqEui]
-    data.EuiEuq     = np.r_["0", data.EuiEuq, data1.EuiEuq]
-    data.EviEvq     = np.r_["0", data.EviEvq, data1.EviEvq]
-    data.EwiEwq     = np.r_["0", data.EwiEwq, data1.EwiEwq]
-    """
+    #
+    data.EuEu_raw   = np.r_["0", data.EuEu_raw, data1.EuEu_raw]
+    data.EvEv_raw   = np.r_["0", data.EvEv_raw, data1.EvEv_raw]
+    data.EwEw_raw   = np.r_["0", data.EwEw_raw, data1.EwEw_raw]
+    data.EuEu_amp   = np.r_["0", data.EuEu_amp, data1.EuEu_amp]
+    data.EvEv_amp   = np.r_["0", data.EvEv_amp, data1.EvEv_amp]
+    data.EwEw_amp   = np.r_["0", data.EwEw_amp, data1.EwEw_amp]
+    data.gain_raw   = np.r_["0", data.gain_raw, data1.gain_raw]
+    data.df_raw     = np.r_["0", data.df_raw,   data1.df_raw]
     #
     data.BG_Eu      = np.r_["0", data.BG_Eu, data1.BG_Eu]
     data.BG_Ev      = np.r_["0", data.BG_Ev, data1.BG_Ev]
@@ -286,26 +253,6 @@ def hf_sid3_add(data, data1):
     data.freq_width = np.r_["0", data.freq_width, data1.freq_width]
 
     hf_hk.status_add(data, data1)
-    """
-    # AUX
-    data.ch_selected  = np.r_["0", data.ch_selected, data1.ch_selected]
-    data.complex     = np.r_["0", data.complex, data1.complex]
-    data.cal_signal  = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.BG_downlink = np.r_["0", data.BG_downlink, data1.BG_downlink]
-    data.BG_subtract = np.r_["0", data.BG_subtract, data1.BG_subtract]
-    data.BG_select   = np.r_["0", data.BG_select, data1.BG_select]
-    data.RFI_rejection = np.r_["0", data.RFI_rejection, data1.RFI_rejection]
-    data.Pol_sep_thres = np.r_["0", data.Pol_sep_thres, data1.Pol_sep_thres]
-    data.Pol_sep_SW  = np.r_["0", data.Pol_sep_SW, data1.Pol_sep_SW]
-    data.T_RWI_CH1   = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
-    data.T_RWI_CH2   = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
-    data.T_HF_FPGA   = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
-    # Header
-    data.N_step      = np.r_["0", data.N_step, data1.N_step]
-    data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
-    data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
-    data.HF_QF       = np.r_["0", data.HF_QF, data1.HF_QF]
-    """
     return data
 
 
@@ -369,41 +316,16 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
         data.EuEv_re_LC  = data.EuEv_re_LC [index[0]]; data.EvEw_re_LC = data.EvEw_re_LC[index[0]]; data.EwEu_re_LC = data.EwEu_re_LC[index[0]]
         data.EuEv_im_LC  = data.EuEv_im_LC [index[0]]; data.EvEw_im_LC = data.EvEw_im_LC[index[0]]; data.EwEu_im_LC = data.EwEu_im_LC[index[0]]
         data.num_NC      = data.num_NC     [index[0]]; data.num_RC     = data.num_RC    [index[0]]; data.num_LC     = data.num_LC    [index[0]]
-        """
-        # complex == 3:    # 3D-matrix
-        data.EuiEui      = data.EuiEui     [index[0]]; data.EviEvi     = data.EviEvi    [index[0]]; data.EwiEwi     = data.EwiEwi    [index[0]]
-        data.EuqEuq      = data.EuqEuq     [index[0]]; data.EvqEvq     = data.EvqEvq    [index[0]]; data.EwqEwq     = data.EwqEwq    [index[0]]
-        data.EuiEvi      = data.EuiEvi     [index[0]]; data.EviEwi     = data.EviEwi    [index[0]]; data.EwiEui     = data.EwiEui    [index[0]]
-        data.EuqEvq      = data.EuqEvq     [index[0]]; data.EvqEwq     = data.EvqEwq    [index[0]]; data.EwqEuq     = data.EwqEuq    [index[0]]
-        data.EuiEvq      = data.EuiEvq     [index[0]]; data.EviEwq     = data.EviEwq    [index[0]]; data.EwiEuq     = data.EwiEuq    [index[0]]
-        data.EuqEvi      = data.EuqEvi     [index[0]]; data.EvqEwi     = data.EvqEwi    [index[0]]; data.EwqEui     = data.EwqEui    [index[0]]
-        data.EuiEuq      = data.EuiEuq     [index[0]]; data.EviEvq     = data.EviEvq    [index[0]]; data.EwiEwq     = data.EwiEwq    [index[0]]
-        """
+        #
+        data.EuEu_raw    = data.EuEu_raw   [index[0]]; data.EvEv_raw   = data.EvEv_raw  [index[0]]; data.EwEw_raw   = data.EwEw_raw  [index[0]]
+        data.EuEu_amp    = data.EuEu_amp   [index[0]]; data.EvEv_amp   = data.EvEv_amp  [index[0]]; data.EwEw_amp   = data.EwEw_amp  [index[0]]
+        data.gain_raw    = data.gain_raw   [index[0]]; data.df_raw     = data.df_raw    [index[0]]
         #
         data.BG_Eu       = data.BG_Eu      [index[0]]; data.BG_Ev      = data.BG_Ev     [index[0]]; data.BG_Ew      = data.BG_Ew     [index[0]]
         #
         data.frequency   = data.frequency  [index[0]]; data.freq_step  = data.freq_step [index[0]]; data.freq_width = data.freq_width[index[0]]
 
         hf_hk.status_shaping(data, index[0])
-        """
-        # AUX
-        data.ch_selected = data.ch_selected[index[0]]
-        data.complex     = data.complex[index[0]]
-        data.cal_signal  = data.cal_signal[index[0]]
-        data.BG_downlink = data.BG_downlink[index[0]]
-        data.BG_subtract = data.BG_subtract[index[0]]
-        data.BG_select   = data.BG_select [index[0]]
-        data.RFI_rejection = data.RFI_rejection[index[0]]
-        data.Pol_sep_thres = data.Pol_sep_thres[index[0]]
-        data.Pol_sep_SW  = data.Pol_sep_SW[index[0]]
-        data.T_RWI_CH1   = data.T_RWI_CH1  [index[0]]
-        data.T_RWI_CH2   = data.T_RWI_CH2  [index[0]]
-        data.T_HF_FPGA   = data.T_HF_FPGA  [index[0]]
-        # Header
-        data.N_step      = data.N_step     [index[0]]
-        data.ADC_ovrflw  = data.ADC_ovrflw [index[0]]
-        data.ISW_ver     = data.ISW_ver    [index[0]]
-        """
         
         data.n_time = data.EuEu.shape[0]
         if cal_mode < 2:
@@ -446,16 +368,6 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     data.EuEu_LC   [index[0]] = math.nan; data.EvEv_LC   [index[0]] = math.nan; data.EwEw_LC   [index[0]] = math.nan
     data.EuEv_re_LC[index[0]] = math.nan; data.EvEw_re_LC[index[0]] = math.nan; data.EwEu_re_LC[index[0]] = math.nan
     data.EuEv_im_LC[index[0]] = math.nan; data.EvEw_im_LC[index[0]] = math.nan; data.EwEu_im_LC[index[0]] = math.nan
-    """
-    index = np.where(data.complex != 3)
-    data.EuiEui    [index[0]] = math.nan; data.EviEvi    [index[0]] = math.nan; data.EwiEwi    [index[0]] = math.nan
-    data.EuqEuq    [index[0]] = math.nan; data.EvqEvq    [index[0]] = math.nan; data.EwqEwq    [index[0]] = math.nan
-    data.EuiEvi    [index[0]] = math.nan; data.EviEwi    [index[0]] = math.nan; data.EwiEui    [index[0]] = math.nan
-    data.EuqEvq    [index[0]] = math.nan; data.EvqEwq    [index[0]] = math.nan; data.EwqEuq    [index[0]] = math.nan
-    data.EuiEvq    [index[0]] = math.nan; data.EviEwq    [index[0]] = math.nan; data.EwiEuq    [index[0]] = math.nan
-    data.EuqEvi    [index[0]] = math.nan; data.EvqEwi    [index[0]] = math.nan; data.EwqEui    [index[0]] = math.nan
-    data.EuiEuq    [index[0]] = math.nan; data.EviEvq    [index[0]] = math.nan; data.EwiEwq    [index[0]] = math.nan
-    """
     #
     index = np.where(data.U_selected == 0) 
     data.EuEu      [index[0]] = math.nan; data.EuEu_NC   [index[0]] = math.nan; data.EuEu_RC   [index[0]] = math.nan; data.EuEu_LC   [index[0]] = math.nan
@@ -463,33 +375,21 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     data.EuEv_re_NC[index[0]] = math.nan; data.EwEu_re_NC[index[0]] = math.nan; data.EuEv_im_NC[index[0]] = math.nan; data.EwEu_im_NC[index[0]] = math.nan
     data.EuEv_re_RC[index[0]] = math.nan; data.EwEu_re_RC[index[0]] = math.nan; data.EuEv_im_RC[index[0]] = math.nan; data.EwEu_im_RC[index[0]] = math.nan
     data.EuEv_re_LC[index[0]] = math.nan; data.EwEu_re_LC[index[0]] = math.nan; data.EuEv_im_LC[index[0]] = math.nan; data.EwEu_im_LC[index[0]] = math.nan
-    """
-    data.EuiEui    [index[0]] = math.nan; data.EuqEuq    [index[0]] = math.nan; data.EuiEuq    [index[0]] = math.nan
-    data.EuiEvi    [index[0]] = math.nan; data.EwiEui    [index[0]] = math.nan; data.EuqEvq    [index[0]] = math.nan; data.EwqEuq    [index[0]] = math.nan
-    data.EuiEvq    [index[0]] = math.nan; data.EwiEuq    [index[0]] = math.nan; data.EuqEvi    [index[0]] = math.nan; data.EwqEui    [index[0]] = math.nan
-    """
+    data.EuEu_raw  [index[0]] = math.nan; data.EuEu_amp  [index[0]] = math.nan; 
     index = np.where(data.V_selected == 0)
     data.EvEv      [index[0]] = math.nan; data.EvEv_NC   [index[0]] = math.nan; data.EvEv_RC   [index[0]] = math.nan; data.EvEv_LC   [index[0]] = math.nan 
     data.EvEw_re   [index[0]] = math.nan; data.EwEu_re   [index[0]] = math.nan; data.EvEw_im   [index[0]] = math.nan; data.EwEu_im   [index[0]] = math.nan
     data.EuEv_re_NC[index[0]] = math.nan; data.EvEw_re_NC[index[0]] = math.nan; data.EuEv_im_NC[index[0]] = math.nan; data.EvEw_im_NC[index[0]] = math.nan
     data.EuEv_re_RC[index[0]] = math.nan; data.EvEw_re_RC[index[0]] = math.nan; data.EuEv_im_RC[index[0]] = math.nan; data.EvEw_im_RC[index[0]] = math.nan
     data.EuEv_re_LC[index[0]] = math.nan; data.EvEw_re_LC[index[0]] = math.nan; data.EuEv_im_LC[index[0]] = math.nan; data.EvEw_im_LC[index[0]] = math.nan
-    """
-    data.EviEvi    [index[0]] = math.nan; data.EvqEvq    [index[0]] = math.nan; data.EviEvq    [index[0]] = math.nan
-    data.EuiEvi    [index[0]] = math.nan; data.EviEwi    [index[0]] = math.nan; data.EuqEvq    [index[0]] = math.nan; data.EvqEwq    [index[0]] = math.nan
-    data.EuiEvq    [index[0]] = math.nan; data.EviEwq    [index[0]] = math.nan; data.EuqEvi    [index[0]] = math.nan; data.EvqEwi    [index[0]] = math.nan
-    """
+    data.EvEv_raw  [index[0]] = math.nan; data.EvEv_amp  [index[0]] = math.nan; 
     index = np.where(data.W_selected == 0)
     data.EwEw      [index[0]] = math.nan; data.EwEw_NC   [index[0]] = math.nan; data.EwEw_RC   [index[0]] = math.nan; data.EwEw_LC   [index[0]] = math.nan
     data.EvEw_re   [index[0]] = math.nan; data.EwEu_re   [index[0]] = math.nan; data.EvEw_im   [index[0]] = math.nan; data.EwEu_im   [index[0]] = math.nan
     data.EvEw_re_NC[index[0]] = math.nan; data.EwEu_re_NC[index[0]] = math.nan; data.EvEw_im_NC[index[0]] = math.nan; data.EwEu_im_NC[index[0]] = math.nan    
     data.EvEw_re_RC[index[0]] = math.nan; data.EwEu_re_RC[index[0]] = math.nan; data.EvEw_im_RC[index[0]] = math.nan; data.EwEu_im_RC[index[0]] = math.nan
     data.EvEw_re_LC[index[0]] = math.nan; data.EwEu_re_LC[index[0]] = math.nan; data.EvEw_im_LC[index[0]] = math.nan; data.EwEu_im_LC[index[0]] = math.nan
-    """
-    data.EwiEwi    [index[0]] = math.nan; data.EwqEwq    [index[0]] = math.nan; data.EwiEwq    [index[0]] = math.nan
-    data.EviEwi    [index[0]] = math.nan; data.EwiEui    [index[0]] = math.nan; data.EvqEwq    [index[0]] = math.nan; data.EwqEuq    [index[0]] = math.nan
-    data.EviEwq    [index[0]] = math.nan; data.EwiEuq    [index[0]] = math.nan; data.EvqEwi    [index[0]] = math.nan; data.EwqEui    [index[0]] = math.nan
-    """
+    data.EwEw_raw  [index[0]] = math.nan; data.EwEw_amp  [index[0]] = math.nan; 
     
     # MIN: cut
     data.EuEu = np.ravel(data.EuEu);  data.EvEv = np.ravel(data.EvEv);  data.EwEw = np.ravel(data.EwEw)
@@ -516,14 +416,8 @@ def spec_nan(data, i):
     data.EuEu_LC   [i] = math.nan; data.EvEv_LC   [i] = math.nan; data.EwEw_LC   [i] = math.nan
     data.EuEv_re_LC[i] = math.nan; data.EvEw_re_LC[i] = math.nan; data.EwEu_re_LC[i] = math.nan
     data.EuEv_im_LC[i] = math.nan; data.EvEw_im_LC[i] = math.nan; data.EwEu_im_LC[i] = math.nan
-    """
-    data.EuiEui    [i] = math.nan; data.EviEvi    [i] = math.nan; data.EwiEwi    [i] = math.nan
-    data.EuqEuq    [i] = math.nan; data.EvqEvq    [i] = math.nan; data.EwqEwq    [i] = math.nan
-    data.EuiEvi    [i] = math.nan; data.EviEwi    [i] = math.nan; data.EwiEui    [i] = math.nan
-    data.EuqEvq    [i] = math.nan; data.EvqEwq    [i] = math.nan; data.EwqEuq    [i] = math.nan
-    data.EuiEvq    [i] = math.nan; data.EviEwq    [i] = math.nan; data.EwiEuq    [i] = math.nan
-    data.EuqEvi    [i] = math.nan; data.EvqEwi    [i] = math.nan; data.EwqEui    [i] = math.nan
-    data.EuiEuq    [i] = math.nan; data.EviEvq    [i] = math.nan; data.EwiEwq    [i] = math.nan
-    """
+    #
+    data.EuEu_raw  [i] = math.nan; data.EvEv_raw  [i] = math.nan; data.EwEw_raw  [i] = math.nan
+    data.EuEu_amp  [i] = math.nan; data.EvEv_amp  [i] = math.nan; data.EwEw_amp  [i] = math.nan
 
     hf_hk.status_nan(data, i, 3)

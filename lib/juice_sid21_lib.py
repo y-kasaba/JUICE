@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2025/12/1
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2026/3/4
 """
 import glob
 import numpy as np
@@ -22,7 +22,7 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
+        base_dir = '/Users/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID21_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -36,12 +36,16 @@ def datalist(date_str, ver_str):
     else:
 
         # *** Ground Test - Ver.3 ***
+        # 202601-- ASW3 test
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID21_20260109T165736-20260109T170606_V01___Sec05_260118.bin.cdf',
+                    ]
         # 202511 -- SAMPLE  Vin=10 mVpp     	interval=40 [s]			freq_set = [1.1 1.2 1.4 1.6 1.8] [MHz]
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID21_20000101T002158-20000101T002658_V01___SID5-21_20251123-1129.ccs.cdf',
                      'JUICE_L1a_RPWI-HF-SID21_20000101T003031-20000101T003642_V01___SID5-21_20251113-1746.ccs.cdf',
                       ]
-        """
         """
 
         # *** Ground Test - Ver.2 ***
@@ -87,26 +91,13 @@ def hf_sid21_read(cdf):
     data.EvEw_re = np.float64(cdf['EvEw_re'][...]);  data.EvEw_im = np.float64(cdf['EvEw_im'][...])  
     data.EwEu_re = np.float64(cdf['EwEu_re'][...]);  data.EwEu_im = np.float64(cdf['EwEu_im'][...])
     data.frequency  = cdf['frequency'][...];   data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
+    #
+    data.EuEu_amp = np.float64(cdf['EuEu_amp'][...]);   data.EuEu_raw = np.float64(cdf['EuEu_raw'][...])
+    data.EvEv_amp = np.float64(cdf['EvEv_amp'][...]);   data.EvEv_raw = np.float64(cdf['EvEv_raw'][...])
+    data.EwEw_amp = np.float64(cdf['EwEw_amp'][...]);   data.EwEw_raw = np.float64(cdf['EwEw_raw'][...])
+    data.gain_raw = cdf['gain_raw'][...];               data.df_raw = cdf['df_raw'][...]
 
     hf_hk.status_read(cdf, data)
-    """
-    data.RPWI_FSW_version = cdf['ISW_ver'][...]
-    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
-    data.epoch      = cdf['Epoch'][...];       data.scet      = cdf['SCET'][...]
-    # AUX
-    data.complex     = cdf['complex'][...]
-    data.ch_selected = cdf['ch_selected'][...]      # [0:U  1:V  2:W]
-    data.cal_signal  = cdf['cal_signal'][...]
-    data.RFI_rejection = cdf['RFI_rejection'][...]
-    #
-    data.T_RWI_CH1   = np.float32(cdf['T_RWI_CH1'][...])
-    data.T_RWI_CH2   = np.float32(cdf['T_RWI_CH2'][...])
-    data.T_HF_FPGA   = np.float32(cdf['T_HF_FPGA'][...])
-    # Header
-    data.N_step      = np.int64(cdf['N_step'][...])
-    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]
-    data.ISW_ver     = cdf['ISW_ver'][...]
-    """
 
     return data
 
@@ -117,34 +108,23 @@ def hf_sid21_add(data, data1):
     return: data
     """
     # Data
-    data.EuEu          = np.r_["0", data.EuEu, data1.EuEu]
-    data.EvEv          = np.r_["0", data.EvEv, data1.EvEv]
-    data.EwEw          = np.r_["0", data.EwEw, data1.EwEw]
-    data.EuEv_re       = np.r_["0", data.EuEv_re, data1.EuEv_re];    data.EuEv_im = np.r_["0", data.EuEv_im, data1.EuEv_im]
-    data.EvEw_re       = np.r_["0", data.EvEw_re, data1.EvEw_re];    data.EvEw_im = np.r_["0", data.EvEw_im, data1.EvEw_im]
-    data.EwEu_re       = np.r_["0", data.EwEu_re, data1.EwEu_re];    data.EwEu_im = np.r_["0", data.EwEu_im, data1.EwEu_im]
-    data.frequency     = np.r_["0", data.frequency, data1.frequency]
-    data.freq_step     = np.r_["0", data.freq_step, data1.freq_step]
-    data.freq_width    = np.r_["0", data.freq_width, data1.freq_width]
+    data.EuEu     = np.r_["0", data.EuEu, data1.EuEu]
+    data.EvEv     = np.r_["0", data.EvEv, data1.EvEv]
+    data.EwEw     = np.r_["0", data.EwEw, data1.EwEw]
+    data.EuEv_re  = np.r_["0", data.EuEv_re, data1.EuEv_re];    data.EuEv_im = np.r_["0", data.EuEv_im, data1.EuEv_im]
+    data.EvEw_re  = np.r_["0", data.EvEw_re, data1.EvEw_re];    data.EvEw_im = np.r_["0", data.EvEw_im, data1.EvEw_im]
+    data.EwEu_re  = np.r_["0", data.EwEu_re, data1.EwEu_re];    data.EwEu_im = np.r_["0", data.EwEu_im, data1.EwEu_im]
+    #
+    data.EuEu_raw = np.r_["0", data.EuEu_raw, data1.EuEu_raw];    data.EuEu_amp = np.r_["0", data.EuEu_amp, data1.EuEu_amp]
+    data.EvEv_raw = np.r_["0", data.EvEv_raw, data1.EvEv_raw];    data.EvEv_amp = np.r_["0", data.EvEv_amp, data1.EvEv_amp]
+    data.EwEw_raw = np.r_["0", data.EwEw_raw, data1.EwEw_raw];    data.EwEw_amp = np.r_["0", data.EwEw_amp, data1.EwEw_amp]
+    data.gain_raw = np.r_["0", data.gain_raw, data1.gain_raw];    data.df_raw   = np.r_["0", data.df_raw,   data1.df_raw]
+    #
+    data.frequency  = np.r_["0", data.frequency, data1.frequency]
+    data.freq_step  = np.r_["0", data.freq_step, data1.freq_step]
+    data.freq_width = np.r_["0", data.freq_width, data1.freq_width]
 
     hf_hk.status_add(data, data1)
-    """
-    data.epoch         = np.r_["0", data.epoch, data1.epoch]
-    data.scet          = np.r_["0", data.scet, data1.scet]
-    # AUX
-    data.complex       = np.r_["0", data.complex, data1.complex]
-    data.ch_selected   = np.r_["0", data.ch_selected, data1.ch_selected]
-    data.cal_signal    = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.RFI_rejection = np.r_["0", data.RFI_rejection, data1.RFI_rejection]
-    #
-    data.T_RWI_CH1     = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
-    data.T_RWI_CH2     = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
-    data.T_HF_FPGA     = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
-    # Header
-    data.N_step        = np.r_["0", data.N_step, data1.N_step]
-    data.ADC_ovrflw    = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
-    data.ISW_ver       = np.r_["0", data.ISW_ver, data1.ISW_ver]
-    """
     return data
 
 
@@ -202,31 +182,19 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
                 print(    "  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
 
         # Data
-        data.EuEu        = data.EuEu      [index[0]]; data.EvEv       = data.EvEv      [index[0]]; data.EwEw       = data.EwEw      [index[0]]
-        data.EuEv_re     = data.EuEv_re   [index[0]]; data.EvEw_re    = data.EvEw_re   [index[0]]; data.EwEu_re    = data.EwEu_re   [index[0]]
-        data.EuEv_im     = data.EuEv_im   [index[0]]; data.EvEw_im    = data.EvEw_im   [index[0]]; data.EwEu_im    = data.EwEu_im   [index[0]]
-        data.frequency   = data.frequency [index[0]]
-        data.freq_step   = data.freq_step [index[0]]
-        data.freq_width  = data.freq_width[index[0]]
+        data.EuEu       = data.EuEu    [index[0]]; data.EvEv     = data.EvEv    [index[0]]; data.EwEw     = data.EwEw    [index[0]]
+        data.EuEv_re    = data.EuEv_re [index[0]]; data.EvEw_re  = data.EvEw_re [index[0]]; data.EwEu_re  = data.EwEu_re [index[0]]
+        data.EuEv_im    = data.EuEv_im [index[0]]; data.EvEw_im  = data.EvEw_im [index[0]]; data.EwEu_im  = data.EwEu_im [index[0]]
+        #
+        data.EuEu_raw   = data.EuEu_raw[index[0]]; data.EvEv_raw = data.EvEv_raw[index[0]]; data.EwEw_raw = data.EwEw_raw[index[0]]
+        data.EuEu_amp   = data.EuEu_amp[index[0]]; data.EvEv_amp = data.EvEv_amp[index[0]]; data.EwEw_amp = data.EwEw_amp[index[0]]
+        data.gain_raw   = data.gain_raw[index[0]]; data.df_raw   = data.df_raw  [index[0]]
+        #
+        data.frequency  = data.frequency [index[0]]
+        data.freq_step  = data.freq_step [index[0]]
+        data.freq_width = data.freq_width[index[0]]
 
         hf_hk.status_shaping(data, index[0])
-        """
-        data.epoch       = data.epoch     [index[0]]
-        data.scet        = data.scet      [index[0]]
-        # AUX
-        data.complex     = data.complex[index[0]]
-        data.ch_selected = data.ch_selected[index[0]]
-        data.cal_signal  = data.cal_signal[index[0]]
-        data.RFI_rejection = data.RFI_rejection[index[0]]
-        #
-        data.T_RWI_CH1   = data.T_RWI_CH1[index[0]]
-        data.T_RWI_CH2   = data.T_RWI_CH2[index[0]]
-        data.T_HF_FPGA   = data.T_HF_FPGA[index[0]]
-        # Header
-        data.N_step      = data.N_step    [index[0]]
-        data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
-        data.ISW_ver     = data.ISW_ver   [index[0]]
-        """
 
         n_time = data.EuEu.shape[0]
         if cal_mode < 2:
@@ -255,14 +223,17 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
     data.EuEv_im[index[0]] = math.nan; data.EvEw_im[index[0]] = math.nan; data.EwEu_im[index[0]] = math.nan
     #
     index = np.where(data.ch_selected & 0b1 == 0) 
-    data.EuEu   [index[0]] = math.nan
-    data.EuEv_re[index[0]] = math.nan; data.EwEu_re[index[0]] = math.nan; data.EuEv_im[index[0]] = math.nan; data.EwEu_im[index[0]] = math.nan
+    data.EuEu    [index[0]] = math.nan
+    data.EuEv_re [index[0]] = math.nan; data.EwEu_re [index[0]] = math.nan; data.EuEv_im[index[0]] = math.nan; data.EwEu_im[index[0]] = math.nan
+    data.EuEu_raw[index[0]] = math.nan; data.EuEu_amp[index[0]] = math.nan; 
     index = np.where(data.ch_selected & 0b10 == 0)
     data.EvEv   [index[0]] = math.nan
     data.EvEw_re[index[0]] = math.nan; data.EwEu_re[index[0]] = math.nan; data.EvEw_im[index[0]] = math.nan; data.EwEu_im[index[0]] = math.nan
+    data.EvEv_raw[index[0]] = math.nan; data.EvEv_amp[index[0]] = math.nan; 
     index = np.where(data.ch_selected & 0b100 == 0)
     data.EwEw   [index[0]] = math.nan
     data.EvEw_re[index[0]] = math.nan; data.EwEu_re[index[0]] = math.nan; data.EvEw_im[index[0]] = math.nan; data.EwEu_im[index[0]] = math.nan
+    data.EwEw_raw[index[0]] = math.nan; data.EwEw_amp[index[0]] = math.nan; 
 
     """
     # Masked
@@ -286,5 +257,8 @@ def spec_nan(data, i):
     data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
     data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
     data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan
+    #
+    data.EuEu_raw  [i] = math.nan; data.EvEv_raw  [i] = math.nan; data.EwEw_raw  [i] = math.nan
+    data.EuEu_amp  [i] = math.nan; data.EvEv_amp  [i] = math.nan; data.EwEw_amp  [i] = math.nan
 
     hf_hk.status_nan(data, i, 21)

@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2025/10/26
+# JUICE RPWI HF CDF lib -- 2026/2/12
 
 # import glob
 # import spacepy.pycdf
@@ -76,14 +76,12 @@ def _get_frequencies(sample_rate, n_freq, samp):
     fs = 80e3                       # start freq
     fe = 45e6                       # end   freq
     df = (fe - fs) / (n_freq - 1)   # band width
-
     i_freq = np.arange(0, n_freq)
     freq = np.float32((fs + df * i_freq) / 1000.)
     step = np.float32((i_freq * 0. + df) / 1000.)
     width = np.float32(
         (i_freq * 0. + sample_rate * 0.7566) / 1000.,
     )
-
     freq = np.repeat(freq, samp)
     step = np.repeat(step, samp)
     width = np.repeat(width, samp)
@@ -92,37 +90,17 @@ def _get_frequencies(sample_rate, n_freq, samp):
 
 # Frequency: Band
 # Output: freq, step, width ******** NEW ********
-def _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, samp):
+def _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, samp, isw_version):
     freq = []
     step = []
     width = []
     for i in range(b_num):
         f_freq, f_step, f_width = _get_band(
-            b_start[i], b_stop[i], b_step[i], b_sdiv[i], sample_rate,
+            b_start[i], b_stop[i], b_step[i], b_sdiv[i], sample_rate, isw_version
         )
         freq.extend(f_freq)
         step.extend(f_step)
         width.extend(f_width)
-
-    freq = np.repeat(freq, samp)
-    step = np.repeat(step, samp)
-    width = np.repeat(width, samp)
-    return freq, step, width
-
-
-def _get_frequencies_band(sample_rate, b_num, b_start, b_stop,
-                          b_step, b_repeat, b_sdiv, samp):
-    freq = []
-    step = []
-    width = []
-    for i in range(b_num):
-        f_freq, f_step, f_width = _get_band(
-            b_start[i], b_stop[i], b_step[i], b_sdiv[i], sample_rate,
-        )
-        freq.extend(f_freq)
-        step.extend(f_step)
-        width.extend(f_width)
-
     freq = np.repeat(freq, samp)
     step = np.repeat(step, samp)
     width = np.repeat(width, samp)
@@ -131,15 +109,22 @@ def _get_frequencies_band(sample_rate, b_num, b_start, b_stop,
 
 # Frequency: Band
 # Output: freq, step, width
-def _get_band(start, stop, step, sdiv, bw_eff):
+def _get_band(start, stop, step, sdiv, bw_eff, isw_version):
+    f_step = (stop - start) / step
+    bw_eff = bw_eff / 1000.
+    if isw_version == 2:
+        bw_eff = bw_eff * 0.75
+    elif isw_version == 3:
+        bw_eff = bw_eff * 0.625
+    else:
+        raise ValueError(
+            f"_get_frequencies_band - frequency: -{isw_version}",
+        )
     if sdiv > 0:
         n_band = step * sdiv
         freq_band = np.float32(np.repeat(-10 ** 30, n_band))
         freq_step = np.float32(np.repeat(-10 ** 30, n_band))
         freq_width = np.float32(np.repeat(-10 ** 30, n_band))
-        f_step = (stop - start) / step
-        bw_eff = bw_eff * 0.75 / 1000.
-
         for i in range(step):
             f_mid = start + f_step * i
             f_div = bw_eff / sdiv
@@ -149,16 +134,13 @@ def _get_band(start, stop, step, sdiv, bw_eff):
                 freq_band[ii] = f_low + f_div*j + f_div*0.5
                 freq_step[ii] = f_step / sdiv
                 freq_width[ii] = f_div
-
+        # print(n_band)
     else:
         sdiv = abs(sdiv)
         n_band = step / sdiv
         freq_band = np.float32(np.repeat(-10 ** 30, n_band))
         freq_step = np.float32(np.repeat(-10 ** 30, n_band))
         freq_width = np.float32(np.repeat(-10 ** 30, n_band))
-        f_step = (stop - start) / step
-        bw_eff = bw_eff * 0.75 / 1000.
-
         ii = 0
         for i in range(0, step, sdiv):
             f_mid1 = start + f_step * i
@@ -167,29 +149,24 @@ def _get_band(start, stop, step, sdiv, bw_eff):
             freq_step[ii] = f_step * sdiv
             freq_width[ii] = bw_eff * sdiv
             ii = ii + 1
-
+        # print(n_band)
     return freq_band, freq_step, freq_width
 
 
-# Frequency: SID-2
+# Frequency: SID-2 ASW3
 # Output: freq, f_step, f_width
 def _frequency_sid2(asw_ver):
     # ASW2
     decimation = 0
-    N_step = 202
     b_num = 1
-    b_start = [131, 0, 0, 0, 0]
-    # b_start = [191, 0, 0, 0, 0]
-    b_stop = [44975, 0, 0, 0, 0]
-    # b_stop = [45111, 0, 0, 0, 0]
-    b_step = [202, 0, 0, 0, 0]
+    b_start = [112, 0, 0, 0, 0]
+    b_stop = [45867, 0, 0, 0, 0]
+    b_step = [243, 0, 0, 0, 0]
     b_repeat = [1, 0, 0, 0, 0]
     b_sdiv = [1, 0, 0, 0, 0]
-    N_samp = 128
     sample_rate = _sample_rate(decimation)
-    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, 1)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, 1, asw_ver)
     return freq, f_step, f_width
-
 
 # Frequency: SID-3
 def _frequency_sid3(asw_ver):
@@ -216,41 +193,35 @@ def _frequency_sid3(asw_ver):
         b_sdiv = [24, 12, 6, 3, 1]
     elif asw_ver == 3.0:
         b_num = 5
-        b_start = [131, 353, 575, 1019, 2129]
-        # b_start = [191, 413, 635, 1079, 2189]
-        b_stop = [353, 575, 1019, 2129, 44975]
-        # b_stop = [413, 635, 1079, 2189, 45035]
-        b_step = [1, 1, 2, 5, 193]
-        b_repeat = [16, 8, 4, 2, 1]
-        b_sdiv = [24, 12, 6, 3, 1]
+        b_start  = [112,  297,    482,    1222,   3257]
+        b_stop   = [297,  482,    1222,   3257,   44697]
+        b_step   = [1,    1,      4,      11,     224]
+        b_repeat = [40,   20,     10,     4,      1]
+        b_sdiv   = [40,   20,     10,     4,      -2]
     elif asw_ver == 3.1:
         b_num = 5
-        b_start = [131, 575, 2129, 3683, 16115]
-        # b_start = [191, 635, 2189, 3743, 16175]
-        b_stop = [575, 2129, 3683, 16115, 40091]
-        # b_stop = [635, 2189, 3743, 16175, 40151]
-        b_step = [2, 7, 7, 56, 108]
-        b_repeat = [24, 8, 2, 1, 1]
-        b_sdiv = [48, 12, 3, -2, -4]
+        b_start  = [112,    482,    2332,   3627,   17317]
+        b_stop   = [482,    2332,   3627,   17317,  40257]
+        b_step   = [2,      10,     7,      74,     124]
+        b_repeat = [24,     8,      8,      1,      1]
+        b_sdiv   = [40,     8,      4,      -2,     -4]
     elif asw_ver == 3.2:
         b_num = 5
-        b_start = [131, 575, 2129, 3683, 26327]
-        # b_start = [191, 635, 2189, 3743, 26387]
-        b_stop = [575, 2129, 3683, 26327, 44975]
-        # b_stop = [635, 2189, 3743, 26387, 45035]
-        b_step = [2, 7, 7, 102, 84]
-        b_repeat = [32, 8, 2, 1, 1]
-        b_sdiv = [48, 12, 3, -3, -4]
+        b_start  = [112,    482,    2147,   3812,   31562]
+        b_stop   = [482,    2147,   3812,   31562,  44882]
+        b_step   = [2,      9,      9,      150,    72]
+        b_repeat = [30,     7,      4,      1,      1]
+        b_sdiv   = [40,     8,      4,      -3,     -4]
     else:
         print("ASW version is not supported")
         os.system("pause")
-    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, asw_ver)
     return freq, f_step, f_width
 
 
 # Frequency: SID-4 & SID-20
 # Output: freq, f_step, f_width
-def _frequency_sid4_sid20():
+def _frequency_sid4_sid20(asw_ver):
     decimation = 3
     b_num = 1
     b_start = [34, 0, 0, 0, 0]
@@ -262,12 +233,12 @@ def _frequency_sid4_sid20():
     b_sdiv = [1, 0, 0, 0, 0]
     N_samp = 1
     sample_rate = _sample_rate(decimation)
-    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, asw_ver)
     return freq, f_step, f_width
 
 # Frequency: SID-5 & SID-21
 # Output: freq, f_step, f_width
-def _frequency_sid5_sid21():
+def _frequency_sid5_sid21(asw_ver):
     decimation = 0
     b_num = 1
     b_start = [131, 0, 0, 0, 0]
@@ -279,12 +250,12 @@ def _frequency_sid5_sid21():
     b_sdiv = [96, 0, 0, 0, 0]
     N_samp = 1
     sample_rate = _sample_rate(decimation)
-    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, asw_ver)
     return freq, f_step, f_width
 
 # Frequency: SID-6 & SID-22
 # Output: freq, f_step, f_width
-def _frequency_sid6_sid22():
+def _frequency_sid6_sid22(asw_ver):
     decimation = 0
     b_num = 2
     b_start = [300, 10500, 0, 0, 0]
@@ -294,7 +265,7 @@ def _frequency_sid6_sid22():
     b_sdiv = [1, 1, 0, 0, 0]
     N_samp = 1
     sample_rate = _sample_rate(decimation)
-    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, asw_ver)
     return freq, f_step, f_width
 
 # Frequency: MASK frequency matching

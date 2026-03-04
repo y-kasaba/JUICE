@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2025/12/1
+    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2026/3/4
 """
 import glob
 import math
@@ -22,7 +22,7 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
+        base_dir = '/Users/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID5_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -35,12 +35,16 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
+        # 202601-- ASW3 test
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20260109T165736-20260109T170606_V01___Sec05_260118.bin.cdf',
+                    ]
         # 202511 -- SAMPLE  Vin=10 mVpp     	interval=40 [s]			freq_set = [1.1 1.2 1.4 1.6 1.8] [MHz]
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID5_20000101T002158-20000101T002628_V01___SID5-21_20251123-1129.ccs.cdf',
                      'JUICE_L1a_RPWI-HF-SID5_20000101T003031-20000101T003531_V01___SID5-21_20251113-1746.ccs.cdf',
                       ]
-        """
         """
 
         # *** Ground Test - Ver.2 ***
@@ -49,18 +53,10 @@ def datalist(date_str, ver_str):
         data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID5_20251003T080925-20251003T081100_V01___TMIDX_00001.bin.cdf']
         """
-        # 202310 -- SAMPLE -- 1.55MHz, 10mVpp, 90/0/0deg -- 1611 - wo RF, 1603 -- with RFI
-        """
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/old/'
-        data_list = [#'JUICE_L1a_RPWI-HF-SID5_20000101T002245-20000101T002315_V01___SID05-21_20231024-0046.ccs.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID5_20000101T000128-20000101T000213_V01___SID05-21_20231117-1603.ccs.cdf',
-                     'JUICE_L1a_RPWI-HF-SID5_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf',
-                    ]
-        """
         # 202503 -- Flight
         """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID5_20250331T033821-20250331T034222_V01___RPR2_62000007_2025.091.16.40.05.450.cdf']
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20250331T033821-20250331T034222_V01___RPR1_52000005_2025.091.16.38.56.448.cdf']
         """
 
     print(data_dir)
@@ -81,25 +77,11 @@ def hf_sid5_read(cdf):
     # Data
     data.EE = np.float64(cdf['EE'][...])
     data.frequency  = cdf['frequency'][...];   data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
+    #
+    data.EE_amp = np.float64(cdf['EE_amp'][...]);   data.EE_raw = np.float64(cdf['EE_raw'][...])
+    data.gain_raw = cdf['gain_raw'][...];           data.df_raw = cdf['df_raw'][...]
 
     hf_hk.status_read(cdf, data)
-    """
-    data.RPWI_FSW_version = cdf['ISW_ver'][...]
-    data.RPWI_FSW_version = data.RPWI_FSW_version[0]
-    data.epoch       = cdf['Epoch'][...];      data.scet      = cdf['SCET'][...]
-    # AUX
-    data.ch_selected = cdf['ch_selected'][...]      # [0:U  1:V  2:W]
-    data.cal_signal  = cdf['cal_signal'][...]
-    data.RFI_rejection = cdf['RFI_rejection'][...]
-    #
-    data.T_RWI_CH1   = np.float32(cdf['T_RWI_CH1'][...])
-    data.T_RWI_CH2   = np.float32(cdf['T_RWI_CH2'][...])
-    data.T_HF_FPGA   = np.float32(cdf['T_HF_FPGA'][...])
-    # Header
-    data.N_step      = np.int64(cdf['N_step'][...])
-    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]
-    data.ISW_ver     = cdf['ISW_ver'][...]
-    """
     return data
 
 
@@ -109,28 +91,15 @@ def hf_sid5_add(data, data1):
     return: data
     """
     # Data
-    data.EE           = np.r_["0", data.EE, data1.EE]
-    data.frequency    = np.r_["0", data.frequency, data1.frequency]
-    data.freq_step    = np.r_["0", data.freq_step, data1.freq_step]
-    data.freq_width   = np.r_["0", data.freq_width, data1.freq_width]
+    data.EE         = np.r_["0", data.EE, data1.EE]
+    data.frequency  = np.r_["0", data.frequency, data1.frequency]
+    data.freq_step  = np.r_["0", data.freq_step, data1.freq_step]
+    data.freq_width = np.r_["0", data.freq_width, data1.freq_width]
+    #
+    data.EE_raw     = np.r_["0", data.EE_raw, data1.EE_raw];        data.EE_amp     = np.r_["0", data.EE_amp, data1.EE_amp]
+    data.gain_raw   = np.r_["0", data.gain_raw, data1.gain_raw];    data.df_raw     = np.r_["0", data.df_raw, data1.df_raw]
 
     hf_hk.status_add(data, data1)
-    """
-    data.epoch        = np.r_["0", data.epoch, data1.epoch]
-    data.scet         = np.r_["0", data.scet, data1.scet]
-    # AUX
-    data.ch_selected   = np.r_["0", data.ch_selected, data1.ch_selected]
-    data.cal_signal    = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.RFI_rejection = np.r_["0", data.RFI_rejection, data1.RFI_rejection]
-    #
-    data.T_RWI_CH1     = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
-    data.T_RWI_CH2     = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
-    data.T_HF_FPGA     = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
-    # Header
-    data.N_step       = np.r_["0", data.N_step, data1.N_step]
-    data.ADC_ovrflw   = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
-    data.ISW_ver      = np.r_["0", data.ISW_ver, data1.ISW_ver]
-    """
     return data
 
 
@@ -152,24 +121,11 @@ def hf_sid5_shaping(data, cal_mode):
         data.frequency   = data.frequency [index[0]]
         data.freq_step   = data.freq_step [index[0]]
         data.freq_width  = data.freq_width[index[0]]
-
-        hf_hk.status_shaping(data, index[0])
-        """
-        data.epoch       = data.epoch     [index[0]]
-        data.scet        = data.scet      [index[0]]
-        # AUX
-        data.ch_selected = data.ch_selected[index[0]]
-        data.cal_signal  = data.cal_signal[index[0]]
-        data.RFI_rejection = data.RFI_rejection[index[0]]
         #
-        data.T_RWI_CH1   = data.T_RWI_CH1 [index[0]]
-        data.T_RWI_CH2   = data.T_RWI_CH2 [index[0]]
-        data.T_HF_FPGA   = data.T_HF_FPGA [index[0]]
-        # Header
-        data.N_samp      = data.N_samp    [index[0]]
-        data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
-        data.ISW_ver     = data.ISW_ver   [index[0]]
-        """
+        data.EE_raw   = data.EE_raw  [index[0]];    data.EE_amp = data.EE_amp[index[0]]
+        data.gain_raw = data.gain_raw[index[0]];    data.df_raw = data.df_raw[index[0]]
+        
+        hf_hk.status_shaping(data, index[0])
     
         n_time = data.EE.shape[0]
         if cal_mode < 2:
@@ -187,6 +143,6 @@ def hf_sid5_shaping(data, cal_mode):
 
 
 def spec_nan(data, i):
-    data.EE[i] = math.nan
-
+    data.EE[i]     = math.nan;  data.EE_raw[i] = math.nan;  data.EE_amp[i] = math.nan
+    
     hf_hk.status_nan(data, i, 5)

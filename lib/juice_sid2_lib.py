@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2025/11/23
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/3/4
 """
 import glob
 import numpy as np
@@ -21,7 +21,7 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'         # ASW2
+        base_dir = '/Users/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID2_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -40,17 +40,16 @@ def datalist(date_str, ver_str):
                      'JUICE_L1a_RPWI-HF-SID2_20000101T000226-20000101T001610_V01___SID2_20251113-1351.ccs.cdf'
                     ]
         """
+        """
         # 202509 -- SAMPLE --1.5MHz	OFF-> 10mVpp->100mVpp->500mVpp-> OFF (500mVpp - saturated)
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old2/'
         data_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000327-20000101T000857_V01___SID02_20251010-1729.ccs.cdf']
-        # 202411 -- SAMPLE -- SG - 1.75MHz 100mVpp 90/0/0deg
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000129-20000101T000229_V01___SID02_20241125-1316_asw3.ccs.cdf']
         """
 
         # *** Ground Test - Ver.2 ***
-        """
         # 202510 -- PCW4 emulation
+        """
         data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID2_20251003T080233-20251003T080516_V01___TMIDX_00000.bin.cdf']
         # 202410 -- SAMPLE -- SG - 1.0MHz 10mVpp 90/0/0deg
@@ -72,7 +71,7 @@ def datalist(date_str, ver_str):
         ]
         """
 
-        # [MEMO: ASW1 data]  *** Flight - Ver.1
+        # *** Flight - Ver.1
         """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW1/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID2_20230419T135855-20230419T141235_V01___RPR1_52000000_2023.109.16.17.21.607.cdf',
@@ -119,32 +118,27 @@ def hf_sid2_read(cdf):
     """
     data = struct()
 
-    # Data
+    # Waveform Data
     data.Eu_i      = np.float64(cdf['Eu_i'][...]);  data.Eu_q = np.float64(cdf['Eu_q'][...])
     data.Ev_i      = np.float64(cdf['Ev_i'][...]);  data.Ev_q = np.float64(cdf['Ev_q'][...])
     data.Ew_i      = np.float64(cdf['Ew_i'][...]);  data.Ew_q = np.float64(cdf['Ew_q'][...])
     data.frequency = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...]; data.freq_width = cdf['freq_width'][...]
     data.time      = cdf['time'][...];       
 
-    hf_hk.status_read(cdf, data)
-    """
-    data.epoch     = cdf['Epoch'][...];     data.scet      = cdf['SCET'][...]
-    # AUX
-    data.ch_selected = cdf['ch_selected'][...]
-    data.cal_signal  = cdf['cal_signal'][...]
-    data.T_RWI_CH1   = np.float32(cdf['T_RWI_CH1'][...])
-    data.T_RWI_CH2   = np.float32(cdf['T_RWI_CH2'][...])
-    data.T_HF_FPGA   = np.float32(cdf['T_HF_FPGA'][...])
-    # Header
-    data.N_samp      = np.int64(cdf['N_samp'][...])
-    data.N_step      = np.int64(cdf['N_step'][...])
-    data.decimation  = cdf['decimation'][...]
-    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...] 
-    data.ISW_ver     = cdf['ISW_ver'][...]
-    data.HF_QF       = cdf['HF_QF'][...]    # Quality flag: b0:RWI-off b1:Cal b2-3:Ovrflw b4:RIME b5-7:n/a (b0-1=3:error)'
-    """
+    # Spectrum Data
+    data.spec_EuEu = np.float64(cdf['EuEu_raw'][...])
+    data.spec_EvEv = np.float64(cdf['EvEv_raw'][...])
+    data.spec_EwEw = np.float64(cdf['EwEw_raw'][...])
+    data.spec_EuEu_amp = np.float64(cdf['EuEu_amp'][...]);  data.spec_EuEu_raw = np.float64(cdf['EuEu_raw'][...])
+    data.spec_EvEv_amp = np.float64(cdf['EvEv_amp'][...]);  data.spec_EvEv_raw = np.float64(cdf['EvEv_raw'][...])
+    data.spec_EwEw_amp = np.float64(cdf['EwEw_amp'][...]);  data.spec_EwEw_raw = np.float64(cdf['EwEw_raw'][...])
+    data.frequency2 = cdf['frequency2'][...];  data.freq_step2 = cdf['freq_step2'][...]; data.freq_width2 = cdf['freq_width2'][...]
+    data.gain_raw = cdf['gain_raw'][...];      data.df_raw = cdf['df_raw'][...]
 
-    # ### ASW1: SPECIAL: data shift -16
+    # HK
+    hf_hk.status_read(cdf, data)
+
+    # ASW1: data shift -16
     date = data.epoch[0];  month = date.strftime('%Y%m')
     if month == "202304" or month == "202305" or month == "202307":
         data.Eu_i = np.roll(data.Eu_i, -16);  data.Eu_q = np.roll(data.Eu_q, -16)
@@ -155,37 +149,32 @@ def hf_sid2_read(cdf):
 
 
 def hf_sid2_add(data, data1):
-    # Data
-    data.Eu_i        = np.r_["0", data.Eu_i, data1.Eu_i]
-    data.Eu_q        = np.r_["0", data.Eu_q, data1.Eu_q]
-    data.Ev_i        = np.r_["0", data.Ev_i, data1.Ev_i]
-    data.Ev_q        = np.r_["0", data.Ev_q, data1.Ev_q]
-    data.Ew_i        = np.r_["0", data.Ew_i, data1.Ew_i]
-    data.Ew_q        = np.r_["0", data.Ew_q, data1.Ew_q]
-    #
+    # Waveform Data
+    data.Eu_i        = np.r_["0", data.Eu_i, data1.Eu_i];   data.Eu_q = np.r_["0", data.Eu_q, data1.Eu_q]
+    data.Ev_i        = np.r_["0", data.Ev_i, data1.Ev_i];   data.Ev_q = np.r_["0", data.Ev_q, data1.Ev_q]
+    data.Ew_i        = np.r_["0", data.Ew_i, data1.Ew_i];   data.Ew_q = np.r_["0", data.Ew_q, data1.Ew_q]
     data.frequency   = np.r_["0", data.frequency, data1.frequency]
     data.freq_step   = np.r_["0", data.freq_step, data1.freq_step]
     data.freq_width  = np.r_["0", data.freq_width, data1.freq_width]
     data.time        = np.r_["0", data.time, data1.time]
 
+    # Spectrum Data
+    data.spec_EuEu   = np.r_["0", data.spec_EuEu,   data1.spec_EuEu]
+    data.spec_EvEv   = np.r_["0", data.spec_EvEv,   data1.spec_EvEv]
+    data.spec_EwEw   = np.r_["0", data.spec_EwEw,   data1.spec_EwEw]
+    data.spec_EuEu_amp = np.r_["0", data.spec_EuEu_amp, data1.spec_EuEu_amp]
+    data.spec_EvEv_amp = np.r_["0", data.spec_EvEv_amp, data1.spec_EvEv_amp]
+    data.spec_EwEw_amp = np.r_["0", data.spec_EwEw_amp, data1.spec_EwEw_amp]
+    data.spec_EuEu_raw = np.r_["0", data.spec_EuEu_raw, data1.spec_EuEu_raw]
+    data.spec_EvEv_raw = np.r_["0", data.spec_EvEv_raw, data1.spec_EvEv_raw]
+    data.spec_EwEw_raw = np.r_["0", data.spec_EwEw_raw, data1.spec_EwEw_raw]
+    data.frequency2  = np.r_["0", data.frequency2,  data1.frequency2]
+    data.freq_step2  = np.r_["0", data.freq_step2,  data1.freq_step2]
+    data.freq_width2 = np.r_["0", data.freq_width2, data1.freq_width2]
+    data.gain_raw    = np.r_["0", data.gain_raw, data1.gain_raw]
+    data.df_raw      = np.r_["0", data.df_raw, data1.df_raw]
+
     hf_hk.status_add(data, data1)
-    """
-    data.epoch       = np.r_["0", data.epoch, data1.epoch]
-    data.scet        = np.r_["0", data.scet,  data1.scet]
-    # AUX
-    data.ch_selected = np.r_["0", data.ch_selected, data1.ch_selected]
-    data.cal_signal  = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.T_RWI_CH1   = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
-    data.T_RWI_CH2   = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
-    data.T_HF_FPGA   = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
-    # Header
-    data.N_samp      = np.r_["0", data.N_samp, data1.N_samp]
-    data.N_step      = np.r_["0", data.N_step, data1.N_step]
-    data.decimation  = np.r_["0", data.decimation, data1.decimation]
-    data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
-    data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
-    data.HF_QF       = np.r_["0", data.HF_QF, data1.HF_QF]
-    """
     return data
 
 
@@ -254,33 +243,29 @@ def hf_sid2_shaping(data, cal_mode):
         if cal_mode == 0: print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only BG>")
         else:             print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only CAL>")
 
-    # NAN -- no data channels
-    index = np.where(data.ch_selected & 0b1   == 0);  data.Eu_i[index[0]] = math.nan;  data.Eu_q[index[0]] = math.nan
-    index = np.where(data.ch_selected & 0b10  == 0);  data.Ev_i[index[0]] = math.nan;  data.Ev_q[index[0]] = math.nan
-    index = np.where(data.ch_selected & 0b100 == 0);  data.Ew_i[index[0]] = math.nan;  data.Ew_q[index[0]] = math.nan
-
     return data
 
 
 def hf_sid2_select_time(data, index):
-    # Data
+    # Waveform Data
     data.Eu_i      = data.Eu_i     [index[0]];   data.Eu_q = data.Eu_q[index[0]]
     data.Ev_i      = data.Ev_i     [index[0]];   data.Ev_q = data.Ev_q[index[0]]
     data.Ew_i      = data.Ew_i     [index[0]];   data.Ew_q = data.Ew_q[index[0]]
     data.frequency = data.frequency[index[0]];   data.freq_step = data.freq_step[index[0]];  data.freq_width = data.freq_width[index[0]]
     data.time      = data.time     [index[0]]
-    # data.epoch     = data.epoch    [index[0]];  data.scet       = data.scet      [index[0]]
+
+    # Spectrum Data
+    data.spec_EuEu = data.spec_EuEu[index[0]]
+    data.spec_EvEv = data.spec_EvEv[index[0]]
+    data.spec_EwEw = data.spec_EwEw[index[0]]
+    data.spec_EuEu_amp = data.spec_EuEu_amp[index[0]];  data.spec_EuEu_raw = data.spec_EuEu_raw[index[0]]
+    data.spec_EvEv_amp = data.spec_EvEv_amp[index[0]];  data.spec_EvEv_raw = data.spec_EvEv_raw[index[0]]
+    data.spec_EwEw_amp = data.spec_EwEw_amp[index[0]];  data.spec_EwEw_raw = data.spec_EwEw_raw[index[0]]
+    data.gain_raw  = data.gain_raw[index[0]];           data.df_raw     = data.df_raw[index[0]]
+
+    data.frequency2= data.frequency2[index[0]]; data.freq_step2 = data.freq_step2[index[0]];  data.freq_width2 = data.freq_width2[index[0]]
 
     hf_hk.status_shaping(data, index[0])
-    """
-    # AUX
-    data.T_RWI_CH1 = data.T_RWI_CH1[index[0]];   data.T_RWI_CH2 = data.T_RWI_CH2[index[0]];  data.T_HF_FPGA  = data.T_HF_FPGA [index[0]]
-    data.ch_selected = data.ch_selected[index[0]]; data.cal_signal= data.cal_signal [index[0]]
-    # Header
-    data.N_step    = data.N_step    [index[0]];  data.N_samp  = data.N_samp [index[0]]; 
-    data.decimation= data.decimation[index[0]]
-    data.ADC_ovrflw= data.ADC_ovrflw[index[0]];  data.ISW_ver = data.ISW_ver[index[0]]
-    """
     return data
 
 
@@ -289,6 +274,13 @@ def hf_sid2_spec_nan(data, i):
     data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
     data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
     data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan
+
+    data.spec_EuEu [i] = math.nan; 
+    data.spec_EvEv [i] = math.nan; 
+    data.spec_EwEw [i] = math.nan; 
+    data.spec_EuEu_amp [i] = math.nan;  data.spec_EuEu_raw [i] = math.nan
+    data.spec_EvEv_amp [i] = math.nan;  data.spec_EvEv_raw [i] = math.nan
+    data.spec_EwEw_amp [i] = math.nan;  data.spec_EwEw_raw [i] = math.nan
 
     hf_hk.status_nan(data, i, 2)
 

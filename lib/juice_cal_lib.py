@@ -1,5 +1,4 @@
 # JUICE RPWI HF CAL lib -- 2025/10/9
-
 import copy
 import csv
 import numpy as np
@@ -132,22 +131,26 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
 
     # Amplitude correction
     cal_factor = 1.0
-    if unit_mode > 0:
-        if   sid==3 and spec.RPWI_FSW_version == 2: # '2.0':
-            cal_factor = 0.1                            # ASW2 --- bug
-        elif sid==3 and spec.RPWI_FSW_version == 3: #'3.0':
-            cal_factor = 100.                           # ASW3 --- ASW2 x 1000
+    if   sid==3:                                        # SID-3:
+        if (band_mode > 0 or unit_mode > 0) and spec.RPWI_FSW_version > 1:
+            cal_factor = 0.1
+        print("<cal_factor: SID-3 Ver.2->",   1/cal_factor**2, band_mode, "--", unit_mode, spec.RPWI_FSW_version)
+    else:
+        print("<cal_factor: others>",   1/cal_factor**2)
     
     # Band width correction
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
     if band_mode > 0:
         # BUG correction in ASW2 SID-3
-        if sid==3 and spec.RPWI_FSW_version == 2: # '2.0':
+        if sid==3 and spec.RPWI_FSW_version == 2:       # '2.0':
             CAL_f_gain = CAL_f_gain / 289.              # ASW2 --- bug
-        elif sid==3 and spec.RPWI_FSW_version == 3: # '3.0':
+            print("<CAL_f_gain: SID-3 Ver.2>",  1/CAL_f_gain[0][0]**2)
+        elif sid==3 and spec.RPWI_FSW_version == 3:     # '3.0':
             CAL_f_gain = CAL_f_gain / 289.              # ASW3 --- ASW2
+            print("<CAL_f_gain: SID-3 Ver.3>",  1/CAL_f_gain[0][0]**2)
         else:
             CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
+            print("<CAL_f_gain: others     >",  1/CAL_f_gain[0][0]**2)
  
     # Complex CAL parameters
     CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
@@ -214,9 +217,9 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     spec.str_unit = power_label(unit_mode, band_mode)
 
     n_freq0 = freq.shape[0]
-    print("CAL-U (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[0][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[0][n_freq0//8]))
-    print("CAL-V (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[1][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[1][n_freq0//8]))
-    print("CAL-W (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[2][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[2][n_freq0//8]))
+    print("CAL-U (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[0][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[0][n_freq0//8]), "--", 1/CAL_f_gain[0][0]**2, 1/cal_factor**2)
+    print("CAL-V (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[1][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[1][n_freq0//8]), "--", 1/CAL_f_gain[1][0]**2, 1/cal_factor**2)
+    print("CAL-W (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[2][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[2][n_freq0//8]), "--", 1/CAL_f_gain[2][0]**2, 1/cal_factor**2)
     return spec
 
 

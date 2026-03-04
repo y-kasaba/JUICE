@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich): L1a QL -- 2025/12/6
+    JUICE RPWI HF SID23 (PSSR3 rich) and SID8 (PSSR3 survey RAW): L1a QL -- 2026/3/4
 """
 import glob
 import numpy          as np
@@ -9,7 +9,7 @@ import juice_cdf_lib   as hk_cdf
 class struct:
     pass
 
-def datalist(date_str, ver_str):
+def datalist(date_str, ver_str, sid):
     """
     input:  date_str        yyyymmdd: group read    others: file list
     return: data_dir
@@ -22,7 +22,7 @@ def datalist(date_str, ver_str):
     
     # *** Group read
     if yr_format=='20':
-        base_dir = '/Users/user/D-Univ/data/data-JUICE/datasets/'
+        base_dir = '/Users/D-Univ/data/data-JUICE/datasets/'
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
         data_name = '*HF*SID23_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
@@ -33,26 +33,27 @@ def datalist(date_str, ver_str):
         for i in range(num_list):
             data_list[i] = os.path.split(data_list[i])[1]
 
-    else:
+    elif sid == 23: 	# <<< SID-23 test datas >>>
         # *** Ground Test - Ver.3 ***
-        # 202511 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
-        #   C1  2d matix    RFI rejection OFF,                                  new sweep table (Beff=62.5%)
-	    #   C2  pol-sep     RFI rejection OFF, noise floor subtraction OFF,     new sweep table (Beff=62.5%)
-        #	interval=40s	freq_set = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T000155-20000101T000503_V01___SID7-23_P0_20251113-2224.ccs.cdf',
-                    ]        
+        # 202601-- ASW3 test
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID23_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID23_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID23_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf',
+                    ]    
+        # 202511 -- SAMPLE
+        # HF_20251113-2224	PSSR3 (param0 = 0)	    1.75 1.8 1.85 [MHz]   Vin = 10mVpp
+        # HF_20251204-0844  PSSR3 (param0 = 1->0)	1.75 1.8 1.85 [MHz]   Vin = 10mVpp
         """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = [# 'JUICE_L1a_RPWI-HF-SID23_20000101T000155-20000101T000503_V01___SID7-23_P0_20251113-2224.ccs.cdf'
+                     'JUICE_L1a_RPWI-HF-SID23_20000101T000049-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf',
+                    ]
         """
         # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old2/'
         data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T064546-20000101T064910_V01___SID07-23_20250925-1722_10mVpp.ccs.cdf']
-        """
-        # 202411 -- SAMPLE -- SG: 1.75MHz 100mVpp 90/0/0deg
-        """
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/old/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T000512-20000101T000512_V01___SID07-23_20241125-1321_PSSR3_asw3.ccs.cdf']    
         """
 
         # *** Ground Test - Ver.2 ***
@@ -79,6 +80,20 @@ def datalist(date_str, ver_str):
                     ]
         """
 
+    else:               # <<< SID-08 test datas >>>
+        # 202601-- ASW3 test
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID8_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf'
+                    ]
+        # 202512 -- SAMPLE
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID8_20000101T000504-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf',
+        ]
+        """
+
     print(data_dir)
     print(data_list)
     return data_dir, data_list
@@ -102,24 +117,16 @@ def hf_sid23_read(cdf):
     data.Ew_i        = np.float64(cdf['Ew_i'][...]);       data.Ew_q = np.float64(cdf['Ew_q'][...])
     data.time_block  = np.float64(cdf['time_block'][...]); data.time = np.float64(cdf['time'][...])
 
-    hf_hk.status_read(cdf, data)
-    """
-    data.epoch       = cdf['Epoch'][...];                  data.scet = cdf['SCET'][...]
-    # AUX
-    data.N_block     = np.int16(cdf['N_block'][...])
-    data.N_feed      = np.int16(cdf['N_feed'][...])
-    data.cal_signal  = cdf['cal_signal'][...]
-    data.freq_center = cdf['freq_center'][...]
-    #
-    data.T_RWI_CH1   = np.float32(cdf['T_RWI_CH1'][...])
-    data.T_RWI_CH2   = np.float32(cdf['T_RWI_CH2'][...])
-    data.T_HF_FPGA   = np.float32(cdf['T_HF_FPGA'][...])
-    # Header
-    data.ADC_ovrflw  = cdf['ADC_ovrflw'][...]
-    data.ISW_ver     = cdf['ISW_ver'][...]
-    data.HF_QF       = cdf['HF_QF'][...]    # Quality flag: b0:RWI-off b1:Cal b2-3:Ovrflw b4:RIME b5-7:n/a (b0-1=3:error)'
-    """
+    # Spectrum Data
+    data.spec_EuEu = np.float64(cdf['EuEu_raw'][...])
+    data.spec_EvEv = np.float64(cdf['EvEv_raw'][...])
+    data.spec_EwEw = np.float64(cdf['EwEw_raw'][...])
+    data.spec_EuEu_amp = np.float64(cdf['EuEu_amp'][...]);  data.spec_EuEu_raw = np.float64(cdf['EuEu_raw'][...])
+    data.spec_EvEv_amp = np.float64(cdf['EvEv_amp'][...]);  data.spec_EvEv_raw = np.float64(cdf['EvEv_raw'][...])
+    data.spec_EwEw_amp = np.float64(cdf['EwEw_amp'][...]);  data.spec_EwEw_raw = np.float64(cdf['EwEw_raw'][...])
+    data.gain_raw = cdf['gain_raw'][...];      data.df_raw = cdf['df_raw'][...]
 
+    hf_hk.status_read(cdf, data)
     return data
 
 
@@ -134,23 +141,20 @@ def hf_sid23_add(data, data1):
     data.Ew_i        = np.r_["0", data.Ew_i, data1.Ew_i];              data.Ew_q = np.r_["0", data.Ew_q, data1.Ew_q]
     data.time_block  = np.r_["0", data.time_block, data1.time_block];  data.time        = np.r_["0", data.time, data1.time]
 
+    # Spectrum Data
+    data.spec_EuEu   = np.r_["0", data.spec_EuEu,   data1.spec_EuEu]
+    data.spec_EvEv   = np.r_["0", data.spec_EvEv,   data1.spec_EvEv]
+    data.spec_EwEw   = np.r_["0", data.spec_EwEw,   data1.spec_EwEw]
+    data.spec_EuEu_amp = np.r_["0", data.spec_EuEu_amp, data1.spec_EuEu_amp]
+    data.spec_EvEv_amp = np.r_["0", data.spec_EvEv_amp, data1.spec_EvEv_amp]
+    data.spec_EwEw_amp = np.r_["0", data.spec_EwEw_amp, data1.spec_EwEw_amp]
+    data.spec_EuEu_raw = np.r_["0", data.spec_EuEu_raw, data1.spec_EuEu_raw]
+    data.spec_EvEv_raw = np.r_["0", data.spec_EvEv_raw, data1.spec_EvEv_raw]
+    data.spec_EwEw_raw = np.r_["0", data.spec_EwEw_raw, data1.spec_EwEw_raw]
+    data.gain_raw   = np.r_["0", data.gain_raw, data1.gain_raw]
+    data.df_raw     = np.r_["0", data.df_raw,   data1.df_raw]
+
     hf_hk.status_add(data, data1)
-    """
-    data.epoch       = np.r_["0", data.epoch, data1.epoch];            data.scet = np.r_["0", data.scet, data1.scet]
-    # AUX
-    data.N_block     = np.r_["0", data.N_block, data1.N_block]
-    data.N_feed      = np.r_["0", data.N_feed, data1.N_feed]
-    data.cal_signal  = np.r_["0", data.cal_signal, data1.cal_signal]
-    data.freq_center = np.r_["0", data.freq_center, data1.freq_center]
-    #
-    data.T_RWI_CH1   = np.r_["0", data.T_RWI_CH1, data1.T_RWI_CH1]
-    data.T_RWI_CH2   = np.r_["0", data.T_RWI_CH2, data1.T_RWI_CH2]
-    data.T_HF_FPGA   = np.r_["0", data.T_HF_FPGA, data1.T_HF_FPGA]
-    # Header
-    data.ADC_ovrflw  = np.r_["0", data.ADC_ovrflw, data1.ADC_ovrflw]
-    data.ISW_ver     = np.r_["0", data.ISW_ver, data1.ISW_ver]
-    data.HF_QF       = np.r_["0", data.HF_QF, data1.HF_QF]
-    """
     return data
 
 
@@ -161,42 +165,34 @@ def hf_sid23_shaping(data, f_max, f_min):
     """
     # Size - original
     data.n_time = data.Eu_i.shape[0]
-    data.n_block = data.N_block[data.n_time//2]
-    data.n_feed = data.N_feed[data.n_time//2]
-    print("    org:", data.Eu_i.shape, data.n_time, data.n_block, data.n_feed)
+    data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
+    data.n_samp = data.N_samp[data.n_time//2]
+    print("    org:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp)
 
-    # ---------------------------
+    """
+    # -------------------
     # --- shape-check ---
-    # ---------------------------
-    index = np.where( (data.N_block == data.n_block) & (data.N_feed == data.n_feed) )
+    # -------------------
+    index = np.where( (data.N_block == data.n_block) & (data.N_samp == data.n_samp) )
     # Data
     data.Eu_i        = data.Eu_i [index[0]];       data.Eu_q = data.Eu_q [index[0]]
     data.Ev_i        = data.Ev_i [index[0]];       data.Ev_q = data.Ev_q [index[0]]
     data.Ew_i        = data.Ew_i [index[0]];       data.Ew_q = data.Ew_q [index[0]]
-    data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
+    data.time_block  = data.time_block [index[0]]; data.time = data.time [index[0]]
+
+    data.spec_EuEu_amp = data.spec_EuEu_amp[index[0]];  data.spec_EuEu_raw = data.spec_EuEu_raw[index[0]]
+    data.spec_EvEv_amp = data.spec_EvEv_amp[index[0]];  data.spec_EvEv_raw = data.spec_EvEv_raw[index[0]]
+    data.spec_EwEw_amp = data.spec_EwEw_amp[index[0]];  data.spec_EwEw_raw = data.spec_EwEw_raw[index[0]]
+    data.gain_raw  = data.gain_raw[index[0]];           data.df_raw     = data.df_raw[index[0]]
 
     hf_hk.status_shaping(data, index[0])
-    """
-    data.epoch       = data.epoch[index[0]];       data.scet = data.scet[index[0]]
-    # AUX
-    data.N_block     = data.N_block [index[0]]
-    data.N_feed      = data.N_feed  [index[0]]
-    data.cal_signal  = data.cal_signal [index[0]]
-    data.freq_center = data.freq_center[index[0]]
-    #
-    data.T_RWI_CH1   = data.T_RWI_CH1[index[0]]
-    data.T_RWI_CH2   = data.T_RWI_CH2[index[0]]
-    data.T_HF_FPGA   = data.T_HF_FPGA[index[0]]
-    # Header
-    data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
-    data.ISW_ver     = data.ISW_ver   [index[0]]
-    """
     #
     # Size - after frequency selection
     data.n_time = data.Eu_i.shape[0]
     data.n_block = data.N_block[data.n_time//2]
-    data.n_feed = data.N_feed[data.n_time//2]
-    print("   cut1:", data.Eu_i.shape, data.n_time, data.n_block, data.n_feed)
+    data.n_samp = data.N_samp[data.n_time//2]
+    print("   cut1:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp)
+    """
 
     # ---------------------------
     # --- frequency selection ---
@@ -206,46 +202,15 @@ def hf_sid23_shaping(data, f_max, f_min):
     data.Eu_i        = data.Eu_i [index[0]];       data.Eu_q = data.Eu_q [index[0]]
     data.Ev_i        = data.Ev_i [index[0]];       data.Ev_q = data.Ev_q [index[0]]
     data.Ew_i        = data.Ew_i [index[0]];       data.Ew_q = data.Ew_q [index[0]]
-    data.time_block  = data.time_block [index[0]]; data.time        = data.time [index[0]]
+    data.time_block  = data.time_block [index[0]]; data.time = data.time [index[0]]
 
     hf_hk.status_shaping(data, index[0])
-    """
-    data.epoch       = data.epoch[index[0]];       data.scet = data.scet[index[0]]
-    # AUX
-    data.N_block     = data.N_block [index[0]]
-    data.N_feed      = data.N_feed  [index[0]]
-    data.cal_signal  = data.cal_signal [index[0]]
-    data.freq_center = data.freq_center[index[0]]
-    #
-    data.T_RWI_CH1   = data.T_RWI_CH1[index[0]]
-    data.T_RWI_CH2   = data.T_RWI_CH2[index[0]]
-    data.T_HF_FPGA   = data.T_HF_FPGA[index[0]]
-    # Header
-    data.ADC_ovrflw  = data.ADC_ovrflw[index[0]]
-    data.ISW_ver     = data.ISW_ver   [index[0]]
-    """
     #
     # Size - after frequency selection
     data.n_time = data.Eu_i.shape[0]
-    data.n_block = data.N_block[data.n_time//2]
-    data.n_feed = data.N_feed[data.n_time//2]
-    print("  cut2:", data.Eu_i.shape, data.n_time, data.n_block, data.n_feed, "   frequency in", f_min, "-", f_max, "kHz")
-
-
-    # -------------------------------------
-    # Reshape to "3D: n_time * n_block * n_feed"
-    # -------------------------------------
-    """
-    data.Eu_i = np.array(data.Eu_i).reshape(data.n_time, data.n_block, data.n_feed*128)
-    data.Eu_q = np.array(data.Eu_q).reshape(data.n_time, data.n_block, data.n_feed*128)
-    data.Ev_i = np.array(data.Ev_i).reshape(data.n_time, data.n_block, data.n_feed*128)
-    data.Ev_q = np.array(data.Ev_q).reshape(data.n_time, data.n_block, data.n_feed*128)
-    data.Ew_i = np.array(data.Ew_i).reshape(data.n_time, data.n_block, data.n_feed*128)
-    data.Ew_q = np.array(data.Ew_q).reshape(data.n_time, data.n_block, data.n_feed*128)
-    data.time = np.array(data.time).reshape(data.n_time, data.n_block, data.n_feed*128)
-    print(" sort:", data.Eu_i.shape, data.n_time, data.n_block, data.n_feed)
-    """
-
+    data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
+    data.n_samp = data.N_samp[data.n_time//2]
+    print("  cut2:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "   frequency in", f_min, "-", f_max, "kHz")
     return data
 
 
@@ -257,14 +222,14 @@ def hf_sid23_getauto(data):
     """
     # Spec formation
     auto = struct()
-    auto.EuEu = np.zeros(data.n_time*data.n_block*data.n_feed*128)
-    auto.EvEv = np.zeros(data.n_time*data.n_block*data.n_feed*128)
-    auto.EwEw = np.zeros(data.n_time*data.n_block*data.n_feed*128)
-    auto.EE   = np.zeros(data.n_time*data.n_block*data.n_feed*128)
-    auto.EuEu = auto.EuEu.reshape(data.n_time, data.n_block, data.n_feed*128)
-    auto.EvEv = auto.EvEv.reshape(data.n_time, data.n_block, data.n_feed*128)
-    auto.EwEw = auto.EwEw.reshape(data.n_time, data.n_block, data.n_feed*128)
-    auto.EE   = auto.EE.reshape(data.n_time, data.n_block, data.n_feed*128)
+    auto.EuEu = np.zeros(data.n_time*data.n_block*data.n_samp)
+    auto.EvEv = np.zeros(data.n_time*data.n_block*data.n_samp)
+    auto.EwEw = np.zeros(data.n_time*data.n_block*data.n_samp)
+    auto.EE   = np.zeros(data.n_time*data.n_block*data.n_samp)
+    auto.EuEu = auto.EuEu.reshape(data.n_time, data.n_block, data.n_samp)
+    auto.EvEv = auto.EvEv.reshape(data.n_time, data.n_block, data.n_samp)
+    auto.EwEw = auto.EwEw.reshape(data.n_time, data.n_block, data.n_samp)
+    auto.EE   = auto.EE.reshape(data.n_time, data.n_block, data.n_samp)
 
     for i in range(data.n_time):
         for j in range(data.n_block):
@@ -277,6 +242,8 @@ def hf_sid23_getauto(data):
             EuEu_auto = np.correlate(EuEu, EuEu, mode='full')
             EuEu_auto = EuEu_auto[EuEu_auto.shape[0]//2:]
             EuEu_auto /= len(EuEu_auto)
+            print(i, j, "EuEu_auto shape:", EuEu_auto.shape, "EuEu shape:", EuEu.shape, auto.EuEu.shape)
+            # 0 0 EuEu_auto shape: (3328,) EuEu shape: (3328,) (8, 45, 0)
             auto.EuEu[i][j] = EuEu_auto
 
             EvEv_auto = np.correlate(EvEv, EvEv, mode='full')
@@ -314,7 +281,7 @@ def hf_sid23_rime_detect(data):
     k0 = 0
     for i in range(data.n_time):
         for j in range(data.n_block):
-            for k in range(data.n_feed*128):
+            for k in range(data.n_samp):
                 if data.EuEu[i][j][k] >= 1000:
                     if k-k0 > 80:
                         print(k0, k)
