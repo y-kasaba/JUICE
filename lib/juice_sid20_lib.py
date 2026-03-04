@@ -64,10 +64,12 @@ def datalist(date_str, ver_str, sid):
                     ]
         """
         # *** Ground Test - Ver.2 ***
-        """
         # 202510 -- PCW4 emulation
-        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID20_20251003T080724-20251003T080912_V01___TMIDX_00001.bin.cdf']
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID20_20251003T080724-20251003T080912_V01___PC4-1_00001.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID20_20251003T080737-20251003T080925_V01___TMIDX_00001.bin.cdf',
+                    ]
+        """
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID20_20000101T000102-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf',
@@ -116,10 +118,12 @@ def datalist(date_str, ver_str, sid):
                     ]
         """
         # *** Ground Test - Ver.2 ***
-        """
         # 202510 -- PCW4 emulation
-        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID4_20251003T080734-20251003T080910_V01___TMIDX_00001.bin.cdf']
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20251003T080734-20251003T080910_V01___PC4-1_00001.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20251003T080747-20251003T080923_V01___TMIDX_00001.bin.cdf',
+                    ]
+        """
         # 202310 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID4_20000101T000112-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf',

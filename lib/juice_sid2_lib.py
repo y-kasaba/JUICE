@@ -50,9 +50,13 @@ def datalist(date_str, ver_str):
         # *** Ground Test - Ver.2 ***
         # 202510 -- PCW4 emulation
         """
-        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID2_20251003T080233-20251003T080516_V01___TMIDX_00000.bin.cdf']
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID2_20251003T080233-20251003T080516_V01___PC4-1_00000.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID2_20251003T080246-20251003T080529_V01___TMIDX_00000.bin.cdf',
+                    ]
+        """
         # 202410 -- SAMPLE -- SG - 1.0MHz 10mVpp 90/0/0deg
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000154-20000101T000454_V01___SID02_20241021-1026.ccs.cdf',                     
                      #'old/JUICE_L1a_RPWI-HF-SID2_20000101T000413-20000101T000513_V01___SID02_20231117-1607.ccs.cdf',

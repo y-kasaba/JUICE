@@ -49,9 +49,11 @@ def datalist(date_str, ver_str):
 
         # *** Ground Test - Ver.2 ***
         # 202510 -- PCW4 emulation
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20251003T080925-20251003T081100_V01___PC4-1_00001.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID5_20251003T080938-20251003T081113_V01___TMIDX_00001.bin.cdf',
+                     ]
         """
-        data_dir = '/Users/user/G-Univ/TU/TU_C_staffs/C-Space/JUICE/data/test-TMIDX/251003_PCW4_test/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID5_20251003T080925-20251003T081100_V01___TMIDX_00001.bin.cdf']
         """
         # 202503 -- Flight
         """
