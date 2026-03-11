@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/3/4
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/3/11
 """
 import glob
 import numpy as np
@@ -65,14 +65,15 @@ def datalist(date_str, ver_str):
         """
 
         # *** Flight - Ver.2 ***
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID2_20240125T112327-20240125T113141_V01___RPR1_52000011_2024.025.15.57.21.441.cdf',    # f_max: 44888.625
                      #'JUICE_L1a_RPWI-HF-SID2_20240125T152238-20240125T152330_V01___RPR1_52000012_2024.025.16.07.08.425.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20240822T023129-20240822T023713_V01___RPR1_52000003_2024.235.03.19.13.483.cdf',    # f_max: 44813.
                      #'JUICE_L1a_RPWI-HF-SID2_20240822T023715-20240822T023953_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',
-                     'JUICE_L1a_RPWI-HF-SID2_20250331T005104-20250331T233757_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',    # CAL
-        ]
+                     'JUICE_L1a_RPWI-HF-SID2_20250331T005104-20250331T233757_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',    # CAL  81.15625 - 44922.84375 kHz 
+                     'JUICE_L1a_RPWI-HF-SID2_20260223T003941-20260223T004236_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',    # CAL: 81.15625 - 44922.84375 kHz / 19392
+                    ]
+        """
         """
 
         # *** Flight - Ver.1

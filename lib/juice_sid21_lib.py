@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2026/3/4
+    JUICE RPWI HF SID21 (PSSR1 rich): L1a QL -- 2026/3/11
 """
 import glob
 import numpy as np
@@ -50,11 +50,11 @@ def datalist(date_str, ver_str):
 
         # *** Ground Test - Ver.2 ***
         # 202510 -- PCW4 emulation
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID21_20251003T080925-20251003T081100_V01___PC4-1_00001.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID21_20251003T080938-20251003T081113_V01___TMIDX_00001.bin.cdf',
                      ]
-        """
         """
         # 202311 -- SAMPLE -- SG 1.55MHz, 10mVpp, [90.0, 0.0, 0.0]    20231117-1611: with RFI-mitigation
         """
@@ -66,10 +66,12 @@ def datalist(date_str, ver_str):
         """
 
         # 202503 -- Flight
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = ['JUICE_L1a_RPWI-HF-SID21_20250331T033821-20250331T034222_V01___RPR2_62000007_2025.091.16.40.05.450.cdf',
-                        ]
+                     'JUICE_L1a_RPWI-HF-SID21_20260223T004655-20260223T004831_V01___RPR2_62000001_2026.054.09.35.22.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID21_20260223T082205-20260223T082341_V01___RPR2_62000001_2026.054.09.35.22.426.cdf',
+                    ]
+        """
         """
 
     print(data_dir)

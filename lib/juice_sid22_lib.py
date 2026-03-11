@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID6 & 22 (PSSR2): L1a QL -- 2026/3/4
+    JUICE RPWI HF SID6 & 22 (PSSR2): L1a QL -- 2026/3/11
 """
 import glob
 import numpy as np
@@ -45,13 +45,6 @@ def datalist(date_str, ver_str, sid):
                      #'JUICE_L1a_RPWI-HF-SID22_20000101T000051-20000101T000121_V01___SID6-22_P0_20251212-2236.ccs.cdf',
         ]
         """
-
-    elif sid == 9:  # <<< SID-09 test datas >>>
-        # *** Ground Test - Ver.3 ***
-        # 202601
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID9_20000101T000034-20000101T000104_V01___SID9-22_20260114.dat.cdf',
-        ]
 
     else:               # <<< SID-06 test datas >>>
         # 202601
