@@ -63,6 +63,7 @@ def datalist(date_str, ver_str):
                      'JUICE_L1a_RPWI-HF-SID3_20000101T000043-20000101T001343_V01___SID3_C2_20251113-1715.ccs.cdf',  
                             # (polariztion separation, RFI rejection OFF, noise floor subtraction OFF), new sweep table (Beff=62.5%)
 	                        # int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
+                     'JUICE_L1a_RPWI-HF-SID3_20000101T000153-20000101T000323_V01___SID3_20251211-2231.ccs.cdf',
                     ]
         """
         # 202509 -- SAMPLE
@@ -125,6 +126,7 @@ def datalist(date_str, ver_str):
                     ]
         """
         # *** Flight data: Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID3_20240126T083835-20240126T113101_V01___RPR1_52000013_2024.026.13.22.14.423.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240701T011127-20240701T011309_V01___RPR1_52000001_2024.183.15.43.53.614.cdf',
@@ -142,7 +144,6 @@ def datalist(date_str, ver_str):
                      'JUICE_L1a_RPWI-HF-SID3_20260225T073900-20260227T054301_V01___RPR1_52000005_2026.062.11.30.25.518.cdf',
                      'JUICE_L1a_RPWI-HF-SID3_20260227T091840-20260228T222000_V01___RPR1_52000006_2026.062.11.56.35.462.cdf',
         ]
-        """
         """
         # *** Flight - Ver.1 ***
         """

@@ -1,5 +1,5 @@
 #---------------------------------------------------------------------
-# JUICE RPWI HF HK -- 2024/7/17
+# JUICE RPWI HF HK -- 2026/3/13
 #---------------------------------------------------------------------
 import glob
 import spacepy.pycdf
@@ -47,44 +47,32 @@ def juice_gethk_hf(data, mode):
     hk = struct()
     hk.epoch = data['Epoch'][...]
     
-    if mode == 0:
-        # LWYHK00032        https://www.space.irfu.se/juice/mib_database/TM/S3_25/LWY_HK_00032.html
-        hk.v1_8 = data['LWT03316']
-        # hk.pol = data['LWT03313']
-        hk.heater_ena = data['LWT03314']
-        hk.calsig_ena = data['LWT0332C']
-
-        hk.temp_rwi_ch1_raw = np.float32(data['LWT03337'][...])
-        hk.temp_rwi_ch2_raw = np.float32(data['LWT03339'][...])
-        hk.temp_hf_fpga_raw = np.float32(data['LWT0333B'][...])
-
-        hk.temp_rwi_ch1 = data['LWT03337_CALIBRATED'][...]
-        hk.temp_rwi_ch2 = data['LWT03339_CALIBRATED'][...]
-        hk.temp_hf_fpga = data['LWT0333B_CALIBRATED'][...]
-    else:
-        # LWYHK10033        https://www.space.irfu.se/juice/mib_database/TM/S3_25/LWY_HK_10033.html
-        hk.v1_8 = data['LWT04320']
-        # hk.pol = data['LWT04331']
-        hk.heater_ena = data['LWT04332']
-        # hk.calsig_ena = none?
-
+    if mode == 0:       # ASW1 / LWYHK00032
+        hk.v1_8             =  data['LWT03316']
+        hk.rwi_on           = (data['LWT0331D']<<2) + (data['LWT0331E']<<1) + data['LWT0331F']
+        hk.heater_ena       =  data['LWT03314']
+        hk.temp_rwi_ch1_raw =  np.float32(data['LWT03337'][...])
+        hk.temp_rwi_ch2_raw =  np.float32(data['LWT03339'][...])
+        hk.temp_hf_fpga_raw =  np.float32(data['LWT0333B'][...])
+    elif mode == 1:     # ASW2 / LWYHK10033
+        hk.v1_8             = data['LWT04320']
+        hk.rwi_on           = (data['LWT04327']<<2) + (data['LWT04328']<<1) + data['LWT04329']
+        hk.heater_ena       = data['LWT04332']
         hk.temp_rwi_ch1_raw = np.float32(data['LWT04333'][...])
         hk.temp_rwi_ch2_raw = np.float32(data['LWT04334'][...])
         hk.temp_hf_fpga_raw = np.float32(data['LWT04335'][...])
-
-        hk.temp_rwi_ch1 = -2.754000E+02 + 6.979000E-02 * hk.temp_rwi_ch1_raw + 7.553000E-05 * (hk.temp_rwi_ch1_raw)**2 -5.196000E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.643000E-11* (hk.temp_rwi_ch1_raw)**4
-        hk.temp_rwi_ch2 = -2.743000E+02 + 6.838000E-02 * hk.temp_rwi_ch2_raw + 7.865000E-05 * (hk.temp_rwi_ch2_raw)**2 -5.466000E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.707000E-11* (hk.temp_rwi_ch2_raw)**4
-        hk.temp_hf_fpga = -2.288629E+02 - 4.686928E-02 * hk.temp_hf_fpga_raw + 1.584843E-04 * (hk.temp_hf_fpga_raw)**2 -8.207110E-08 * (hk.temp_hf_fpga_raw)**3 + 2.189507E-11* (hk.temp_hf_fpga_raw)**4
+    elif mode == 2:     # ASW3 /LWYHK20033
+        hk.v1_8             = data['LWT04300']
+        hk.rwi_on           = (data['LWT04304']<<2) + (data['LWT04305']<<1) + data['LWT04306']
+        hk.heater_ena       = data['LWT04313']
+        hk.temp_rwi_ch1_raw = np.float32(data['LWT04314'][...])
+        hk.temp_rwi_ch2_raw = np.float32(data['LWT04315'][...])
+        hk.temp_hf_fpga_raw = np.float32(data['LWT04316'][...])
 
     # ASW3
-    hk.temp_rwi_ch1_rev = -2.29287E+02 - 4.54293E-03 * hk.temp_rwi_ch1_raw + 1.12892E-04 * (hk.temp_rwi_ch1_raw)**2 -5.79267E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.64358E-11 * (hk.temp_rwi_ch1_raw)**4
-    hk.temp_rwi_ch2_rev = -2.28787E+02 - 4.54293E-03 * hk.temp_rwi_ch2_raw + 1.12892E-04 * (hk.temp_rwi_ch2_raw)**2 -5.79267E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.64358E-11 * (hk.temp_rwi_ch2_raw)**4
-    hk.temp_hf_fpga_rev = -2.47787E+02 + 4.54293E-03 * hk.temp_hf_fpga_raw + 1.12892E-04 * (hk.temp_hf_fpga_raw)**2 -5.79267E-08 * (hk.temp_hf_fpga_raw)**3 + 1.64358E-11 * (hk.temp_hf_fpga_raw)**4
-
-    # ICD - modified
-    hk.temp_rwi_ch1_rev2 = -2.28245E+02 + 1.33770E-03 * hk.temp_rwi_ch1_raw + 1.05086E-04 * (hk.temp_rwi_ch1_raw)**2 -5.41059E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.58098E-11* (hk.temp_rwi_ch1_raw)**4
-    hk.temp_rwi_ch2_rev2 = -2.28245E+02 + 1.33770E-03 * hk.temp_rwi_ch2_raw + 1.05086E-04 * (hk.temp_rwi_ch2_raw)**2 -5.41059E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.58098E-11* (hk.temp_rwi_ch2_raw)**4
-    hk.temp_hf_fpga_rev2 = -2.49225E+02 + 1.04332E-02 * hk.temp_hf_fpga_raw + 1.05301E-04 * (hk.temp_hf_fpga_raw)**2 -5.42289E-08 * (hk.temp_hf_fpga_raw)**3 + 1.58352E-11* (hk.temp_hf_fpga_raw)**4
+    hk.temp_hf_fpga = -2.47787E+02 + 4.54293E-03 * hk.temp_hf_fpga_raw + 1.12892E-04 * (hk.temp_hf_fpga_raw)**2 -5.79267E-08 * (hk.temp_hf_fpga_raw)**3 + 1.64358E-11 * (hk.temp_hf_fpga_raw)**4
+    hk.temp_rwi_ch1 = -2.29287E+02 - 4.54293E-03 * hk.temp_rwi_ch1_raw + 1.12892E-04 * (hk.temp_rwi_ch1_raw)**2 -5.79267E-08 * (hk.temp_rwi_ch1_raw)**3 + 1.64358E-11 * (hk.temp_rwi_ch1_raw)**4
+    hk.temp_rwi_ch2 = -2.28787E+02 - 4.54293E-03 * hk.temp_rwi_ch2_raw + 1.12892E-04 * (hk.temp_rwi_ch2_raw)**2 -5.79267E-08 * (hk.temp_rwi_ch2_raw)**3 + 1.64358E-11 * (hk.temp_rwi_ch2_raw)**4
 
     return hk
 

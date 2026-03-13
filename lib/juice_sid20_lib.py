@@ -81,6 +81,7 @@ def datalist(date_str, ver_str, sid):
                     ]
         """
         # *** Flight data: Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID20_20240126T113714-20240126T114759_V01___RPR2_62000007_2024.026.12.58.18.441.cdf',
                      #'JUICE_L1a_RPWI-HF-SID20_20240126T114800-20240126T123719_V01___RPR2_62000008_2024.026.13.54.26.469.cdf',
@@ -89,7 +90,6 @@ def datalist(date_str, ver_str, sid):
                      'JUICE_L1a_RPWI-HF-SID20_20260223T004451-20260223T004640_V01___RPR2_62000001_2026.054.09.35.22.426.cdf',
                      'JUICE_L1a_RPWI-HF-SID20_20260223T082001-20260223T082150_V01___RPR2_62000001_2026.054.09.35.22.426.cdf',
                     ]
-        """
         """
 
     else:     # <<< SID-4 test datas >>>
@@ -139,13 +139,13 @@ def datalist(date_str, ver_str, sid):
                          ]
         """
         # *** Flight data: Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID4_20240126T113727-20240126T123719_V01___RPR1_52000013_2024.026.13.22.14.423.cdf',
                      'JUICE_L1a_RPWI-HF-SID4_20240706T121439-20240706T125422_V01___RPR1_52000002_2024.190.14.59.43.630.cdf',
                      #'JUICE_L1a_RPWI-HF-SID4_20240819T203025-20240819T210933_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',
                      'JUICE_L1a_RPWI-HF-SID4_20260223T004501-20260223T004630_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',
                      ]
-        """
         """
 
     print(data_dir)
