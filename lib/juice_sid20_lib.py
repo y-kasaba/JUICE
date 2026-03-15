@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 & 20: L1a QL -- 2026/3/11
+    JUICE RPWI HF SID4 & 20: L1a QL -- 2026/3/16
 """
 import glob
 import numpy as np
@@ -45,14 +45,14 @@ def datalist(date_str, ver_str, sid):
                      'JUICE_L1a_RPWI-HF-SID20_20260110T000730-20260110T001635_V01___Sec20_260118.bin.cdf',
                     ]
         # 202511 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID20_20000101T000046-20000101T000506_V01___SID4-20_20251123-1107.ccs.cdf',         # .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  f = 1.8 [MHz]
+        data_list = [#'JUICE_L1a_RPWI-HF-SID20_20000101T000046-20000101T000506_V01___SID4-20_20251123-1107.ccs.cdf',         # .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  f = 1.8 [MHz]
                      #'JUICE_L1a_RPWI-HF-SID20_20000101T000718-20000101T001159_V01___SID4-20_20251123-1345.ccs.cdf',         # .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  int=1 [s]	 f = 0.02 0.1 0.5 1.1 1.8 [MHz]
-                     #'JUICE_L1a_RPWI-HF-SID20_20000101T000823-20000101T001238_V01___SID4-20_20251123-1114.ccs.cdf',         # .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  int=1 [s]	 f = 0.02 0.1 0.5 1.1 1.8 [MHz]
+                     'JUICE_L1a_RPWI-HF-SID20_20000101T000823-20000101T001238_V01___SID4-20_20251123-1114.ccs.cdf',         # .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  int=1 [s]	 f = 0.02 0.1 0.5 1.1 1.8 [MHz]
                      #'JUICE_L1a_RPWI-HF-SID20_20000101T002118-20000101T002307_V01___SID4-20_0.5s_20251113-1736.ccs.cdf',    # int=1[s]	f = 0.02 0.1 0.5 1.1 1.8 [MHz]
                      #'JUICE_L1a_RPWI-HF-SID20_20000101T002515-20000101T002833_V01___SID4-20_20251113-1741.ccs.cdf',			#           f = 1.8 [MHz]
                     ]
+        """
         """
         # 202509 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
         """
@@ -221,10 +221,8 @@ def hf_sid20_shaping(data, cal_mode, comp_mode):
     data.n_time  = data.EuEu.shape[0]
     data.n_freq  = data.EuEu.shape[1]
     data.n_step  = data.N_step [data.n_time//2]
-    if data.sid in [20]:
-        data.n_block = data.N_block[data.n_time//2]
-    else:
-        data.n_block = 1
+    if data.sid in [20]:  data.n_block = min(data.N_block)
+    else:                 data.n_block = 1
     n_num = data.n_step * data.n_block
 
     if   data.n_freq != 72  and data.sid == 4:
@@ -247,10 +245,8 @@ def hf_sid20_shaping(data, cal_mode, comp_mode):
         data.n_time  = data.EuEu.shape[0]
         data.n_freq  = data.EuEu.shape[1]
         data.n_step  = data.N_step [data.n_time//2]
-        if data.sid in [20]:
-            data.n_block = data.N_block[data.n_time//2]
-        else:
-            data.n_block = 1
+        if data.sid in [20]:  data.n_block = min(data.N_block)
+        else:                 data.n_block = 1
         n_num = data.n_step * data.n_block
         print("  cut:[SID]", data.sid, "  size:", data.EuEu.shape, data.n_time, "x", data.n_freq, "[", data.n_time*data.n_freq, "]", 
             data.n_time, "x", data.n_block, "x", data.n_step, "[", data.n_time*data.n_block*data.n_step, "]")
@@ -304,10 +300,8 @@ def hf_sid20_shaping(data, cal_mode, comp_mode):
     data.n_time  = data.EuEu.shape[0]
     data.n_freq  = data.EuEu.shape[1]
     data.n_step  = data.N_step [data.n_time//2]
-    if data.sid in [20]:
-        data.n_block = data.N_block[data.n_time//2]
-    else:
-        data.n_block = 1
+    if data.sid in [20]:  data.n_block = min(data.N_block)
+    else:                 data.n_block = 1
 
     return data
 

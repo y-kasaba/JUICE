@@ -279,62 +279,42 @@ def hf_getspec_sid2(data):
 
 
 def hf_getspec_sid2_Fsum(data):
-    """
-    input:  data
-    return: spec
-    """
     spec = hf_getspec_sid2_FFT(data)
-
-    # Frequency
     spec.freq   = data.frequency[:, :, 0]
     spec.freq_w = data.freq_width[:, :, 0]
     
-    # Sum
     spec.EuEu = np.sum(spec.EuEu, axis=2)
     spec.EvEv = np.sum(spec.EvEv, axis=2)
     spec.EwEw = np.sum(spec.EwEw, axis=2)
     print("spec.EuEu:", data.Eu_i.shape, spec.EuEu.shape)
-    # -- cross (rms)
-    spec.EuEv_re = np.sum(spec.EuEv_re, axis=1)
-    spec.EvEw_re = np.sum(spec.EvEw_re, axis=1)
-    spec.EwEu_re = np.sum(spec.EwEu_re, axis=1)
-    spec.EuEv_im = np.sum(spec.EuEv_im, axis=1)
-    spec.EvEw_im = np.sum(spec.EvEw_im, axis=1)
-    spec.EwEu_im = np.sum(spec.EwEu_im, axis=1)
-
     return spec
 
 
-def hf_getspec_sid2_Wsum(data):
-    """
-    input:  data
-    return: spec
-    """
-    # Spec formation
-    spec = struct_hf()
-    spec.RPWI_FSW_version = data.RPWI_FSW_version
-
-    # Frequency
+def hf_getspec_sid2_Fmed(data):
+    spec = hf_getspec_sid2_FFT(data)
     spec.freq   = data.frequency[:, :, 0]
     spec.freq_w = data.freq_width[:, :, 0]
-    spec.freq_w[:][:] = juice_cdf._sample_rate(data.decimation[0]) / 1000.
     
-    # Sum
+    spec.EuEu = np.median(spec.EuEu, axis=2)
+    spec.EvEv = np.median(spec.EvEv, axis=2)
+    spec.EwEw = np.median(spec.EwEw, axis=2)
+    print("spec.EuEu:", data.Eu_i.shape, spec.EuEu.shape)
+    return spec
+
+
+"""
+def hf_getspec_sid2_Wsum(data):
+    spec = struct_hf()
+    spec.freq   = data.frequency[:, :, 0]
+    spec.freq_w = data.freq_width[:, :, 0]
+    spec.epoch    = data.epoch[:]
+    
     spec.EuEu = np.mean(data.Eu_i**2 + data.Eu_q**2, axis=2)
     spec.EvEv = np.mean(data.Ev_i**2 + data.Ev_q**2, axis=2)
     spec.EwEw = np.mean(data.Ew_i**2 + data.Ew_q**2, axis=2)
     print("spec.EuEu:", data.Eu_i.shape, spec.EuEu.shape)
-    # -- cross (rms)
-    spec.EuEv_re = np.mean(data.Eu_i*data.Ev_i + data.Eu_q*data.Ev_q, axis=1)
-    spec.EvEw_re = np.mean(data.Ev_i*data.Ew_i + data.Ev_q*data.Ew_q, axis=1)
-    spec.EwEu_re = np.mean(data.Ew_i*data.Eu_i + data.Ew_q*data.Eu_q, axis=1)
-    spec.EuEv_im = np.mean(data.Eu_q*data.Ev_i - data.Eu_i*data.Ev_q, axis=1)
-    spec.EvEw_im = np.mean(data.Ev_q*data.Ew_i - data.Ev_i*data.Ew_q, axis=1)
-    spec.EwEu_im = np.mean(data.Ew_q*data.Eu_i - data.Ew_i*data.Eu_q, axis=1)
-    
-    # Epoch
-    spec.epoch    = data.epoch[:]
     return spec
+"""
 
 
 # ---------------------------------------------------------------------

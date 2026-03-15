@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/3/11
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/3/15
 """
 import glob
 import numpy as np
@@ -36,8 +36,8 @@ def datalist(date_str, ver_str):
         # *** Ground Test - Ver.3 ***
         # 202511 -- 10mV, interval=40 [s]  freq_set = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000043-20000101T001413_V01___SID2_20251123-1005.ccs.cdf',
-                     'JUICE_L1a_RPWI-HF-SID2_20000101T000226-20000101T001610_V01___SID2_20251113-1351.ccs.cdf'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID2_20000101T000226-20000101T001610_V01___SID2_20251113-1351.ccs.cdf'
+                     'JUICE_L1a_RPWI-HF-SID2_20000101T000043-20000101T001413_V01___SID2_20251123-1005.ccs.cdf',
                     ]
         """
         """
@@ -131,12 +131,9 @@ def hf_sid2_read(cdf):
     data.time      = cdf['time'][...];       
 
     # Spectrum Data
-    data.spec_EuEu = np.float64(cdf['EuEu_raw'][...])
-    data.spec_EvEv = np.float64(cdf['EvEv_raw'][...])
-    data.spec_EwEw = np.float64(cdf['EwEw_raw'][...])
-    data.spec_EuEu_amp = np.float64(cdf['EuEu_amp'][...]);  data.spec_EuEu_raw = np.float64(cdf['EuEu_raw'][...])
-    data.spec_EvEv_amp = np.float64(cdf['EvEv_amp'][...]);  data.spec_EvEv_raw = np.float64(cdf['EvEv_raw'][...])
-    data.spec_EwEw_amp = np.float64(cdf['EwEw_amp'][...]);  data.spec_EwEw_raw = np.float64(cdf['EwEw_raw'][...])
+    data.EuEu_amp = np.float64(cdf['EuEu_amp'][...]);  data.EuEu_raw = np.float64(cdf['EuEu_raw'][...])
+    data.EvEv_amp = np.float64(cdf['EvEv_amp'][...]);  data.EvEv_raw = np.float64(cdf['EvEv_raw'][...])
+    data.EwEw_amp = np.float64(cdf['EwEw_amp'][...]);  data.EwEw_raw = np.float64(cdf['EwEw_raw'][...])
     data.frequency2 = cdf['frequency2'][...];  data.freq_step2 = cdf['freq_step2'][...]; data.freq_width2 = cdf['freq_width2'][...]
     data.gain_raw = cdf['gain_raw'][...];      data.df_raw = cdf['df_raw'][...]
 
@@ -164,15 +161,13 @@ def hf_sid2_add(data, data1):
     data.time        = np.r_["0", data.time, data1.time]
 
     # Spectrum Data
-    data.spec_EuEu   = np.r_["0", data.spec_EuEu,   data1.spec_EuEu]
-    data.spec_EvEv   = np.r_["0", data.spec_EvEv,   data1.spec_EvEv]
-    data.spec_EwEw   = np.r_["0", data.spec_EwEw,   data1.spec_EwEw]
-    data.spec_EuEu_amp = np.r_["0", data.spec_EuEu_amp, data1.spec_EuEu_amp]
-    data.spec_EvEv_amp = np.r_["0", data.spec_EvEv_amp, data1.spec_EvEv_amp]
-    data.spec_EwEw_amp = np.r_["0", data.spec_EwEw_amp, data1.spec_EwEw_amp]
-    data.spec_EuEu_raw = np.r_["0", data.spec_EuEu_raw, data1.spec_EuEu_raw]
-    data.spec_EvEv_raw = np.r_["0", data.spec_EvEv_raw, data1.spec_EvEv_raw]
-    data.spec_EwEw_raw = np.r_["0", data.spec_EwEw_raw, data1.spec_EwEw_raw]
+    data.EuEu_amp = np.r_["0", data.EuEu_amp, data1.EuEu_amp]
+    data.EvEv_amp = np.r_["0", data.EvEv_amp, data1.EvEv_amp]
+    data.EwEw_amp = np.r_["0", data.EwEw_amp, data1.EwEw_amp]
+    data.EuEu_raw = np.r_["0", data.EuEu_raw, data1.EuEu_raw]
+    data.EvEv_raw = np.r_["0", data.EvEv_raw, data1.EvEv_raw]
+    data.EwEw_raw = np.r_["0", data.EwEw_raw, data1.EwEw_raw]
+    
     data.frequency2  = np.r_["0", data.frequency2,  data1.frequency2]
     data.freq_step2  = np.r_["0", data.freq_step2,  data1.freq_step2]
     data.freq_width2 = np.r_["0", data.freq_width2, data1.freq_width2]
@@ -260,13 +255,10 @@ def hf_sid2_select_time(data, index):
     data.time      = data.time     [index[0]]
 
     # Spectrum Data
-    data.spec_EuEu = data.spec_EuEu[index[0]]
-    data.spec_EvEv = data.spec_EvEv[index[0]]
-    data.spec_EwEw = data.spec_EwEw[index[0]]
-    data.spec_EuEu_amp = data.spec_EuEu_amp[index[0]];  data.spec_EuEu_raw = data.spec_EuEu_raw[index[0]]
-    data.spec_EvEv_amp = data.spec_EvEv_amp[index[0]];  data.spec_EvEv_raw = data.spec_EvEv_raw[index[0]]
-    data.spec_EwEw_amp = data.spec_EwEw_amp[index[0]];  data.spec_EwEw_raw = data.spec_EwEw_raw[index[0]]
-    data.gain_raw  = data.gain_raw[index[0]];           data.df_raw     = data.df_raw[index[0]]
+    data.EuEu_amp = data.EuEu_amp[index[0]];  data.EuEu_raw = data.EuEu_raw[index[0]]
+    data.EvEv_amp = data.EvEv_amp[index[0]];  data.EvEv_raw = data.EvEv_raw[index[0]]
+    data.EwEw_amp = data.EwEw_amp[index[0]];  data.EwEw_raw = data.EwEw_raw[index[0]]
+    data.gain_raw = data.gain_raw[index[0]];  data.df_raw   = data.df_raw[index[0]]
 
     data.frequency2= data.frequency2[index[0]]; data.freq_step2 = data.freq_step2[index[0]];  data.freq_width2 = data.freq_width2[index[0]]
 
@@ -275,17 +267,14 @@ def hf_sid2_select_time(data, index):
 
 
 def hf_sid2_spec_nan(data, i):
-    data.EE        [i] = math.nan; 
-    data.EuEu      [i] = math.nan; data.EvEv      [i] = math.nan; data.EwEw      [i] = math.nan
-    data.EuEv_re   [i] = math.nan; data.EvEw_re   [i] = math.nan; data.EwEu_re   [i] = math.nan
-    data.EuEv_im   [i] = math.nan; data.EvEw_im   [i] = math.nan; data.EwEu_im   [i] = math.nan
+    data.EE       [i] = math.nan; 
+    data.EuEu     [i] = math.nan;  data.EvEv     [i] = math.nan;  data.EwEw      [i] = math.nan
+    data.EuEv_re  [i] = math.nan;  data.EvEw_re  [i] = math.nan;  data.EwEu_re   [i] = math.nan
+    data.EuEv_im  [i] = math.nan;  data.EvEw_im  [i] = math.nan;  data.EwEu_im   [i] = math.nan
 
-    data.spec_EuEu [i] = math.nan; 
-    data.spec_EvEv [i] = math.nan; 
-    data.spec_EwEw [i] = math.nan; 
-    data.spec_EuEu_amp [i] = math.nan;  data.spec_EuEu_raw [i] = math.nan
-    data.spec_EvEv_amp [i] = math.nan;  data.spec_EvEv_raw [i] = math.nan
-    data.spec_EwEw_amp [i] = math.nan;  data.spec_EwEw_raw [i] = math.nan
+    data.EuEu_amp [i] = math.nan;  data.EuEu_raw [i] = math.nan
+    data.EvEv_amp [i] = math.nan;  data.EvEv_raw [i] = math.nan
+    data.EwEw_amp [i] = math.nan;  data.EwEw_raw [i] = math.nan
 
     hf_hk.status_nan(data, i, 2)
 
