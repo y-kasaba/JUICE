@@ -1,20 +1,18 @@
 """
-    JUICE RPWI HF SID3 (Full): L1a QL -- 2026/3/11
+    JUICE RPWI HF SID3 (Full): L1a QL -- 2026/3/17
 """
 import glob
 import numpy as np
 import math
 import juice_hf_hk_lib as hf_hk
-# import juice_cdf_lib   as hk_cdf
 
 class struct:
     pass
 
 def datalist(date_str, ver_str):
     """
-    input:  date_str        yyyymmdd: group read    others: file list
-    return: data_dir
-            data_list
+    input:  date_str (yyyymmdd: group-read    others: file list)
+    return: data_dir, data_list
     """
     yr_format = date_str[0:2]
     yr_str    = date_str[0:4]
@@ -37,6 +35,7 @@ def datalist(date_str, ver_str):
     else:
         # *** Ground Test - Ver.3 ***
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID3_20260109T162606-20260109T162606_V01___Sec03_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID3_20260109T164153-20260109T165023_V01___Sec04_260118.bin.cdf',
@@ -48,6 +47,7 @@ def datalist(date_str, ver_str):
                      'JUICE_L1a_RPWI-HF-SID3_20260109T225315-20260109T230145_V01___Sec15_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID3_20260109T232303-20260109T233133_V01___Sec17_260118.bin.cdf',
                     ]
+        """
         # 202511 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID3_20000101T001750-20000101T003120_V01___SID3_C1_20251113-1557.ccs.cdf',
@@ -167,8 +167,7 @@ def datalist(date_str, ver_str):
                     ]
         """
 
-    print(data_dir)
-    print(data_list)
+    print(data_dir); print(data_list)
     return data_dir, data_list
 
 
@@ -183,7 +182,7 @@ def hf_sid3_read(cdf):
     data = struct()
 
     # Data
-    data.EuEu       = np.float64(cdf['EuEu'][...]);       data.EvEv       = np.float64(cdf['EvEv'][...]);       data.EwEw = np.float64(cdf['EwEw'][...])
+    data.EuEu       = np.float64(cdf['EuEu'][...]);       data.EvEv       = np.float64(cdf['EvEv'][...]);       data.EwEw       = np.float64(cdf['EwEw'][...])
     data.EuEv_re    = np.float64(cdf['EuEv_re'][...]);    data.EvEw_re    = np.float64(cdf['EvEw_re'][...]);    data.EwEu_re    = np.float64(cdf['EwEu_re'][...])   
     data.EuEv_im    = np.float64(cdf['EuEv_im'][...]);    data.EvEw_im    = np.float64(cdf['EvEw_im'][...]);    data.EwEu_im    = np.float64(cdf['EwEu_im'][...])
     # complex == 2:    # Matrix - N/R/L-separated
@@ -197,13 +196,12 @@ def hf_sid3_read(cdf):
     data.EuEv_re_LC = np.float64(cdf['EuEv_re_LC'][...]); data.EvEw_re_LC = np.float64(cdf['EvEw_re_LC'][...]); data.EwEu_re_LC = np.float64(cdf['EwEu_re_LC'][...])
     data.EuEv_im_LC = np.float64(cdf['EuEv_im_LC'][...]); data.EvEw_im_LC = np.float64(cdf['EvEw_im_LC'][...]); data.EwEu_im_LC = np.float64(cdf['EwEu_im_LC'][...])
     data.num_NC     = cdf['num_NC'][...];                 data.num_RC     = cdf['num_RC'][...];                 data.num_LC     = cdf['num_LC'][...]
+    data.BG_Eu      = np.float64(cdf['BG_Eu'][...]);      data.BG_Ev      = np.float64(cdf['BG_Ev'][...]);      data.BG_Ew      = np.float64(cdf['BG_Ew'][...])
     #
-    data.EuEu_amp = np.float64(cdf['EuEu_amp'][...]);   data.EuEu_raw = np.float64(cdf['EuEu_raw'][...])
-    data.EvEv_amp = np.float64(cdf['EvEv_amp'][...]);   data.EvEv_raw = np.float64(cdf['EvEv_raw'][...])
-    data.EwEw_amp = np.float64(cdf['EwEw_amp'][...]);   data.EwEw_raw = np.float64(cdf['EwEw_raw'][...])
-    data.gain_raw = cdf['gain_raw'][...];               data.df_raw   = cdf['df_raw'][...]
-    #
-    data.BG_Eu      = np.float64(cdf['BG_Eu'][...]);      data.BG_Ev      = np.float64(cdf['BG_Ev'][...]);     data.BG_Ew      = np.float64(cdf['BG_Ew'][...])
+    data.EuEu_amp   = np.float64(cdf['EuEu_amp'][...]);   data.EuEu_raw   = np.float64(cdf['EuEu_raw'][...])
+    data.EvEv_amp   = np.float64(cdf['EvEv_amp'][...]);   data.EvEv_raw   = np.float64(cdf['EvEv_raw'][...])
+    data.EwEw_amp   = np.float64(cdf['EwEw_amp'][...]);   data.EwEw_raw   = np.float64(cdf['EwEw_raw'][...])
+    data.gain_raw   = cdf['gain_raw'][...];               data.df_raw     = cdf['df_raw'][...]
     #
     data.frequency  = cdf['frequency'][...];  data.freq_step = cdf['freq_step'][...];  data.freq_width  = cdf['freq_width'][...]
 
@@ -217,51 +215,31 @@ def hf_sid3_add(data, data1):
     return: data
     """
     # Data
-    data.EuEu       = np.r_["0", data.EuEu, data1.EuEu]
-    data.EvEv       = np.r_["0", data.EvEv, data1.EvEv]
-    data.EwEw       = np.r_["0", data.EwEw, data1.EwEw]
-    data.EuEv_re    = np.r_["0", data.EuEv_re, data1.EuEv_re];       data.EvEw_re = np.r_["0", data.EvEw_re, data1.EvEw_re]
-    data.EwEu_re    = np.r_["0", data.EwEu_re, data1.EwEu_re];       data.EuEv_im = np.r_["0", data.EuEv_im, data1.EuEv_im]
-    data.EvEw_im    = np.r_["0", data.EvEw_im, data1.EvEw_im];       data.EwEu_im = np.r_["0", data.EwEu_im, data1.EwEu_im]
+    data.EuEu    = np.r_["0", data.EuEu, data1.EuEu];       data.EvEv    = np.r_["0", data.EvEv, data1.EvEv];       data.EwEw    = np.r_["0", data.EwEw, data1.EwEw]
+    data.EuEv_re = np.r_["0", data.EuEv_re, data1.EuEv_re]; data.EvEw_re = np.r_["0", data.EvEw_re, data1.EvEw_re]
+    data.EwEu_re = np.r_["0", data.EwEu_re, data1.EwEu_re]; data.EuEv_im = np.r_["0", data.EuEv_im, data1.EuEv_im]
+    data.EvEw_im = np.r_["0", data.EvEw_im, data1.EvEw_im]; data.EwEu_im = np.r_["0", data.EwEu_im, data1.EwEu_im]
     # complex == 2:    # Matrix - N/R/L-separated
-    data.EuEu_NC    = np.r_["0", data.EuEu_NC, data1.EuEu_NC]
-    data.EvEv_NC    = np.r_["0", data.EvEv_NC, data1.EvEv_NC]
-    data.EwEw_NC    = np.r_["0", data.EwEw_NC, data1.EwEw_NC]
+    data.EuEu_NC = np.r_["0", data.EuEu_NC, data1.EuEu_NC]; data.EvEv_NC = np.r_["0", data.EvEv_NC, data1.EvEv_NC]; data.EwEw_NC = np.r_["0", data.EwEw_NC, data1.EwEw_NC]
     data.EuEv_re_NC = np.r_["0", data.EuEv_re_NC, data1.EuEv_re_NC]; data.EvEw_re_NC = np.r_["0", data.EvEw_re_NC, data1.EvEw_re_NC]
     data.EwEu_re_NC = np.r_["0", data.EwEu_re_NC, data1.EwEu_re_NC]; data.EuEv_im_NC = np.r_["0", data.EuEv_im_NC, data1.EuEv_im_NC]
     data.EvEw_im_NC = np.r_["0", data.EvEw_im_NC, data1.EvEw_im_NC]; data.EwEu_im_NC = np.r_["0", data.EwEu_im_NC, data1.EwEu_im_NC]
-    data.EuEu_RC    = np.r_["0", data.EuEu_RC, data1.EuEu_RC]
-    data.EvEv_RC    = np.r_["0", data.EvEv_RC, data1.EvEv_RC]
-    data.EwEw_RC    = np.r_["0", data.EwEw_RC, data1.EwEw_RC]
+    data.EuEu_RC = np.r_["0", data.EuEu_RC, data1.EuEu_RC]; data.EvEv_RC = np.r_["0", data.EvEv_RC, data1.EvEv_RC]; data.EwEw_RC = np.r_["0", data.EwEw_RC, data1.EwEw_RC]
     data.EuEv_re_RC = np.r_["0", data.EuEv_re_RC, data1.EuEv_re_RC]; data.EvEw_re_RC = np.r_["0", data.EvEw_re_RC, data1.EvEw_re_RC]
     data.EwEu_re_RC = np.r_["0", data.EwEu_re_RC, data1.EwEu_re_RC]; data.EuEv_im_RC = np.r_["0", data.EuEv_im_RC, data1.EuEv_im_RC]
     data.EvEw_im_RC = np.r_["0", data.EvEw_im_RC, data1.EvEw_im_RC]; data.EwEu_im_RC = np.r_["0", data.EwEu_im_RC, data1.EwEu_im_RC]
-    data.EuEu_LC    = np.r_["0", data.EuEu_LC, data1.EuEu_LC]
-    data.EvEv_LC    = np.r_["0", data.EvEv_LC, data1.EvEv_LC]
-    data.EwEw_LC    = np.r_["0", data.EwEw_LC, data1.EwEw_LC]
+    data.EuEu_LC = np.r_["0", data.EuEu_LC, data1.EuEu_LC]; data.EvEv_LC = np.r_["0", data.EvEv_LC, data1.EvEv_LC]; data.EwEw_LC = np.r_["0", data.EwEw_LC, data1.EwEw_LC]
     data.EuEv_re_LC = np.r_["0", data.EuEv_re_LC, data1.EuEv_re_LC]; data.EvEw_re_LC = np.r_["0", data.EvEw_re_LC, data1.EvEw_re_LC]
     data.EwEu_re_LC = np.r_["0", data.EwEu_re_LC, data1.EwEu_re_LC]; data.EuEv_im_LC = np.r_["0", data.EuEv_im_LC, data1.EuEv_im_LC]
     data.EvEw_im_LC = np.r_["0", data.EvEw_im_LC, data1.EvEw_im_LC]; data.EwEu_im_LC = np.r_["0", data.EwEu_im_LC, data1.EwEu_im_LC]
-    data.num_NC     = np.r_["0", data.num_NC, data1.num_NC]
-    data.num_RC     = np.r_["0", data.num_RC, data1.num_RC]
-    data.num_LC     = np.r_["0", data.num_LC, data1.num_LC]
+    data.num_NC = np.r_["0", data.num_NC, data1.num_NC]; data.num_RC = np.r_["0", data.num_RC, data1.num_RC]; data.num_LC  = np.r_["0", data.num_LC, data1.num_LC]
+    data.BG_Eu  = np.r_["0", data.BG_Eu, data1.BG_Eu];   data.BG_Ev  = np.r_["0", data.BG_Ev, data1.BG_Ev];   data.BG_Ew   = np.r_["0", data.BG_Ew, data1.BG_Ew]
     #
-    data.EuEu_raw   = np.r_["0", data.EuEu_raw, data1.EuEu_raw]
-    data.EvEv_raw   = np.r_["0", data.EvEv_raw, data1.EvEv_raw]
-    data.EwEw_raw   = np.r_["0", data.EwEw_raw, data1.EwEw_raw]
-    data.EuEu_amp   = np.r_["0", data.EuEu_amp, data1.EuEu_amp]
-    data.EvEv_amp   = np.r_["0", data.EvEv_amp, data1.EvEv_amp]
-    data.EwEw_amp   = np.r_["0", data.EwEw_amp, data1.EwEw_amp]
-    data.gain_raw   = np.r_["0", data.gain_raw, data1.gain_raw]
-    data.df_raw     = np.r_["0", data.df_raw,   data1.df_raw]
+    data.EuEu_raw = np.r_["0", data.EuEu_raw, data1.EuEu_raw]; data.EvEv_raw = np.r_["0", data.EvEv_raw, data1.EvEv_raw]; data.EwEw_raw = np.r_["0", data.EwEw_raw, data1.EwEw_raw]
+    data.EuEu_amp = np.r_["0", data.EuEu_amp, data1.EuEu_amp]; data.EvEv_amp = np.r_["0", data.EvEv_amp, data1.EvEv_amp]; data.EwEw_amp = np.r_["0", data.EwEw_amp, data1.EwEw_amp]
+    data.gain_raw = np.r_["0", data.gain_raw, data1.gain_raw]; data.df_raw   = np.r_["0", data.df_raw,   data1.df_raw]
     #
-    data.BG_Eu      = np.r_["0", data.BG_Eu, data1.BG_Eu]
-    data.BG_Ev      = np.r_["0", data.BG_Ev, data1.BG_Ev]
-    data.BG_Ew      = np.r_["0", data.BG_Ew, data1.BG_Ew]
-    #
-    data.frequency  = np.r_["0", data.frequency, data1.frequency]
-    data.freq_step  = np.r_["0", data.freq_step, data1.freq_step]
-    data.freq_width = np.r_["0", data.freq_width, data1.freq_width]
+    data.frequency = np.r_["0", data.frequency, data1.frequency]; data.freq_step = np.r_["0", data.freq_step, data1.freq_step]; data.freq_width = np.r_["0", data.freq_width, data1.freq_width]
 
     hf_hk.status_add(data, data1)
     return data
@@ -275,15 +253,15 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
             comp_mode   [Complex]   0: Poweer  1: Matrix   3: Matrix-2D    >3: any   
     return: data
     """
-
-    # Selection: CAL, N_ch, comp_mode
-    data.n_time  = data.EuEu.shape[0]
-    data.n_freq  = data.EuEu.shape[1]
+    # Size
+    data.n_time = data.EuEu.shape[0];   data.n_freq = data.EuEu.shape[1]
     data.U_selected = (data.ch_selected & 0b1   ) 
     data.V_selected = (data.ch_selected & 0b10  ) >> 1
     data.W_selected = (data.ch_selected & 0b100 ) >> 2
     N_ch0 = data.U_selected + data.V_selected + data.W_selected
     print("  org:", data.EuEu.shape, data.n_time, "x", data.n_freq, "[", data.n_time * data.n_freq, "]")
+
+    # Selection: CAL, N_ch, comp_mode
     if cal_mode < 2 or N_ch < 4 or comp_mode < 4:
         if cal_mode < 2:
             if N_ch < 4:
@@ -327,15 +305,13 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
         data.EuEv_re_LC  = data.EuEv_re_LC [index[0]]; data.EvEw_re_LC = data.EvEw_re_LC[index[0]]; data.EwEu_re_LC = data.EwEu_re_LC[index[0]]
         data.EuEv_im_LC  = data.EuEv_im_LC [index[0]]; data.EvEw_im_LC = data.EvEw_im_LC[index[0]]; data.EwEu_im_LC = data.EwEu_im_LC[index[0]]
         data.num_NC      = data.num_NC     [index[0]]; data.num_RC     = data.num_RC    [index[0]]; data.num_LC     = data.num_LC    [index[0]]
+        data.BG_Eu       = data.BG_Eu      [index[0]]; data.BG_Ev      = data.BG_Ev     [index[0]]; data.BG_Ew      = data.BG_Ew     [index[0]]
         #
         data.EuEu_raw    = data.EuEu_raw   [index[0]]; data.EvEv_raw   = data.EvEv_raw  [index[0]]; data.EwEw_raw   = data.EwEw_raw  [index[0]]
         data.EuEu_amp    = data.EuEu_amp   [index[0]]; data.EvEv_amp   = data.EvEv_amp  [index[0]]; data.EwEw_amp   = data.EwEw_amp  [index[0]]
         data.gain_raw    = data.gain_raw   [index[0]]; data.df_raw     = data.df_raw    [index[0]]
         #
-        data.BG_Eu       = data.BG_Eu      [index[0]]; data.BG_Ev      = data.BG_Ev     [index[0]]; data.BG_Ew      = data.BG_Ew     [index[0]]
-        #
         data.frequency   = data.frequency  [index[0]]; data.freq_step  = data.freq_step [index[0]]; data.freq_width = data.freq_width[index[0]]
-
         hf_hk.status_shaping(data, index[0])
         
         data.n_time = data.EuEu.shape[0]
@@ -355,8 +331,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
             else:                 print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> comp_mode:", comp_mode)
 
     # Size
-    data.n_time  = data.EuEu.shape[0]
-    data.n_freq  = data.EuEu.shape[1]
+    data.n_time = data.EuEu.shape[0];   data.n_freq = data.EuEu.shape[1]
     data.U_selected = (data.ch_selected & 0b1   ) 
     data.V_selected = (data.ch_selected & 0b10  ) >> 1
     data.W_selected = (data.ch_selected & 0b100 ) >> 2
@@ -402,7 +377,7 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     data.EvEw_re_LC[index[0]] = math.nan; data.EwEu_re_LC[index[0]] = math.nan; data.EvEw_im_LC[index[0]] = math.nan; data.EwEu_im_LC[index[0]] = math.nan
     data.EwEw_raw  [index[0]] = math.nan; data.EwEw_amp  [index[0]] = math.nan; 
     
-    # MIN: cut
+    # cit: low intensity data
     data.EuEu = np.ravel(data.EuEu);  data.EvEv = np.ravel(data.EvEv);  data.EwEw = np.ravel(data.EwEw)
     index = np.where(data.EuEu < 1e-9);  data.EuEu[index[0]] = math.nan
     index = np.where(data.EvEv < 1e-9);  data.EvEv[index[0]] = math.nan
@@ -410,7 +385,6 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     data.EuEu = data.EuEu.reshape(data.n_time, data.n_freq)
     data.EvEv = data.EvEv.reshape(data.n_time, data.n_freq)
     data.EwEw = data.EwEw.reshape(data.n_time, data.n_freq)
-
     return data
 
 

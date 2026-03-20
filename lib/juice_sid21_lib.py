@@ -70,7 +70,6 @@ def datalist(date_str, ver_str):
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = ['JUICE_L1a_RPWI-HF-SID21_20250331T033821-20250331T034222_V01___RPR2_62000007_2025.091.16.40.05.450.cdf',
                      'JUICE_L1a_RPWI-HF-SID21_20260223T004655-20260223T004831_V01___RPR2_62000001_2026.054.09.35.22.426.cdf',
-                     'JUICE_L1a_RPWI-HF-SID21_20260223T082205-20260223T082341_V01___RPR2_62000001_2026.054.09.35.22.426.cdf',
                     ]
         """
 

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich) and SID8 (PSSR3 survey RAW): L1a QL -- 2026/3/11
+    JUICE RPWI HF SID23 (PSSR3 rich) and SID8 (PSSR3 survey RAW): L1a QL -- 2026/3/20
 """
 import glob
 import numpy          as np
@@ -36,19 +36,21 @@ def datalist(date_str, ver_str, sid):
     elif sid == 23: 	# <<< SID-23 test datas >>>
         # *** Ground Test - Ver.3 ***
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID23_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID23_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID23_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf',
                     ]    
+        """
         # 202511 -- SAMPLE
         # HF_20251113-2224	PSSR3 (param0 = 0)	    1.75 1.8 1.85 [MHz]   Vin = 10mVpp
         # HF_20251204-0844  PSSR3 (param0 = 1->0)	1.75 1.8 1.85 [MHz]   Vin = 10mVpp
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = [# 'JUICE_L1a_RPWI-HF-SID23_20000101T000155-20000101T000503_V01___SID7-23_P0_20251113-2224.ccs.cdf'
                      'JUICE_L1a_RPWI-HF-SID23_20000101T000049-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf',
                     ]
+        """
         """
         # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
         """
@@ -82,16 +84,18 @@ def datalist(date_str, ver_str, sid):
 
     else:               # <<< SID-08 test datas >>>
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID8_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID8_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID8_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf'
                     ]
-        # 202512 -- SAMPLE
         """
+        # 202512 -- SAMPLE
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID8_20000101T000504-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf',
         ]
+        """
         """
 
     print(data_dir)
@@ -169,48 +173,26 @@ def hf_sid23_shaping(data, f_max, f_min):
     data.n_samp = data.N_samp[data.n_time//2]
     print("    org:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp)
 
-    """
-    # -------------------
-    # --- shape-check ---
-    # -------------------
-    index = np.where( (data.N_block == data.n_block) & (data.N_samp == data.n_samp) )
-    # Data
-    data.Eu_i        = data.Eu_i [index[0]];       data.Eu_q = data.Eu_q [index[0]]
-    data.Ev_i        = data.Ev_i [index[0]];       data.Ev_q = data.Ev_q [index[0]]
-    data.Ew_i        = data.Ew_i [index[0]];       data.Ew_q = data.Ew_q [index[0]]
-    data.time_block  = data.time_block [index[0]]; data.time = data.time [index[0]]
-
-    data.spec_EuEu_amp = data.spec_EuEu_amp[index[0]];  data.spec_EuEu_raw = data.spec_EuEu_raw[index[0]]
-    data.spec_EvEv_amp = data.spec_EvEv_amp[index[0]];  data.spec_EvEv_raw = data.spec_EvEv_raw[index[0]]
-    data.spec_EwEw_amp = data.spec_EwEw_amp[index[0]];  data.spec_EwEw_raw = data.spec_EwEw_raw[index[0]]
-    data.gain_raw  = data.gain_raw[index[0]];           data.df_raw     = data.df_raw[index[0]]
-
-    hf_hk.status_shaping(data, index[0])
-    #
-    # Size - after frequency selection
-    data.n_time = data.Eu_i.shape[0]
-    data.n_block = data.N_block[data.n_time//2]
-    data.n_samp = data.N_samp[data.n_time//2]
-    print("   cut1:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp)
-    """
-
     # ---------------------------
     # --- frequency selection ---
     # ---------------------------
-    index = np.where( (data.freq_center > f_min) & (data.freq_center < f_max) )
-    # Data
-    data.Eu_i        = data.Eu_i [index[0]];       data.Eu_q = data.Eu_q [index[0]]
-    data.Ev_i        = data.Ev_i [index[0]];       data.Ev_q = data.Ev_q [index[0]]
-    data.Ew_i        = data.Ew_i [index[0]];       data.Ew_q = data.Ew_q [index[0]]
-    data.time_block  = data.time_block [index[0]]; data.time = data.time [index[0]]
+    index = np.where( (data.frequency > f_min) & (data.frequency < f_max) )
+ 
+    data.Eu_i       = data.Eu_i [index[0]];      data.Eu_q = data.Eu_q [index[0]]
+    data.Ev_i       = data.Ev_i [index[0]];      data.Ev_q = data.Ev_q [index[0]]
+    data.Ew_i       = data.Ew_i [index[0]];      data.Ew_q = data.Ew_q [index[0]]
+    data.time_block = data.time_block[index[0]]; data.time = data.time [index[0]]
+    data.spec_EuEu  = data.spec_EuEu[index[0]];  data.spec_EuEu_amp = data.spec_EuEu_amp[index[0]]; data.spec_EuEu_raw = data.spec_EuEu_raw[index[0]]
+    data.spec_EvEv  = data.spec_EvEv[index[0]];  data.spec_EvEv_amp = data.spec_EvEv_amp[index[0]]; data.spec_EvEv_raw = data.spec_EvEv_raw[index[0]]
+    data.spec_EwEw  = data.spec_EwEw[index[0]];  data.spec_EwEw_amp = data.spec_EwEw_amp[index[0]]; data.spec_EwEw_raw = data.spec_EwEw_raw[index[0]]
+    data.gain_raw   = data.gain_raw [index[0]];  data.df_raw        = data.df_raw[index[0]]
 
     hf_hk.status_shaping(data, index[0])
-    #
-    # Size - after frequency selection
-    data.n_time = data.Eu_i.shape[0]
+ 
+    data.n_time  = data.Eu_i.shape[0]
     data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
-    data.n_samp = data.N_samp[data.n_time//2]
-    print("  cut2:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "   frequency in", f_min, "-", f_max, "kHz")
+    data.n_samp  = data.N_samp[data.n_time//2]
+    print("    cut:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "   frequency in", f_min, "-", f_max, "kHz")
     return data
 
 
@@ -261,14 +243,8 @@ def hf_sid23_getauto(data):
             EE_auto   /= len(EE_auto)
             auto.EE[i][j] = EE_auto
 
-            auto.EuEu[i][j][0] = 0
-            auto.EvEv[i][j][0] = 0
-            auto.EwEw[i][j][0] = 0
-            auto.EE[i][j][0] = 0
-            auto.EuEu[i][j][1] = 0
-            auto.EvEv[i][j][1] = 0
-            auto.EwEw[i][j][1] = 0
-            auto.EE[i][j][1] = 0
+            auto.EE[i][j][0] = 0;  auto.EuEu[i][j][0] = 0;  auto.EvEv[i][j][0] = 0;  auto.EwEw[i][j][0] = 0
+            auto.EE[i][j][1] = 0;  auto.EuEu[i][j][1] = 0;  auto.EvEv[i][j][1] = 0;  auto.EwEw[i][j][1] = 0
     return auto
 
 

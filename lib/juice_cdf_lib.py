@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2026/2/12
+# JUICE RPWI HF CDF lib -- 2026/3/16
 
 # import glob
 # import spacepy.pycdf
@@ -34,6 +34,7 @@ def _sample_rate(decimation):
     return ret
 
 
+"""
 # Bandwidth in original (kHz)
 def _df_org(HF_ID):
     sid = HF_ID[0] >> 8
@@ -68,6 +69,7 @@ def _df_org(HF_ID):
     if ret == 0:
         raise ValueError(f"proc._df_org: SID error:{sid}")
     return ret
+"""
 
 
 # Frequency: linear [kHz]
