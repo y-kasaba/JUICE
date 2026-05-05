@@ -35,11 +35,11 @@ def datalist(date_str, ver_str):
     else:
         # *** Ground Test - Ver.3 ***
         # 202511 -- 10mV, interval=40 [s]  freq_set = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID2_20000101T000226-20000101T001610_V01___SID2_20251113-1351.ccs.cdf'
                      'JUICE_L1a_RPWI-HF-SID2_20000101T000043-20000101T001413_V01___SID2_20251123-1005.ccs.cdf',
                     ]
-        """
         """
         # 202509 -- SAMPLE --1.5MHz	OFF-> 10mVpp->100mVpp->500mVpp-> OFF (500mVpp - saturated)
         """
@@ -65,15 +65,15 @@ def datalist(date_str, ver_str):
         """
 
         # *** Flight - Ver.2 ***
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID2_20240125T112327-20240125T113141_V01___RPR1_52000011_2024.025.15.57.21.441.cdf',    # f_max: 44888.625
                      #'JUICE_L1a_RPWI-HF-SID2_20240125T152238-20240125T152330_V01___RPR1_52000012_2024.025.16.07.08.425.cdf',
                      #'JUICE_L1a_RPWI-HF-SID2_20240822T023129-20240822T023713_V01___RPR1_52000003_2024.235.03.19.13.483.cdf',    # f_max: 44813.
                      #'JUICE_L1a_RPWI-HF-SID2_20240822T023715-20240822T023953_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',
-                     'JUICE_L1a_RPWI-HF-SID2_20250331T005104-20250331T233757_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',    # CAL  81.15625 - 44922.84375 kHz 
+                     #'JUICE_L1a_RPWI-HF-SID2_20250331T005104-20250331T233757_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',    # CAL  81.15625 - 44922.84375 kHz 
                      'JUICE_L1a_RPWI-HF-SID2_20260223T003941-20260223T004236_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',    # CAL: 81.15625 - 44922.84375 kHz / 19392
                     ]
+        """
         """
 
         # *** Flight - Ver.1

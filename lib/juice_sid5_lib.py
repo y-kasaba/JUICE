@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1 surv): L1a QL -- 2026/3/11
+    JUICE RPWI HF SID5 (PSSR1-S) L1a QL -- 2026/4/30
 """
 import glob
 import math
@@ -35,15 +35,23 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
+        # 202604-- ASW3 test @ system
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20260421T152539-20260421T152939_V01___52000001_4.cdf',]
+        """
         # 202601-- ASW3 test
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID5_20260109T165736-20260109T170606_V01___Sec05_260118.bin.cdf',
+        data_list = [#'JUICE_L1a_RPWI-HF-SID5_20260109T165736-20260109T170606_V01___Sec05_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID5_20260414T111952-20260414T112822_V01___Sec05_260416.bin.cdf',
                     ]
+        """
+        """
         # 202511 -- SAMPLE  Vin=10 mVpp     	interval=40 [s]			freq_set = [1.1 1.2 1.4 1.6 1.8] [MHz]
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID5_20000101T002158-20000101T002628_V01___SID5-21_20251123-1129.ccs.cdf',
-                     'JUICE_L1a_RPWI-HF-SID5_20000101T003031-20000101T003531_V01___SID5-21_20251113-1746.ccs.cdf',
+                     # 'JUICE_L1a_RPWI-HF-SID5_20000101T003031-20000101T003531_V01___SID5-21_20251113-1746.ccs.cdf',
                       ]
         """
 
@@ -56,14 +64,12 @@ def datalist(date_str, ver_str):
                      ]
         """
         # 202503 -- Flight
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID5_20250331T033821-20250331T034222_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
+        data_list = [#'JUICE_L1a_RPWI-HF-SID5_20250331T033821-20250331T034222_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
                      'JUICE_L1a_RPWI-HF-SID5_20260223T004655-20260223T004831_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',
                     ]
         """
-
-
+        """
 
     print(data_dir)
     print(data_list)

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID6 & 9 & 22 (PSSR2): L1a QL -- 2026/3/16
+    JUICE RPWI HF SID6 (PSSR2-S) & 9 (PSSR2-S-SINGLE) & 22 (PSSR2-R) L1a QL -- 2026/5/5
 """
 import glob
 import numpy as np
@@ -34,11 +34,20 @@ def datalist(date_str, ver_str, sid):
 
     elif sid == 22: 	# <<< SID-22 test datas >>>
         # *** Ground Test - Ver.3 ***
+        # 202604-- ASW3 test @ system
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID22_20260421T153015-20260421T153145_V01___62000001_3.cdf',]
+        """
         # 202601-- ASW3 test
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID22_20260109T171221-20260109T172121_V01___Sec06_260118.bin.cdf',
+        data_list = [#'JUICE_L1a_RPWI-HF-SID22_20260109T171221-20260109T172121_V01___Sec06_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID22_20260414T120343-20260414T121243_V01___Sec06_260416.bin.cdf',
                     ]
+        """
+        """
         # 202601
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID22_20000101T000044-20000101T001414_V01___SID6-22_20251211-1108.ccs.cdf',
                      #'JUICE_L1a_RPWI-HF-SID22_20000101T000051-20000101T000121_V01___SID6-22_P0_20251212-2236.ccs.cdf',
@@ -46,20 +55,39 @@ def datalist(date_str, ver_str, sid):
                      #'JUICE_L1a_RPWI-HF-SID22_20000101T000034-20000101T000104_V01___SID9-22_20260114.dat.cdf',
                     ]
         """
-        """
     elif sid == 6:      # <<< SID-06 test datas >>>
+        # 202601-- ASW3 test
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID6_20260109T171221-20260109T172121_V01___Sec06_260118.bin.cdf'
+                    ]
+        """
+        """
         # 202601
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID6_20000101T000044-20000101T001444_V01___SID6-22_20251211-1108.ccs.cdf',
                      #'JUICE_L1a_RPWI-HF-SID6_20000101T000047-20000101T001317_V01___SID6-22_20251213-1846.ccs.cdf',
                      'JUICE_L1a_RPWI-HF-SID6_20000101T000051-20000101T000151_V01___SID6-22_P0_20251212-2236.ccs.cdf',
                     ]
+        """
 
     elif sid == 9:      # <<< SID-09 test datas >>>
+        # 202604-- ASW3 test @ system
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID9_20260421T153015-20260421T153145_V01___52000001_4.cdf']
+        """
+        """
+        # 202601-- ASW3 test
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID9_20260414T120343-20260414T121243_V01___Sec06_260416.bin.cdf']
+        """
+        """
         # 202601
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID9_20000101T000034-20000101T000104_V01___SID9-22_20260114.dat.cdf',
                     ]
+        """
 
     print(data_dir)
     print(data_list)
@@ -110,7 +138,7 @@ def hf_sid22_add(data, data1):
     return data
 
 
-def hf_sid22_shaping(data, cal_mode):
+def hf_sid22_shaping(data, cal_mode, sid):
     """
     input:  data
     return: data
@@ -140,6 +168,7 @@ def hf_sid22_shaping(data, cal_mode):
     data.n_time  = data.auto_corr.shape[0]
     data.n_step  = data.N_step[data.n_time//2]
     data.n_lag   = data.N_lag[data.n_time//2]
+    if sid == 6:  data.n_lag = np.int64(data.n_lag / 16)
     print("    cut:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag)
     
     # *** frequncy & width for spec cal

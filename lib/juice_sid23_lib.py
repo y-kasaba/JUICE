@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3 rich) and SID8 (PSSR3 survey RAW): L1a QL -- 2026/3/20
+    JUICE RPWI HF SID23 (PSSR3-R) / SID8 (PSSR3-S RAW) L1a QL -- 2026/4/30
 """
 import glob
 import numpy          as np
@@ -35,22 +35,30 @@ def datalist(date_str, ver_str, sid):
 
     elif sid == 23: 	# <<< SID-23 test datas >>>
         # *** Ground Test - Ver.3 ***
-        # 202601-- ASW3 test
+        # 202604-- ASW3 test @ system
         """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID23_20260421T153231-20260421T153832_V01___62000001_3.cdf',]
+        """
+        # 202601-- ASW3 test
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID23_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
-                     'JUICE_L1a_RPWI-HF-SID23_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
-                     'JUICE_L1a_RPWI-HF-SID23_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf',
+        data_list = [#'JUICE_L1a_RPWI-HF-SID23_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID23_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID23_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID23_20260414T122726-20260414T123556_V01___Sec07_260416.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID23_20260414T125034-20260414T125904_V01___Sec08_260416.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID23_20260414T130843-20260414T131713_V01___Sec09_260416.bin.cdf',
                     ]    
         """
+        """
         # 202511 -- SAMPLE
+        """
         # HF_20251113-2224	PSSR3 (param0 = 0)	    1.75 1.8 1.85 [MHz]   Vin = 10mVpp
         # HF_20251204-0844  PSSR3 (param0 = 1->0)	1.75 1.8 1.85 [MHz]   Vin = 10mVpp
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = [# 'JUICE_L1a_RPWI-HF-SID23_20000101T000155-20000101T000503_V01___SID7-23_P0_20251113-2224.ccs.cdf'
                      'JUICE_L1a_RPWI-HF-SID23_20000101T000049-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf',
                     ]
-        """
         """
         # 202509 -- SAMPLE  Freq = 1.8, 1.85, 1.75, 1.9, 1.7 MHz  Vin = 10mVpp
         """
@@ -83,19 +91,27 @@ def datalist(date_str, ver_str, sid):
         """
 
     else:               # <<< SID-08 test datas >>>
-        # 202601-- ASW3 test
+        # 202604-- ASW3 test @ system
         """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID8_20260421T153231-20260421T153832_V01___52000001_4.cdf',]
+        """
+        # 202601-- ASW3 test
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID8_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
-                     'JUICE_L1a_RPWI-HF-SID8_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
-                     'JUICE_L1a_RPWI-HF-SID8_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID8_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID8_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID8_20260109T180233-20260109T181103_V01___Sec09_260118.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260414T122726-20260414T123556_V01___Sec07_260416.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260414T125034-20260414T125904_V01___Sec08_260416.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260414T130843-20260414T131713_V01___Sec09_260416.bin.cdf',
                     ]
         """
+        """
         # 202512 -- SAMPLE
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID8_20000101T000504-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf',
         ]
-        """
         """
 
     print(data_dir)
@@ -162,15 +178,16 @@ def hf_sid23_add(data, data1):
     return data
 
 
-def hf_sid23_shaping(data, f_max, f_min):
+def hf_sid23_shaping(data, f_max, f_min, sid):
     """
     input:  data, f_max, f_min
     return: data
     """
     # Size - original
-    data.n_time = data.Eu_i.shape[0]
-    data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
-    data.n_samp = data.N_samp[data.n_time//2]
+    data.n_time  = data.Eu_i.shape[0]
+    if sid == 23:  data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
+    else:          data.n_block = 1
+    data.n_samp  = data.N_samp[data.n_time//2]
     print("    org:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp)
 
     # ---------------------------
@@ -190,8 +207,20 @@ def hf_sid23_shaping(data, f_max, f_min):
     hf_hk.status_shaping(data, index[0])
  
     data.n_time  = data.Eu_i.shape[0]
-    data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
+    if sid == 23:  data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
+    else:          data.n_block = 1
     data.n_samp  = data.N_samp[data.n_time//2]
+
+    if sid == 8:
+        # np.array(spec.freq).reshape   (n_time, n_block, n_freq)
+        data.Eu_i = data.Eu_i.reshape(data.n_time, data.n_block, data.n_samp)
+        data.Eu_q = data.Eu_q.reshape(data.n_time, data.n_block, data.n_samp)
+        data.Ev_i = data.Ev_i.reshape(data.n_time, data.n_block, data.n_samp)
+        data.Ev_q = data.Ev_q.reshape(data.n_time, data.n_block, data.n_samp)
+        data.Ew_i = data.Ew_i.reshape(data.n_time, data.n_block, data.n_samp)
+        data.Ew_q = data.Ew_q.reshape(data.n_time, data.n_block, data.n_samp)
+        data.time = data.time.reshape(data.n_time, data.n_block, data.n_samp)
+
     print("    cut:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "   frequency in", f_min, "-", f_max, "kHz")
     return data
 

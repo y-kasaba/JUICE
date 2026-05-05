@@ -204,7 +204,7 @@ def hf_getspec_sid2_FFT(data):
             spec.freq_w[i][j] = d_freq
 
     # FFT
-    window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp)
+    window = windows.blackmanharris(n_samp); acf = 1.0/(sum(window)/n_samp); print("ACF:", acf)
     # -- auto  (rms)
     s = np.fft.fft((data.Eu_i - data.Eu_q * 1j) * window);  s_u_re = s.real; s_u_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EuEu = np.fft.fftshift(s, axes=(2,))
     s = np.fft.fft((data.Ev_i - data.Ev_q * 1j) * window);  s_v_re = s.real; s_v_im = s.imag;  s = np.power(np.abs(s) / n_samp, 2.0) * acf * acf / 2.0; spec.EvEv = np.fft.fftshift(s, axes=(2,))

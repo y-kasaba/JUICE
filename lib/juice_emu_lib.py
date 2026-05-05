@@ -15,107 +15,70 @@ def datalist(asw, space, cal_mode):
     cdf_sid23= '';  cdf_sid7 = '';  cdf_sid8 = ''
     if asw == 3:
         if space == 0:
-            # *** Ground Test - Ver.3 ***
+            # *** Ground Test - ASW3 ***
             data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
-
             # SID-2    ASW3        20251123     10mV, interval=40 [s]  freq_set = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
-            # cdf_sid2 = data_dir + 'JUICE_L1a_RPWI-HF-SID2_20000101T000226-20000101T001610_V01___SID2_20251113-1351.ccs.cdf'
             cdf_sid2  = data_dir + 'JUICE_L1a_RPWI-HF-SID2_20000101T000043-20000101T001413_V01___SID2_20251123-1005.ccs.cdf'
-
             # SID-3    ASW3         20251123
             #   (2d matix, RFI rejection OFF), new sweep table (Beff=62.5%)
             #   int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
-            # cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20000101T001750-20000101T003120_V01___SID3_C1_20251113-1557.ccs.cdf'
-            #   (2d matix, RFI rejection OFF), new sweep table (Beff=62.5%)
-            #   int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
             cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20000101T001555-20000101T002925_V01___SID3_C1_20251123-1021.ccs.cdf'
-            #   (2d matix, RFI rejection OFF), new sweep table (Beff=62.5%)
-            #   int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1 [MHz]
-            # cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20000101T000043-20000101T001343_V01___SID3_C2_20251113-1715.ccs.cdf'
-            #   (polariztion separation, RFI rejection OFF, noise floor subtraction OFF), new sweep table (Beff=62.5%)
-	        #   int=40 [s]		f = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
             # cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20000101T003123-20000101T004453_V01___SID3_C2_20251123-1037.ccs.cdf'
-            # cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20000101T000153-20000101T000323_V01___SID3_20251211-2231.ccs.cdf'
-
             # SID-20   ASW3         20251123    sweep 0.02-2MHz 5s		Vin=10 mVpp     .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  f = 1.8 [MHz]
-            # cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20000101T002118-20000101T002307_V01___SID4-20_0.5s_20251113-1736.ccs.cdf'
-            # cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20000101T002515-20000101T002833_V01___SID4-20_20251113-1741.ccs.cdf'
             cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20000101T000046-20000101T000506_V01___SID4-20_20251123-1107.ccs.cdf'
-            # cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20000101T000823-20000101T001238_V01___SID4-20_20251123-1114.ccs.cdf'
-            # cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20000101T000718-20000101T001159_V01___SID4-20_20251123-1345.ccs.cdf'
-
-            # SID-4    ASW3         20251123    sweep 0.02-2MHz 5s		Vin=10 mVpp     .2s(10s)>.5s(10s)>1s(20s)>2s(30s))  f = 1.8 [MHz]
-            # cdf_sid4  = data_dir + 'JUICE_L1a_RPWI-HF-SID4_20000101T002127-20000101T002138_V01___SID4-20_0.5s_20251113-1736.ccs.cdf'
-            # df_sid4  = data_dir + 'JUICE_L1a_RPWI-HF-SID4_20000101T002522-20000101T002759_V01___SID4-20_20251113-1741.ccs.cdf'
             cdf_sid4  = data_dir + 'JUICE_L1a_RPWI-HF-SID4_20000101T000046-20000101T000420_V01___SID4-20_20251123-1107.ccs.cdf'
-            # cdf_sid4  = data_dir + 'JUICE_L1a_RPWI-HF-SID4_20000101T000718-20000101T001114_V01___SID4-20_20251123-1345.ccs.cdf'
-
             # SID-21   ASW3  COMP-1 20250926    1.5MHz  Vin=10mVpp, Phase=[0 45 90 135 180 225 270 315 0] deg (V-ch) 
-            # cdf_sid21 = data_dir + 'JUICE_L1a_RPWI-HF-SID21_20000101T003031-20000101T003642_V01___SID5-21_20251113-1746.ccs.cdf'
             cdf_sid21 = data_dir + 'JUICE_L1a_RPWI-HF-SID21_20000101T002158-20000101T002658_V01___SID5-21_20251123-1129.ccs.cdf'
-
-            # SID-5    ASW3         20250926    1.5MHz  Vin=10mVpp, Phase=[0 45 90 135 180 225 270 315 0] deg (V-ch) 
-            # cdf_sid5  = data_dir + 'JUICE_L1a_RPWI-HF-SID5_20000101T003031-20000101T003531_V01___SID5-21_20251113-1746.ccs.cdf'
             cdf_sid5  = data_dir + 'JUICE_L1a_RPWI-HF-SID5_20000101T002158-20000101T002628_V01___SID5-21_20251123-1129.ccs.cdf'
-
             # SID-22   ASW3
-            # cdf_sid22 = data_dir + 'JUICE_L1a_RPWI-HF-SID22_20000101T000044-20000101T001414_V01___SID6-22_20251211-1108.ccs.cdf'
-            # cdf_sid22 = data_dir + 'JUICE_L1a_RPWI-HF-SID22_20000101T000051-20000101T000121_V01___SID6-22_P0_20251212-2236.ccs.cdf'
             cdf_sid22 = data_dir + 'JUICE_L1a_RPWI-HF-SID22_20000101T000047-20000101T001317_V01___SID6-22_20251213-1846.ccs.cdf'
-            # cdf_sid22 = data_dir + 'JUICE_L1a_RPWI-HF-SID22_20000101T000034-20000101T000104_V01___SID9-22_20260114.dat.cdf'
-
-            # SID-6    ASW3
-            # cdf_sid6  = data_dir + 'JUICE_L1a_RPWI-HF-SID6_20000101T000044-20000101T001444_V01___SID6-22_20251211-1108.ccs.cdf'
-            # cdf_sid6  = data_dir + 'JUICE_L1a_RPWI-HF-SID6_20000101T000051-20000101T000151_V01___SID6-22_P0_20251212-2236.ccs.cdf'
             cdf_sid6  = data_dir + 'JUICE_L1a_RPWI-HF-SID6_20000101T000047-20000101T001317_V01___SID6-22_20251213-1846.ccs.cdf'
-
-            # SID-9    ASW3
             cdf_sid9  = data_dir + 'JUICE_L1a_RPWI-HF-SID9_20000101T000034-20000101T000104_V01___SID9-22_20260114.dat.cdf'
-
             # SID-23   ASW3
-            # cdf_sid23 = data_dir + 'JUICE_L1a_RPWI-HF-SID23_20000101T000155-20000101T000503_V01___SID7-23_P0_20251113-2224.ccs.cdf'
             cdf_sid23 = data_dir + 'JUICE_L1a_RPWI-HF-SID23_20000101T000049-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf'
-
-            # SID-7    ASW3
-            cdf_sid7  = data_dir + 'JUICE_L1a_RPWI-HF-SID7_20000101T000155-20000101T000430_V01___SID7-23_P0_20251113-2224.ccs.cdf'
             cdf_sid7  = data_dir + 'JUICE_L1a_RPWI-HF-SID7_20000101T000049-20000101T000300_V01___SID7-23_P1_20251204-0844.ccs.cdf'
-
-            # SID-8    ASW3
             cdf_sid8  = data_dir + 'JUICE_L1a_RPWI-HF-SID8_20000101T000504-20000101T000708_V01___SID7-23_P1_20251204-0844.ccs.cdf'
 
     if asw == 2:
         if space == 1:
-            # *** Flight - Ver.2 ***
+            # *** Flight - ASW2 ***
             data_dir  = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
-
             # SID-2  ASW2        20250331   normal + OFF + CAL
             cdf_sid2  = data_dir + 'JUICE_L1a_RPWI-HF-SID2_20250331T005104-20250331T233757_V01___RPR1_52000005_2025.091.16.38.56.448.cdf'
-
             # SID-3  ASW2 COMP-1 20250331   normal + CAL
             if cal_mode == 1:    # CAL
                 cdf_sid3 = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20240822T095914-20240822T182844_V01___RPR1_52000004_2024.236.08.13.31.519.cdf' # CAL
             else:
                 cdf_sid3 = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20250331T030012-20250331T201834_V01___RPR1_52000005_2025.091.16.38.56.448.cdf' # Normal
-
             # SID-20 ASW2 COMP-1 20240706   normal
             cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20240706T121424-20240706T125428_V01___RPR2_62000002_2024.190.19.50.21.637.cdf'
-
-            # SID-4  ASW2 COMP-1 20240706   normal
             cdf_sid4  = data_dir + 'JUICE_L1a_RPWI-HF-SID4_20240706T121439-20240706T125422_V01___RPR1_52000002_2024.190.14.59.43.630.cdf'
-
             # SID-21 ASW2 COMP-1 20250331   nornal & CAL
             cdf_sid21 = data_dir + 'JUICE_L1a_RPWI-HF-SID21_20250331T033821-20250331T034222_V01___RPR2_62000007_2025.091.16.40.05.450.cdf'
-
-            # SID-5  ASW2        20250331   nornal & CAL
             cdf_sid5  = data_dir + 'JUICE_L1a_RPWI-HF-SID5_20250331T033821-20250331T034222_V01___RPR1_52000005_2025.091.16.38.56.448.cdf'
-
             # SID-23   ASW3
             cdf_sid23 = data_dir + 'JUICE_L1a_RPWI-HF-SID23_20240706T130407-20240706T130904_V01___RPR2_62000003_2024.190.22.47.44.640.cdf'
+        else:
+            # *** Ground Test - ASW2 ***
+            data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW2/cdf/'
+            # SID-2    ASW2        SG - 1.0MHz 10mVpp 90/0/0deg
+            cdf_sid2  = data_dir + 'JUICE_L1a_RPWI-HF-SID2_20000101T000154-20000101T000454_V01___SID02_20241021-1026.ccs.cdf'
+            # SID-3    ASW2        10/10/10mV, 90/0/0deg,  1.55MHz
+            cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20000101T000055-20000101T001033_V01___SID03_20241010-1027_RadioFull_comp1.ccs.cdf'
+            # cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20000101T000511-20000101T000855_V01___SID03_20241009-1806_RadioFull_comp2.ccs.cdf'
+            # SID-20   ASW2
+            cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20000101T000102-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf'
+            cdf_sid4  = data_dir + 'JUICE_L1a_RPWI-HF-SID4_20000101T000112-20000101T000123_V01___SID04-20_20241016-1156-Radioburst.ccs.cdf'
+            # SID-21   ASW2
+            cdf_sid21 = data_dir + 'old/JUICE_L1a_RPWI-HF-SID21_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf'
+            cdf_sid5  = data_dir + 'old/JUICE_L1a_RPWI-HF-SID5_20000101T000044-20000101T000144_V01___SID05-21_20231117-1611.ccs.cdf'
+            # SID-23   ASW3
+            cdf_sid23 = data_dir + 'old/JUICE_L1a_RPWI-HF-SID23_20000101T000047-20000101T000047_V01___SID07-23_20231024-0024.ccs.cdf'
 
     if asw == 1:
         if space == 1:
             # *** Flight - Ver.1 ***
-            data_dir = data_dir + '/Users/user/0-python/JUICE_data/Data-CDF/ASW1/'
+            data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW1/'
 
             # SID-2  ASW1       20230530   normal + CAL
             cdf_sid2 = data_dir + 'JUICE_L1a_RPWI-HF-SID2_20230530T100330-20230530T100930_V01___RPR1_52000010_2023.150.10.40.53.663.cdf' # 230530 background & CAL
@@ -183,8 +146,16 @@ def spec_shaping_EuEu(spec_sid, str_SID, n_sweep1, n_sweep2):
     # RAW^2/Hz -> RAW^2
     spec_sid.df_freq      = spec_sid.freq_w1   * 1000.              # kHz -> Hz
     spec_sid.EuEu_max     = np.nanmax(spec_sid.EuEu, axis=0)   
-    spec_sid.EuEu_a_max   = spec_sid.EuEu_max * spec_sid.df_freq;   spec_sid.EuEu_med     = np.nanmedian(spec_sid.EuEu, axis=0)
-    spec_sid.EuEu_amp_max = np.nanmax(spec_sid.EuEu_amp, axis=0);   spec_sid.EuEu_raw_med = np.nanmedian(spec_sid.EuEu_raw, axis=0)
+    spec_sid.EuEu_a_max   = spec_sid.EuEu_max * spec_sid.df_freq
+    spec_sid.EuEu_amp_max = np.nanmax(spec_sid.EuEu_amp, axis=0)
+    
+    # Median except large amplitude parts (< amp_max)
+    amp_max = 1e+6
+    if spec_sid.sid != 8:  spec_sid.time_EuEu_amp_med = np.nanmedian(spec_sid.EuEu_amp, axis=1)
+    else:                  spec_sid.time_EuEu_amp_med = spec_sid.EuEu_amp
+    index = np.where( spec_sid.time_EuEu_amp_med < amp_max )
+    spec_sid.EuEu_med     = np.nanmedian(spec_sid.EuEu[index[0]],     axis=0)
+    spec_sid.EuEu_raw_med = np.nanmedian(spec_sid.EuEu_raw[index[0]], axis=0)
 
     # peak
     peak_f = np.nanargmax(spec_sid.EuEu_a_max);  print('\n'+str_SID+' [peak-MAX]', spec_sid.EuEu_max.shape, spec_sid.freq.shape, peak_f)
