@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/3/15
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/6/14
 """
 import glob
 import numpy as np
@@ -34,6 +34,16 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID2_20000101T000110-20000101T000828_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID2_20000101T183019-20000101T183050_V01___FFT.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID2_20000102T203420-20000102T204139_V01___FFT3_0.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID2_20000101T001840-20000101T002558_V01___260525FFT_0.bin.cdf',
+                    ]
+        """
         # 202511 -- 10mV, interval=40 [s]  freq_set = [0.02 0.05 0.1 0.2 0.5 1.1 1.8 2.1 3.1 5.1 10.1 15.1 20.1 25.1 30.1 35.1 40.1 44.1] [MHz]
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
@@ -65,6 +75,7 @@ def datalist(date_str, ver_str):
         """
 
         # *** Flight - Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID2_20240125T112327-20240125T113141_V01___RPR1_52000011_2024.025.15.57.21.441.cdf',    # f_max: 44888.625
                      #'JUICE_L1a_RPWI-HF-SID2_20240125T152238-20240125T152330_V01___RPR1_52000012_2024.025.16.07.08.425.cdf',
@@ -73,7 +84,6 @@ def datalist(date_str, ver_str):
                      #'JUICE_L1a_RPWI-HF-SID2_20250331T005104-20250331T233757_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',    # CAL  81.15625 - 44922.84375 kHz 
                      'JUICE_L1a_RPWI-HF-SID2_20260223T003941-20260223T004236_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',    # CAL: 81.15625 - 44922.84375 kHz / 19392
                     ]
-        """
         """
 
         # *** Flight - Ver.1
@@ -208,6 +218,11 @@ def hf_sid2_shaping(data, cal_mode):
         data.frequency  = data.frequency [:, 0:n_num];   data.freq_step  = data.freq_step [:, 0:n_num]
         data.freq_width = data.freq_width[:, 0:n_num];   data.time       = data.time      [:, 0:n_num]
         print(" cut1:", data.Eu_i.shape, data.n_time, "  <n_freq*n_samp selection>")
+    # Cut: Spectrum Data
+    data.EuEu_amp   = data.EuEu_amp  [:, 0:data.n_step]; data.EuEu_raw   = data.EuEu_raw  [:, 0:data.n_step]
+    data.EvEv_amp   = data.EvEv_amp  [:, 0:data.n_step]; data.EvEv_raw   = data.EvEv_raw  [:, 0:data.n_step]
+    data.EwEw_amp   = data.EwEw_amp  [:, 0:data.n_step]; data.EwEw_raw   = data.EwEw_raw  [:, 0:data.n_step]
+    data.frequency2 = data.frequency2[:, 0:data.n_step]; data.freq_step2 = data.freq_step2[:, 0:data.n_step]; data.freq_width2 = data.freq_width2[:, 0:data.n_step]
 
     # Reshape from "2D: n_time * (n_freq * n_samp)" to "3D: n_time * n_freq * n_samp"
     data.Eu_i       = np.array(data.Eu_i).reshape      (data.n_time, data.n_step, data.n_samp)
@@ -251,7 +266,6 @@ def hf_sid2_select_time(data, index):
     data.Eu_i      = data.Eu_i     [index[0]];   data.Eu_q = data.Eu_q[index[0]]
     data.Ev_i      = data.Ev_i     [index[0]];   data.Ev_q = data.Ev_q[index[0]]
     data.Ew_i      = data.Ew_i     [index[0]];   data.Ew_q = data.Ew_q[index[0]]
-    data.frequency = data.frequency[index[0]];   data.freq_step = data.freq_step[index[0]];  data.freq_width = data.freq_width[index[0]]
     data.time      = data.time     [index[0]]
 
     # Spectrum Data

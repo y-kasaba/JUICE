@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full) L1a QL -- 2026/4/30
+    JUICE RPWI HF SID3 (Full) L1a QL -- 2026/6/14
 """
 import glob
 import numpy as np
@@ -34,15 +34,23 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
-        # 202604-- ASW3 test @ system
-        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
-        data_list = [#'JUICE_L1a_RPWI-HF-SID3_20260421T152048-20260421T160502_V01___52000001_4.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20260422T085943-20260422T090740_V01___52000001_5_ASW2.cdf',
-                     'JUICE_L1a_RPWI-HF-SID3_20260422T123205-20260422T125820_V01___52000001_6_tmp.cdf',
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID3_20000101T000844-20000101T002155_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID3_20000102T204155-20000102T204952_V01___FFT3_0.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID3_20000113T002201-20000113T002958_V01___260520FFT_0.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20000101T002614-20000101T003411_V01___260525FFT_0.bin.cdf',
                     ]
         """
+        # 202604-- ASW3 test @ system
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID3_20260421T152048-20260421T160502_V01___52000001_4.cdf']
         """
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID3_20260109T162606-20260109T162606_V01___Sec03_260118.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20260109T164153-20260109T165023_V01___Sec04_260118.bin.cdf',
@@ -63,7 +71,6 @@ def datalist(date_str, ver_str):
                      'JUICE_L1a_RPWI-HF-SID3_20260416T165608-20260416T170438_V01___Sec15_260416.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID3_20260416T174142-20260416T175012_V01___Sec17_260416.bin.cdf',
                     ]
-        """
         """
         # 202511 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
         """
@@ -143,24 +150,24 @@ def datalist(date_str, ver_str):
                     ]
         """
         # *** Flight data: Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID3_20240126T083835-20240126T113101_V01___RPR1_52000013_2024.026.13.22.14.423.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240701T011127-20240701T011309_V01___RPR1_52000001_2024.183.15.43.53.614.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240706T121009-20240706T131448_V01___RPR1_52000002_2024.190.14.59.43.630.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20240706T175202-20240706T183012_V01___RPR1_52000003_2024.190.15.33.44.638.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20240819T202636-20240819T221323_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',    # LGA
+                     #'JUICE_L1a_RPWI-HF-SID3_20240819T202636-20240819T221323_V01___RPR1_52000003_2024.233.02.43.43.102.cdf',   # LGA
                      #'JUICE_L1a_RPWI-HF-SID3_20240820T180734-20240822T022254_V01___RPR1_52000003_2024.235.03.19.13.483.cdf',   # EGA
-                     #'JUICE_L1a_RPWI-HF-SID3_20240822T095914-20240822T182844_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',    # CAL
+                     #'JUICE_L1a_RPWI-HF-SID3_20240822T095914-20240822T182844_V01___RPR1_52000004_2024.236.08.13.31.519.cdf',   # CAL
                      #'JUICE_L1a_RPWI-HF-SID3_20240823T035818-20240823T215457_V01___RPR1_52000005_2024.237.04.37.21.527.cdf',   # CAL-roll
                      #'JUICE_L1a_RPWI-HF-SID3_20240909T093241-20240909T101941_V01___RPR1_52000005_2024.254.16.53.07.436.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20250331T030012-20250331T201834_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID3_20260223T004250-20260223T004427_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20250331T030012-20250331T201834_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260223T004250-20260223T004427_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20260224T071223-20260224T202104_V01___RPR1_52000003_2026.062.10.00.23.546.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20260225T032214-20260225T035144_V01___RPR1_52000004_2026.062.10.36.22.491.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20260225T073900-20260227T054301_V01___RPR1_52000005_2026.062.11.30.25.518.cdf',
-                     'JUICE_L1a_RPWI-HF-SID3_20260227T091840-20260228T222000_V01___RPR1_52000006_2026.062.11.56.35.462.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID3_20260227T091840-20260228T222000_V01___RPR1_52000006_2026.062.11.56.35.462.cdf',
         ]
-        """
         """
         # *** Flight - Ver.1 ***
         """
@@ -174,7 +181,7 @@ def datalist(date_str, ver_str):
                      #'JUICE_L1a_RPWI-HF-SID3_20230523T104541-20230523T104752_V01___RPR1_52000001_2023.143.10.49.52.471.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20230523T104936-20230523T105153_V01___RPR1_52000002_2023.143.10.54.17.487.cdf',   # after Z deployment
                      #'JUICE_L1a_RPWI-HF-SID3_20230523T110542-20230523T110754_V01___RPR1_52000002_2023.143.11.09.54.471.cdf',
-                     'JUICE_L1a_RPWI-HF-SID3_20230523T110938-20230523T111154_V01___RPR1_52000003_2023.143.11.14.17.500.cdf',   # after Y deployment: with CAL
+                     #'JUICE_L1a_RPWI-HF-SID3_20230523T110938-20230523T111154_V01___RPR1_52000003_2023.143.11.14.17.500.cdf',   # after Y deployment: with CAL
                      #'JUICE_L1a_RPWI-HF-SID3_20230523T121543-20230523T122531_V01___RPR1_52000003_2023.143.12.39.49.467.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20230523T124139-20230523T125127_V01___RPR1_52000003_2023.143.12.55.52.507.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20230523T125743-20230523T130731_V01___RPR1_52000003_2023.143.13.11.36.466.cdf',
@@ -328,7 +335,6 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
         data.EuEu_amp    = data.EuEu_amp   [index[0]]; data.EvEv_amp   = data.EvEv_amp  [index[0]]; data.EwEw_amp   = data.EwEw_amp  [index[0]]
         data.gain_raw    = data.gain_raw   [index[0]]; data.df_raw     = data.df_raw    [index[0]]
         #
-        data.frequency   = data.frequency  [index[0]]; data.freq_step  = data.freq_step [index[0]]; data.freq_width = data.freq_width[index[0]]
         hf_hk.status_shaping(data, index[0])
         
         data.n_time = data.EuEu.shape[0]

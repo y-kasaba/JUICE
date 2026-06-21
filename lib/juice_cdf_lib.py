@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2026/3/16
+# JUICE RPWI HF CDF lib -- 2026/6/1
 
 # import glob
 # import spacepy.pycdf
@@ -116,7 +116,7 @@ def _get_band(start, stop, step, sdiv, bw_eff, isw_version):
     bw_eff = bw_eff / 1000.
     if isw_version == 2:
         bw_eff = bw_eff * 0.75
-    elif isw_version == 3:
+    elif isw_version >= 3.0:
         bw_eff = bw_eff * 0.625
     else:
         raise ValueError(
@@ -217,7 +217,7 @@ def _frequency_sid3(asw_ver):
     else:
         print("ASW version is not supported")
         os.system("pause")
-    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, asw_ver)
+    freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, np.int32(asw_ver))
     return freq, f_step, f_width
 
 

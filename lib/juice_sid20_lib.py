@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 & 20 (BURST) L1a QL -- 2026/4/30
+    JUICE RPWI HF SID4 & 20 (BURST) L1a QL -- 2026/6/14
 """
 import glob
 import numpy as np
@@ -35,10 +35,20 @@ def datalist(date_str, ver_str, sid):
 
     elif sid == 20:     # <<< SID-20 test datas >>>
         # *** Ground Test - Ver.3 ***
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID20_20000101T002239-20000101T002307_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID20_20000113T003042-20000113T003111_V01___FFT4_0.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID20_20000113T003042-20000113T003111_V01___260520FFT_0.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID20_20000101T003455-20000101T003525_V01___260525FFT_0.bin.cdf',
+                    ]
+        """
         # 202604-- ASW3 test @ system
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
         data_list = ['JUICE_L1a_RPWI-HF-SID20_20260421T150736-20260421T161242_V01___62000001_3.cdf',]
-        """
         """
         # 202604-- ASW3 test
         """
@@ -106,12 +116,22 @@ def datalist(date_str, ver_str, sid):
 
     else:     # <<< SID-4 test datas >>>
         # *** Ground Test - Ver.3 ***
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20000101T002239-20000101T002307_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID4_20000113T003042-20000113T003111_V01___260520FFT_0.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20000101T003455-20000101T003525_V01___260525FFT_0.bin.cdf',
+                    ]
+        """
         # 202604-- ASW3 test @ system
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
         data_list = ['JUICE_L1a_RPWI-HF-SID4_20260421T150736-20260421T161242_V01___52000001_4.cdf',]
         """
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID4_20260109T153335-20260109T154240_V01___Sec01_260118.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID4_20260109T155142-20260109T160047_V01___Sec02_260118.bin.cdf',
@@ -126,7 +146,6 @@ def datalist(date_str, ver_str, sid):
                      'JUICE_L1a_RPWI-HF-SID4_20260416T182127-20260416T183029_V01___Sec19_260416.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID4_20260416T184231-20260416T185136_V01___Sec20_260416.bin.cdf',
                     ]
-        """
         """
         # 202511 -- SAMPLE  sweep 0.02-2MHz 5s		Vin=10 mVpp
         """
@@ -234,12 +253,12 @@ def hf_sid20_add(data, data1):
     return data
 
 
-def hf_sid20_shaping(data, cal_mode, comp_mode):
+def hf_sid20_shaping(data, mode_cal, mode_comp):
     """
     input:  data, sid
-            cal_mode    [Power]     0: background          1: CAL           2: all
+            mode_cal    [Power]     0: background          1: CAL           2: all
             N_ch0       [channel]   2: 2-ch    3: 3-ch                   0,>3: any
-            comp_mode   [Complex]   0: Poweer  1: Matrix   3: Matrix-2D    >3: any   
+            mode_comp   [Complex]   0: Poweer  1: Matrix   3: Matrix-2D    >3: any   
     return: data
     """
     # Size
@@ -277,21 +296,18 @@ def hf_sid20_shaping(data, cal_mode, comp_mode):
             data.n_time, "x", data.n_block, "x", data.n_step, "[", data.n_time*data.n_block*data.n_step, "]")
 
     # CAL & COMP
-    if cal_mode < 2 or comp_mode < 4:
-        if cal_mode < 2:
-            if comp_mode < 4:
-                index = np.where( (data.cal_signal == cal_mode) &                   (comp_mode == data.complex) )
-                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
+    if mode_cal < 2 or mode_comp < 4:
+        if mode_cal < 2:
+            if mode_comp < 4:
+                index = np.where( (data.cal_signal == mode_cal) &                   (mode_comp == data.complex) )
+                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_cal, " mode_comp:", mode_comp)
             else:
-                index = np.where( (data.cal_signal == cal_mode)                                                 )
-                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode)
+                index = np.where( (data.cal_signal == mode_cal)                                                 )
+                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_cal)
         else:
-            index     = np.where(                                                   (comp_mode == data.complex) )
-            print(    "  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> comp_mode:", comp_mode)
+            index     = np.where(                                                   (mode_comp == data.complex) )
+            print(    "  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> mode_comp:", mode_comp)
 
-        # Data
-        data.epoch     = data.epoch    [index[0]];  data.scet      = data.scet     [index[0]]
-        data.frequency = data.frequency[index[0]];  data.freq_step = data.freq_step[index[0]];  data.freq_width = data.freq_width[index[0]]
         # complex < 2:     # Power
         data.EuEu    = data.EuEu   [index[0]]; data.EvEv    = data.EvEv   [index[0]]; data.EwEw    = data.EwEw   [index[0]]
         # complex == 1:    # Matrix
@@ -305,12 +321,12 @@ def hf_sid20_shaping(data, cal_mode, comp_mode):
         hf_hk.status_shaping(data, index[0])
 
         n_time = data.EuEu.shape[0]
-        if cal_mode < 2:
-            if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
-            else:             print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", cal_mode)
-            if cal_mode == 0: print("<only BG>")
+        if mode_cal < 2:
+            if mode_comp < 4: print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", mode_cal, " mode_comp:", mode_comp)
+            else:             print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", mode_cal)
+            if mode_cal == 0: print("<only BG>")
             else:             print("<only CAL>")
-        else:                 print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> comp_mode:", comp_mode)
+        else:                 print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> mode_comp:", mode_comp)
 
     # NAN
     index = np.where(data.complex == 0)

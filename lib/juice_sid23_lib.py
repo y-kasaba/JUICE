@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3-R) / SID8 (PSSR3-S RAW) L1a QL -- 2026/4/30
+    JUICE RPWI HF SID23 (PSSR3-R) / SID8 (PSSR3-S RAW) L1a QL -- 2026/6/13
 """
 import glob
 import numpy          as np
@@ -35,12 +35,23 @@ def datalist(date_str, ver_str, sid):
 
     elif sid == 23: 	# <<< SID-23 test datas >>>
         # *** Ground Test - Ver.3 ***
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T003711-20000101T003904_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID23_20000113T004514-20000113T004538_V01___260520FFT_0.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID23_20000113T004604-20000113T004640_V01___260520FFT_1.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID23_20000101T004927-20000101T005054_V01___260525FFT_1.bin.cdf',
+                     ]
+        """
         # 202604-- ASW3 test @ system
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
         data_list = ['JUICE_L1a_RPWI-HF-SID23_20260421T153231-20260421T153832_V01___62000001_3.cdf',]
         """
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID23_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID23_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
@@ -49,7 +60,6 @@ def datalist(date_str, ver_str, sid):
                      'JUICE_L1a_RPWI-HF-SID23_20260414T125034-20260414T125904_V01___Sec08_260416.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID23_20260414T130843-20260414T131713_V01___Sec09_260416.bin.cdf',
                     ]    
-        """
         """
         # 202511 -- SAMPLE
         """
@@ -92,11 +102,14 @@ def datalist(date_str, ver_str, sid):
 
     else:               # <<< SID-08 test datas >>>
         # 202604-- ASW3 test @ system
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID8_20000101T003711-20000101T003758_V01___FFT_20260602-2241.ccs.cdf']
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
         data_list = ['JUICE_L1a_RPWI-HF-SID8_20260421T153231-20260421T153832_V01___52000001_4.cdf',]
         """
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID8_20260109T172713-20260109T173543_V01___Sec07_260118.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID8_20260109T174710-20260109T175540_V01___Sec08_260118.bin.cdf',
@@ -105,7 +118,6 @@ def datalist(date_str, ver_str, sid):
                      'JUICE_L1a_RPWI-HF-SID8_20260414T125034-20260414T125904_V01___Sec08_260416.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID8_20260414T130843-20260414T131713_V01___Sec09_260416.bin.cdf',
                     ]
-        """
         """
         # 202512 -- SAMPLE
         """
@@ -122,7 +134,7 @@ def datalist(date_str, ver_str, sid):
 # ---------------------------------------------------------------------
 # --- SID23 ------------------------------------------------------------
 # ---------------------------------------------------------------------
-def hf_sid23_read(cdf):
+def hf_sid23_read(cdf, sid):
     """
     input:  CDF
     return: data
@@ -145,12 +157,16 @@ def hf_sid23_read(cdf):
     data.spec_EvEv_amp = np.float64(cdf['EvEv_amp'][...]);  data.spec_EvEv_raw = np.float64(cdf['EvEv_raw'][...])
     data.spec_EwEw_amp = np.float64(cdf['EwEw_amp'][...]);  data.spec_EwEw_raw = np.float64(cdf['EwEw_raw'][...])
     data.gain_raw = cdf['gain_raw'][...];      data.df_raw = cdf['df_raw'][...]
+    #
+    if sid == 8:
+        data.EE      = np.float64(cdf['EE'][...])
+        data.EE_amp  = np.float64(cdf['EE_amp'][...]);      data.EE_raw = np.float64(cdf['EE_raw'][...])
 
     hf_hk.status_read(cdf, data)
     return data
 
 
-def hf_sid23_add(data, data1):
+def hf_sid23_add(data, data1, sid):
     """
     input:  data, data1
     return: data
@@ -173,6 +189,11 @@ def hf_sid23_add(data, data1):
     data.spec_EwEw_raw = np.r_["0", data.spec_EwEw_raw, data1.spec_EwEw_raw]
     data.gain_raw   = np.r_["0", data.gain_raw, data1.gain_raw]
     data.df_raw     = np.r_["0", data.df_raw,   data1.df_raw]
+
+    if sid == 8:
+        data.EE       = np.r_["0", data.EE, data1.EE]
+        data.EE_raw   = np.r_["0", data.EE_raw, data1.EE_raw];      data.EE_amp = np.r_["0", data.EE_amp, data1.EE_amp]
+        data.gain_raw = np.r_["0", data.gain_raw, data1.gain_raw];  data.df_raw = np.r_["0", data.df_raw, data1.df_raw]
 
     hf_hk.status_add(data, data1)
     return data
@@ -203,6 +224,9 @@ def hf_sid23_shaping(data, f_max, f_min, sid):
     data.spec_EvEv  = data.spec_EvEv[index[0]];  data.spec_EvEv_amp = data.spec_EvEv_amp[index[0]]; data.spec_EvEv_raw = data.spec_EvEv_raw[index[0]]
     data.spec_EwEw  = data.spec_EwEw[index[0]];  data.spec_EwEw_amp = data.spec_EwEw_amp[index[0]]; data.spec_EwEw_raw = data.spec_EwEw_raw[index[0]]
     data.gain_raw   = data.gain_raw [index[0]];  data.df_raw        = data.df_raw[index[0]]
+    if sid == 8:
+        data.EE     = data.EE       [index[0]]
+        data.EE_amp = data.EE_amp   [index[0]];  data.EE_raw        = data.EE_raw[index[0]]
 
     hf_hk.status_shaping(data, index[0])
  

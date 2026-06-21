@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF: L1a spec -- 2026/3/19
+    JUICE RPWI HF: L1a spec -- 2026/6/12
 """
 import copy
 import math

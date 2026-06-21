@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1-S) L1a QL -- 2026/4/30
+    JUICE RPWI HF SID5 (PSSR1-S) L1a QL -- 2026/6/14
 """
 import glob
 import math
@@ -35,17 +35,26 @@ def datalist(date_str, ver_str):
 
     else:
         # *** Ground Test - Ver.3 ***
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID5_20000101T002317-20000101T002929_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID5_20000113T003120-20000113T003733_V01___260520FFT_0.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID5_20000101T003534-20000101T004146_V01___260525FFT_0.bin.cdf'
+                     ]
+        """
         # 202604-- ASW3 test @ system
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
         data_list = ['JUICE_L1a_RPWI-HF-SID5_20260421T152539-20260421T152939_V01___52000001_4.cdf',]
         """
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID5_20260109T165736-20260109T170606_V01___Sec05_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID5_20260414T111952-20260414T112822_V01___Sec05_260416.bin.cdf',
                     ]
-        """
         """
         # 202511 -- SAMPLE  Vin=10 mVpp     	interval=40 [s]			freq_set = [1.1 1.2 1.4 1.6 1.8] [MHz]
         """
@@ -64,11 +73,11 @@ def datalist(date_str, ver_str):
                      ]
         """
         # 202503 -- Flight
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID5_20250331T033821-20250331T034222_V01___RPR1_52000005_2025.091.16.38.56.448.cdf',
                      'JUICE_L1a_RPWI-HF-SID5_20260223T004655-20260223T004831_V01___RPR1_52000001_2026.062.08.07.27.435.cdf',
                     ]
-        """
         """
 
     print(data_dir)
@@ -130,10 +139,6 @@ def hf_sid5_shaping(data, cal_mode):
 
         # Data
         data.EE          = data.EE        [index[0]]
-        data.frequency   = data.frequency [index[0]]
-        data.freq_step   = data.freq_step [index[0]]
-        data.freq_width  = data.freq_width[index[0]]
-        #
         data.EE_raw   = data.EE_raw  [index[0]];    data.EE_amp = data.EE_amp[index[0]]
         data.gain_raw = data.gain_raw[index[0]];    data.df_raw = data.df_raw[index[0]]
         

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID6 (PSSR2-S) & 9 (PSSR2-S-SINGLE) & 22 (PSSR2-R) L1a QL -- 2026/5/5
+    JUICE RPWI HF SID6 (PSSR2-S) & 9 (PSSR2-S-SINGLE) & 22 (PSSR2-R) L1a QL -- 2026/6/14
 """
 import glob
 import numpy as np
@@ -34,17 +34,29 @@ def datalist(date_str, ver_str, sid):
 
     elif sid == 22: 	# <<< SID-22 test datas >>>
         # *** Ground Test - Ver.3 ***
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID22_20000101T003014-20000101T004605_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID22_20000113T003818-20000113T004500_V01___260520FFT_0.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID22_20000113T004654-20000113T005337_V01___260520FFT_1.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID22_20000101T004231-20000101T004331_V01___260525FFT_0.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID22_20000101T004401-20000101T005208_V01___260525FFT_1.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID22_20000101T005252-20000101T005750_V01___260525FFT_2.bin.cdf',
+                    ]
+        """
         # 202604-- ASW3 test @ system
         """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
         data_list = ['JUICE_L1a_RPWI-HF-SID22_20260421T153015-20260421T153145_V01___62000001_3.cdf',]
         """
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID22_20260109T171221-20260109T172121_V01___Sec06_260118.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID22_20260414T120343-20260414T121243_V01___Sec06_260416.bin.cdf',
                     ]
-        """
         """
         # 202601
         """
@@ -72,15 +84,27 @@ def datalist(date_str, ver_str, sid):
         """
 
     elif sid == 9:      # <<< SID-09 test datas >>>
+        # 202605-- ASW3 FFT
+        data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID9_20000101T003014-20000101T005639_V01___FFT_20260602-2241.ccs.cdf']
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
+        data_list = [#'JUICE_L1a_RPWI-HF-SID9_20000113T003818-20000113T004500_V01___260520FFT_0.bin.cdf',
+                     #'JUICE_L1a_RPWI-HF-SID9_20000113T004654-20000113T005337_V01___260520FFT_1.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID9_20000101T004231-20000101T004331_V01___260525FFT_0.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID9_20000101T004401-20000101T005238_V01___260525FFT_1.bin.cdf',
+                     'JUICE_L1a_RPWI-HF-SID9_20000101T005252-20000101T005750_V01___260525FFT_2.bin.cdf',
+                    ]
+        """
         # 202604-- ASW3 test @ system
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/system/'
         data_list = ['JUICE_L1a_RPWI-HF-SID9_20260421T153015-20260421T153145_V01___52000001_4.cdf']
         """
-        """
         # 202601-- ASW3 test
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID9_20260414T120343-20260414T121243_V01___Sec06_260416.bin.cdf']
-        """
         """
         # 202601
         """
