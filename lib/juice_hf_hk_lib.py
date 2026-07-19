@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF Status -- 2026/6/14
+    JUICE RPWI HF Status -- 2026/7/19
 """
 import numpy as np
 import math
@@ -47,6 +47,7 @@ def status_read(cdf, data):
         data.sweep_table    = cdf['sweep_table'][...];      data.Ver_tbl_freq   = cdf['Ver_tbl_freq'][...]; data.Ver_tbl_mask = cdf['Ver_tbl_mask'][...]
     if data.sid in [3, 4, 20, 21]:                          data.complex     = cdf['complex'][...]
     if data.sid in [7, 8, 23]:                              data.frequency   = cdf['frequency'][...];       data.freq_width   = cdf['freq_width'][...]
+    if data.sid in [6, 9, 22]:                              data.proc_param1 = cdf['proc_param1'][...]
 
     if data.sid in [2, 8, 23]:                      data.N_samp     = np.int64(cdf['N_samp'][...])
     if data.sid in [2, 3, 4, 20, 5, 21, 6, 9, 22]:  data.N_step     = np.int64(cdf['N_step'][...])         # SID-2,3,4/20,5/21,6/22
@@ -87,7 +88,7 @@ def status_add(data, data1):
     if data.sid in [3, 4, 20, 21]:                  data.complex    = np.r_["0", data.complex, data1.complex]
     if data.sid in [7, 8, 23]:                      
         data.frequency  = np.r_["0", data.frequency, data1.frequency]; data.freq_width = np.r_["0", data.freq_width, data1.freq_width]
-
+    if data.sid in [6, 9, 22]:                      data.proc_param1= np.r_["0", data.proc_param1, data1.proc_param1]
 
     if data.sid in [2, 8, 23]:                      data.N_samp     = np.r_["0", data.N_samp, data1.N_samp]
     if data.sid in [2, 3, 4, 20, 5, 21, 6, 9, 22]:  data.N_step     = np.r_["0", data.N_step, data1.N_step]
@@ -115,9 +116,9 @@ def status_shaping(data, index):
         data.proc_param2   = data.proc_param2[index];   data.proc_param3  = data.proc_param3[index]
         data.sweep_table   = data.sweep_table[index];   data.Ver_tbl_freq = data.Ver_tbl_freq[index]; data.Ver_tbl_mask = data.Ver_tbl_mask[index]
     if data.sid in [3, 4, 20, 21]:              data.complex    = data.complex   [index]
-
     data.frequency  = data.frequency [index];   data.freq_width = data.freq_width[index]
     if data.sid in [2, 3, 4, 20, 5, 21]:        data.freq_step  = data.freq_step [index]
+    if data.sid in [6, 9, 22]:                  data.proc_param1  = data.proc_param1[index]
     
     if data.sid in [2, 8, 23]:                  data.N_samp     = data.N_samp    [index]
     if data.sid in [2, 3, 4, 20, 5, 21, 6, 22]: data.N_step     = data.N_step    [index]

@@ -1,11 +1,11 @@
 """
-    JUICE RPWI HF SID3 (Full) L1a QL -- 2026/6/14
+    JUICE RPWI HF SID3 (Full) L1a QL -- 2026/7/19
 """
 import glob
-import numpy as np
 import math
+import numpy as np
+import os
 import juice_hf_hk_lib as hf_hk
-
 class struct:
     pass
 
@@ -33,11 +33,19 @@ def datalist(date_str, ver_str):
             data_list[i] = os.path.split(data_list[i])[1]
 
     else:
+        # *** Flight - Ver.3 ***
+        # 202606 -- PC4
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID3_20260716T213754-20260716T215104_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                    ]
+        """
+        """
+
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID3_20000101T000844-20000101T002155_V01___FFT_20260602-2241.ccs.cdf']
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID3_20000102T204155-20000102T204952_V01___FFT3_0.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID3_20000113T002201-20000113T002958_V01___260520FFT_0.bin.cdf',

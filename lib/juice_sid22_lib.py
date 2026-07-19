@@ -1,8 +1,9 @@
 """
-    JUICE RPWI HF SID6 (PSSR2-S) & 9 (PSSR2-S-SINGLE) & 22 (PSSR2-R) L1a QL -- 2026/6/14
+    JUICE RPWI HF SID6 (PSSR2-S) & 9 (PSSR2-S-SINGLE) & 22 (PSSR2-R) L1a QL -- 2026/7/19
 """
 import glob
 import numpy as np
+import os
 import juice_hf_hk_lib as hf_hk
 class struct:
     pass
@@ -22,8 +23,9 @@ def datalist(date_str, ver_str, sid):
     if yr_format=='20':
         base_dir = '/Users/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
-        if sid == 6:  data_name = '*HF*SID6_*'+ver_str+'.cdf'
-        else:         data_name = '*HF*SID22_*'+ver_str+'.cdf'    
+        if   sid == 6:  data_name = '*HF*SID6_*'+ver_str+'.cdf'
+        elif sid == 22: data_name = '*HF*SID22_*'+ver_str+'.cdf'    
+        elif sid == 9:  data_name = '*HF*SID9_*'+ver_str+'.cdf'
         cdf_file = data_dir + data_name
 
         data_list = glob.glob(cdf_file)
@@ -33,6 +35,14 @@ def datalist(date_str, ver_str, sid):
             data_list[i] = os.path.split(data_list[i])[1]
 
     elif sid == 22: 	# <<< SID-22 test datas >>>
+        # *** Flight - Ver.3 ***
+        """
+        # 202606 -- PC4
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID9_20260716T215924-20260716T221515_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                    ]
+        """
+
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
@@ -68,6 +78,14 @@ def datalist(date_str, ver_str, sid):
                     ]
         """
     elif sid == 6:      # <<< SID-06 test datas >>>
+        # *** Flight - Ver.3 ***
+        """
+        # 202606 -- PC4
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID9_20260716T215924-20260716T221515_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                    ]
+        """
+
         # 202601-- ASW3 test
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID6_20260109T171221-20260109T172121_V01___Sec06_260118.bin.cdf'
@@ -84,10 +102,18 @@ def datalist(date_str, ver_str, sid):
         """
 
     elif sid == 9:      # <<< SID-09 test datas >>>
+        # *** Flight - Ver.3 ***
+        # 202606 -- PC4
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID9_20260716T215924-20260716T221515_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                    ]
+        """
+        """
+
         # 202605-- ASW3 FFT
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID9_20000101T003014-20000101T005639_V01___FFT_20260602-2241.ccs.cdf']
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID9_20000113T003818-20000113T004500_V01___260520FFT_0.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID9_20000113T004654-20000113T005337_V01___260520FFT_1.bin.cdf',

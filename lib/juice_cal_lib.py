@@ -1,4 +1,4 @@
-# JUICE RPWI HF CAL lib -- 2025/10/9
+# JUICE RPWI HF CAL lib -- 2026/6/26
 import copy
 import csv
 import numpy as np
@@ -49,13 +49,10 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
     Output: wave_cal        Eu_i, Eu_q, Ev_i, Ev_q, Ew_i, Ew_q, cf (dB), str
     """
     # ******************************************************************************************
-    # ***** SID-3 cal: different in ASW-1&3 - ASW-2 (wrong) --- TBC
+    # ***** Date: to be used in future 
     # ******************************************************************************************
-    print("  ASW:", data.RPWI_FSW_version)
-    # ***************************************
-    # ***** Date will be used in future *****
-    # ***************************************
-    print("Epoch:", data.epoch[0], "-", data.epoch[-1])
+    print("         ASW:", data.RPWI_FSW_version)
+    print("       Epoch:", data.epoch[0], "-", data.epoch[-1])
 
     # ******************************************************
     # [EM2-0]
@@ -96,7 +93,7 @@ def wave_cal(data, sid, unit_mode, T_HF, T_RWI):
 
     wave_cal.cf       = cf          # dB
     wave_cal.str_unit = str_unit    # unit for wave
-    print("Wave-CAL (dB):", cf, str_unit)
+    print("Wave-CAL(dB):", cf, str_unit)
     return wave_cal
 
 
@@ -115,62 +112,44 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
     """
 
     # ******************************************************************************************
-    # ***** SID-3 cal: different in ASW-1&3 - ASW-2 (wrong) --- TBC
+    # ***** n_time
     # ******************************************************************************************
     print("  ASW:", spec.RPWI_FSW_version)
-    if sid==5:
-        n_time = spec.EE.shape[0]
-    else:
-        n_time = spec.EuEu.shape[0]
-    # ***************************************
-    # ***** Date will be used in future *****
-    # ***************************************
+    if sid==5:  n_time = spec.EE.shape[0]
+    else:       n_time = spec.EuEu.shape[0]
+    # ******************************************************************************************
+    # ***** Date : to be used in future 
+    # ******************************************************************************************
     print("Epoch:", spec.epoch[0], "-", spec.epoch[-1])
-
-    freq = spec.freq[n_time//2];  n_freq = freq.shape[0];  freq_w = spec.freq_w[n_time//2]
-
-    # Amplitude correction
-    cal_factor = 1.0
-    if   sid==3:                                        # SID-3:
-        if (band_mode > 0 or unit_mode > 0) and spec.RPWI_FSW_version > 1:
-            cal_factor = 0.1
-        print("<cal_factor: SID-3 Ver.2->",   1/cal_factor**2, band_mode, "--", unit_mode, spec.RPWI_FSW_version)
-    else:
-        print("<cal_factor: others>",   1/cal_factor**2)
-    
-    # Band width correction
+    # ******************************************************************************************
+    # ***** Frequency
+    # ******************************************************************************************
+    freq = spec.freq[n_time//2];  n_freq = freq.shape[0]    # ;  freq_w = spec.freq_w[n_time//2]
+    # ******************************************************************************************
+    # Gain & Phase
+    #   phase_shift: dt (sec) * frequency (Hz) * 2π
+    # ******************************************************************************************
     CAL_f_gain, CAL_f_phase = spec_gain_phase(freq, unit_mode, T_HF, T_RWI)
-    if band_mode > 0:
-        # BUG correction in ASW2 SID-3
-        if sid==3 and spec.RPWI_FSW_version == 2:       # '2.0':
-            CAL_f_gain = CAL_f_gain / 289.              # ASW2 --- bug
-            print("<CAL_f_gain: SID-3 Ver.2>",  1/CAL_f_gain[0][0]**2)
-        elif sid==3 and spec.RPWI_FSW_version == 3:     # '3.0':
-            CAL_f_gain = CAL_f_gain / 289.              # ASW3 --- ASW2
-            print("<CAL_f_gain: SID-3 Ver.3>",  1/CAL_f_gain[0][0]**2)
-        else:
-            CAL_f_gain = CAL_f_gain / (freq_w*1000)**0.5
-            print("<CAL_f_gain: others     >",  1/CAL_f_gain[0][0]**2)
- 
+    print("<CAL_f_gain>",  1/CAL_f_gain[0][0]**2)
+
     # Complex CAL parameters
     CAL_f_gainC  = CAL_f_gain  * np.cos(np.pi * CAL_f_phase/180) + CAL_f_gain * np.sin(np.pi * CAL_f_phase/180) * 1j
-    CAL_f_gainC  = CAL_f_gainC * cal_factor
     CAL_f_gainC2 = np.conjugate(CAL_f_gainC)
-    CAL_f_gain0  = CAL_f_gain  * cal_factor
 
+    # CAL
     if sid==5:
-        spec.EE   = spec.EE   * CAL_f_gain0[0]**2
+        spec.EE   = spec.EE   * CAL_f_gain[0]**2
     else:
-        spec.EuEu = spec.EuEu * CAL_f_gain0[0]**2;  spec.EvEv = spec.EvEv * CAL_f_gain0[1]**2;      spec.EwEw = spec.EwEw * CAL_f_gain0[2]**2
+        spec.EuEu = spec.EuEu * CAL_f_gain[0]**2;   spec.EvEv = spec.EvEv * CAL_f_gain[1]**2;       spec.EwEw = spec.EwEw * CAL_f_gain[2]**2
         EuEv = spec.EuEv_re + spec.EuEv_im * 1j;    EuEv = EuEv * CAL_f_gainC[0] * CAL_f_gainC[1];  spec.EuEv_re = EuEv.real; spec.EuEv_im = EuEv.imag
         EvEw = spec.EvEw_re + spec.EvEw_im * 1j;    EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC[2];  spec.EvEw_re = EvEw.real; spec.EvEw_im = EvEw.imag
         EwEu = spec.EwEu_re + spec.EwEu_im * 1j;    EwEu = EwEu * CAL_f_gainC[2] * CAL_f_gainC[0];  spec.EwEu_re = EwEu.real; spec.EwEu_im = EwEu.imag
         #
         if sid == 3:
-            spec.EuEu_NC = spec.EuEu_NC * CAL_f_gain0[0]**2;  spec.EvEv_NC = spec.EvEv_NC * CAL_f_gain0[1]**2;  spec.EwEw_NC = spec.EwEw_NC * CAL_f_gain0[2]**2
-            spec.EuEu_RC = spec.EuEu_RC * CAL_f_gain0[0]**2;  spec.EvEv_RC = spec.EvEv_RC * CAL_f_gain0[1]**2;  spec.EwEw_RC = spec.EwEw_RC * CAL_f_gain0[2]**2
-            spec.EuEu_LC = spec.EuEu_LC * CAL_f_gain0[0]**2;  spec.EvEv_LC = spec.EvEv_LC * CAL_f_gain0[1]**2;  spec.EwEw_LC = spec.EwEw_LC * CAL_f_gain0[2]**2
-            spec.BG_Eu   = spec.BG_Eu   * CAL_f_gain0[0]**2;  spec.BG_Ev   = spec.BG_Ev   * CAL_f_gain0[1]**2;  spec.BG_Ew   = spec.BG_Ew   * CAL_f_gain0[2]**2
+            spec.EuEu_NC = spec.EuEu_NC * CAL_f_gain[0]**2;  spec.EvEv_NC = spec.EvEv_NC * CAL_f_gain[1]**2;  spec.EwEw_NC = spec.EwEw_NC * CAL_f_gain[2]**2
+            spec.EuEu_RC = spec.EuEu_RC * CAL_f_gain[0]**2;  spec.EvEv_RC = spec.EvEv_RC * CAL_f_gain[1]**2;  spec.EwEw_RC = spec.EwEw_RC * CAL_f_gain[2]**2
+            spec.EuEu_LC = spec.EuEu_LC * CAL_f_gain[0]**2;  spec.EvEv_LC = spec.EvEv_LC * CAL_f_gain[1]**2;  spec.EwEw_LC = spec.EwEw_LC * CAL_f_gain[2]**2
+            spec.BG_Eu   = spec.BG_Eu   * CAL_f_gain[0]**2;  spec.BG_Ev   = spec.BG_Ev   * CAL_f_gain[1]**2;  spec.BG_Ew   = spec.BG_Ew   * CAL_f_gain[2]**2
             #
             EuEv = spec.EuEv_re_NC + spec.EuEv_im_NC * 1j;  EuEv = EuEv * CAL_f_gainC[0] * CAL_f_gainC2[1];  spec.EuEv_re_NC = EuEv.real; spec.EuEv_im_NC = EuEv.imag
             EvEw = spec.EvEw_re_NC + spec.EvEw_im_NC * 1j;  EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC2[2];  spec.EvEw_re_NC = EvEw.real; spec.EvEw_im_NC = EvEw.imag
@@ -184,42 +163,27 @@ def spec_cal(spec, sid, unit_mode, band_mode, T_HF, T_RWI):
             EvEw = spec.EvEw_re_LC + spec.EvEw_im_NC * 1j;  EvEw = EvEw * CAL_f_gainC[1] * CAL_f_gainC2[2];  spec.EvEw_re_LC = EvEw.real; spec.EvEw_im_LC = EvEw.imag
             EwEu = spec.EwEu_re_LC + spec.EwEu_im_NC * 1j;  EwEu = EwEu * CAL_f_gainC[2] * CAL_f_gainC2[0];  spec.EwEu_re_LC = EwEu.real; spec.EwEu_im_LC = EwEu.imag
             """
-            spec.EuiEui = spec.EuiEui
-            spec.EuqEuq = spec.EuqEuq
-            spec.EviEvi = spec.EviEvi
-            spec.EvqEvq = spec.EvqEvq
-            spec.EwiEwi = spec.EwiEwi
-            spec.EwqEwq = spec.EwqEwq
-            #
-            spec.EuiEvi = spec.EuiEvi
-            spec.EuqEvq = spec.EuqEvq
-            spec.EviEwi = spec.EviEwi
-            spec.EvqEwq = spec.EvqEwq
-            spec.EwiEui = spec.EwiEui
-            spec.EwqEuq = spec.EwqEuq
-            #
-            spec.EuiEvq = spec.EuiEvq
-            spec.EuqEvi = spec.EuqEvi
-            spec.EviEwq = spec.EviEwq
-            spec.EvqEwi = spec.EvqEwi
-            spec.EwiEuq = spec.EwiEuq
-            spec.EwqEui = spec.EwqEui
-            #
-            spec.EuiEuq = spec.EuiEuq
-            spec.EviEvq = spec.EviEvq
-            spec.EwiEwq = spec.EwiEwq
+            spec.EuiEui = spec.EuiEui;  spec.EuqEuq = spec.EuqEuq;  spec.EviEvi = spec.EviEvi
+            spec.EvqEvq = spec.EvqEvq;  spec.EwiEwi = spec.EwiEwi;  spec.EwqEwq = spec.EwqEwq
+            spec.EuiEvi = spec.EuiEvi;  spec.EuqEvq = spec.EuqEvq;  spec.EviEwi = spec.EviEwi
+            spec.EvqEwq = spec.EvqEwq;  spec.EwiEui = spec.EwiEui;  spec.EwqEuq = spec.EwqEuq
+            spec.EuiEvq = spec.EuiEvq;  spec.EuqEvi = spec.EuqEvi;  spec.EviEwq = spec.EviEwq
+            spec.EvqEwi = spec.EvqEwi;  spec.EwiEuq = spec.EwiEuq;  spec.EwqEui = spec.EwqEui
+            spec.EuiEuq = spec.EuiEuq;  spec.EviEvq = spec.EviEvq;  spec.EwiEwq = spec.EwiEwq
             """
 
+    # Conversion Factor & Lavel
     for j in range(n_freq):
         if 1000 < freq[j]:
             break
+    if j == n_freq:  j = n_freq - 1
     spec.cf  = 20*np.log10(CAL_f_gain[0][j])
     spec.str_unit = power_label(unit_mode, band_mode)
 
-    n_freq0 = freq.shape[0]
-    print("CAL-U (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[0][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[0][n_freq0//8]), "--", 1/CAL_f_gain[0][0]**2, 1/cal_factor**2)
-    print("CAL-V (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[1][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[1][n_freq0//8]), "--", 1/CAL_f_gain[1][0]**2, 1/cal_factor**2)
-    print("CAL-W (Hz) (gain) (dB) :", freq[n_freq0//8], 1/CAL_f_gain0[2][n_freq0//8]**2, -20*np.log10(CAL_f_gain0[2][n_freq0//8]), "--", 1/CAL_f_gain[2][0]**2, 1/cal_factor**2)
+    # n_freq0 = freq.shape[0]
+    print("CAL-U (Hz) (gain) (dB) :", freq[n_freq//8], 1/CAL_f_gain[0][n_freq//8]**2, -20*np.log10(CAL_f_gain[0][n_freq//8]), "--", 1/CAL_f_gain[0][0]**2) # , 1/cal_factor**2)
+    print("CAL-V (Hz) (gain) (dB) :", freq[n_freq//8], 1/CAL_f_gain[1][n_freq//8]**2, -20*np.log10(CAL_f_gain[1][n_freq//8]), "--", 1/CAL_f_gain[1][0]**2) # , 1/cal_factor**2)
+    print("CAL-W (Hz) (gain) (dB) :", freq[n_freq//8], 1/CAL_f_gain[2][n_freq//8]**2, -20*np.log10(CAL_f_gain[2][n_freq//8]), "--", 1/CAL_f_gain[2][0]**2) # , 1/cal_factor**2)
     return spec
 
 
@@ -473,6 +437,7 @@ def spec_gain_phase(freq, unit_mode, T_HF, T_RWI):
     print("CAL-W (Hz) (dB) (phase):", freq[n_freq0//8], 20*np.log10(CAL_gain[2][n_freq0//8]), CAL_phase[2][n_freq0//8])
     return CAL_gain, CAL_phase
 
+
 def spec_gain_phase2(freq):
     """
     [U/V/W diff from Onboard CAL]
@@ -532,5 +497,3 @@ def spec_gain_onboard_cal(freq):
     CAL_gain = g0 + g1 * f + g2 * f**2 + g3 * f**3 + g4 * f**4 + g5 * f**5 + g6 * f**6 + g7 * f**7 + g8 * f**8
     CAL_gain = 10**(-CAL_gain/20)
     return CAL_gain
-
-

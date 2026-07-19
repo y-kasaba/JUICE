@@ -1,9 +1,10 @@
 """
-    JUICE RPWI HF SID4 & 20 (BURST) L1a QL -- 2026/6/14
+    JUICE RPWI HF SID4 & 20 (BURST) L1a QL -- 2026/7/19
 """
 import glob
-import numpy as np
 import math
+import numpy as np
+import os
 import juice_hf_hk_lib as hf_hk
 class struct:
     pass
@@ -23,8 +24,8 @@ def datalist(date_str, ver_str, sid):
     if yr_format=='20':
         base_dir = '/Users/D-Univ/data/data-JUICE/datasets/'         # ASW2
         data_dir = base_dir+yr_str+'/'+mn_str+'/'+dy_str + '/'
-        if sid == 4:  data_name = '*HF*SID4_*'+ver_str+'.cdf'
-        else:         data_name = '*HF*SID20_*'+ver_str+'.cdf'    
+        if   sid == 4:  data_name = '*HF*SID4_*'+ver_str+'.cdf'
+        elif sid == 20: data_name = '*HF*SID20_*'+ver_str+'.cdf'    
         cdf_file = data_dir + data_name
 
         data_list = glob.glob(cdf_file)
@@ -34,6 +35,14 @@ def datalist(date_str, ver_str, sid):
             data_list[i] = os.path.split(data_list[i])[1]
 
     elif sid == 20:     # <<< SID-20 test datas >>>
+        # *** Flight - Ver.3 ***
+        # 202606 -- PC4
+        """
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20260716T215148-20260716T215217_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                    ]
+        """
+
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
@@ -87,6 +96,7 @@ def datalist(date_str, ver_str, sid):
                     ]
         """
         # *** Flight data: Ver.2 ***
+        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW2/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID20_20240126T113714-20240126T114759_V01___RPR2_62000007_2024.026.12.58.18.441.cdf',
                      #'JUICE_L1a_RPWI-HF-SID20_20240126T114800-20240126T123719_V01___RPR2_62000008_2024.026.13.54.26.469.cdf',
@@ -94,7 +104,6 @@ def datalist(date_str, ver_str, sid):
                      #'JUICE_L1a_RPWI-HF-SID20_20240819T203013-20240819T210936_V01___RPR2_62000004_2024.235.10.15.04.518.cdf',
                      'JUICE_L1a_RPWI-HF-SID20_20260223T004451-20260223T004640_V01___RPR2_62000001_2026.054.09.35.22.426.cdf',
                     ]
-        """
         """
         # *** Ground Test - Ver.2 ***
         # 202510 -- PCW4 emulation
@@ -115,11 +124,19 @@ def datalist(date_str, ver_str, sid):
         """
 
     else:     # <<< SID-4 test datas >>>
+        # *** Flight - Ver.3 ***
+        # 202606 -- PC4
+        data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
+        data_list = ['JUICE_L1a_RPWI-HF-SID4_20260716T215148-20260716T215217_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                    ]
+        """
+        """
+
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID4_20000101T002239-20000101T002307_V01___FFT_20260602-2241.ccs.cdf']
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID4_20000113T003042-20000113T003111_V01___260520FFT_0.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID4_20000101T003455-20000101T003525_V01___260525FFT_0.bin.cdf',
