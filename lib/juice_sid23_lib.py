@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID23 (PSSR3-R) / SID8 (PSSR3-S RAW) L1a QL -- 2026/7/19
+    JUICE RPWI HF SID23 (PSSR3-R) / SID8 (PSSR3-S RAW) L1a QL -- 2026/7/23
 """
 import glob
 import numpy          as np
@@ -37,17 +37,17 @@ def datalist(date_str, ver_str, sid):
     elif sid == 23: 	# <<< SID-23 test datas >>>
         # *** Flight - Ver.3 ***
         # 202606 -- PC4
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID4_20260716T215148-20260716T215217_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+        data_list = ['JUICE_L1a_RPWI-HF-SID23_20260716T220620-20260716T220814_V01___RPW0_62000005_2026.198.19.00.45.441.cdf',
                     ]
+        """
         """
 
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID23_20000101T003711-20000101T003904_V01___FFT_20260602-2241.ccs.cdf']
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID23_20000113T004514-20000113T004538_V01___260520FFT_0.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID23_20000113T004604-20000113T004640_V01___260520FFT_1.bin.cdf',
@@ -103,8 +103,8 @@ def datalist(date_str, ver_str, sid):
                      #'JUICE_L1a_RPWI-HF-SID23_20240706T023200-20240706T023440_V01___RPR2_62000001_2024.190.16.56.50.659.cdf',
                      #'JUICE_L1a_RPWI-HF-SID23_20240706T124753-20240706T130347_V01___RPR2_62000002_2024.190.19.50.21.637.cdf',
                      #'JUICE_L1a_RPWI-HF-SID23_20240706T130407-20240706T130904_V01___RPR2_62000003_2024.190.22.47.44.640.cdf',
-                     #'JUICE_L1a_RPWI-HF-SID23_20240819T210319-20240819T211856_V01___RPR2_62000004_2024.235.10.15.04.518.cdf',  # LGA 
-                     #'JUICE_L1a_RPWI-HF-SID23_20240819T211916-20240819T212356_V01___RPR2_62000005_2024.235.12.58.11.564.cdf',  # LGA
+                     'JUICE_L1a_RPWI-HF-SID23_20240819T210319-20240819T211856_V01___RPR2_62000004_2024.235.10.15.04.518.cdf',  # LGA 
+                     'JUICE_L1a_RPWI-HF-SID23_20240819T211916-20240819T212356_V01___RPR2_62000005_2024.235.12.58.11.564.cdf',  # LGA
                      #'JUICE_L1a_RPWI-HF-SID23_20240822T024109-20240822T024134_V01___RPR2_62000006_2024.236.10.07.45.514.cdf',
                     ]
         """
@@ -114,6 +114,10 @@ def datalist(date_str, ver_str, sid):
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
         data_list = ['JUICE_L1a_RPWI-HF-SID8_20260716T220620-20260716T220708_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260720T012319-20260720T012407_V01___RPR1_5200000E_2026.201.05.13.34.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260720T053011-20260720T053341_V01___RPR1_52000012_2026.201.05.43.50.470.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260720T053411-20260720T063411_V01___RPR1_52000013_2026.201.06.41.32.466.cdf',
+                     'JUICE_L1a_RPWI-HF-SID8_20260720T063441-20260720T065941_V01___RPR1_52000014_2026.201.07.41.27.422.cdf',
                     ]
         """
         """
@@ -216,7 +220,7 @@ def hf_sid23_add(data, data1, sid):
     return data
 
 
-def hf_sid23_shaping(data, f_max, f_min, sid):
+def hf_sid23_shaping(data, mode_bg, f_max, f_min, sid):
     """
     input:  data, f_max, f_min
     return: data
@@ -226,13 +230,12 @@ def hf_sid23_shaping(data, f_max, f_min, sid):
     if sid == 23:  data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
     else:          data.n_block = 1
     data.n_samp  = data.N_samp[data.n_time//2]
-    print("    org:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp)
+    print("     org:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp)
 
     # ---------------------------
     # --- frequency selection ---
     # ---------------------------
     index = np.where( (data.frequency > f_min) & (data.frequency < f_max) )
- 
     data.Eu_i       = data.Eu_i [index[0]];      data.Eu_q = data.Eu_q [index[0]]
     data.Ev_i       = data.Ev_i [index[0]];      data.Ev_q = data.Ev_q [index[0]]
     data.Ew_i       = data.Ew_i [index[0]];      data.Ew_q = data.Ew_q [index[0]]
@@ -244,9 +247,31 @@ def hf_sid23_shaping(data, f_max, f_min, sid):
     if sid == 8:
         data.EE     = data.EE       [index[0]]
         data.EE_amp = data.EE_amp   [index[0]];  data.EE_raw        = data.EE_raw[index[0]]
-
     hf_hk.status_shaping(data, index[0])
- 
+    print("cut-freq:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "   frequency in", f_min, "-", f_max, "kHz")
+
+    # ---------------------
+    # --- CAL selection ---
+    # ---------------------
+    if mode_bg < 3:
+        if mode_bg < 2: index = np.where(data.cal_signal == mode_bg)
+        else:           index = np.where((data.HF_QF & 0x01) == 1)
+        data.Eu_i       = data.Eu_i [index[0]];      data.Eu_q = data.Eu_q [index[0]]
+        data.Ev_i       = data.Ev_i [index[0]];      data.Ev_q = data.Ev_q [index[0]]
+        data.Ew_i       = data.Ew_i [index[0]];      data.Ew_q = data.Ew_q [index[0]]
+        data.time_block = data.time_block[index[0]]; data.time = data.time [index[0]]
+        data.spec_EuEu  = data.spec_EuEu[index[0]];  data.spec_EuEu_amp = data.spec_EuEu_amp[index[0]]; data.spec_EuEu_raw = data.spec_EuEu_raw[index[0]]
+        data.spec_EvEv  = data.spec_EvEv[index[0]];  data.spec_EvEv_amp = data.spec_EvEv_amp[index[0]]; data.spec_EvEv_raw = data.spec_EvEv_raw[index[0]]
+        data.spec_EwEw  = data.spec_EwEw[index[0]];  data.spec_EwEw_amp = data.spec_EwEw_amp[index[0]]; data.spec_EwEw_raw = data.spec_EwEw_raw[index[0]]
+        data.gain_raw   = data.gain_raw [index[0]];  data.df_raw        = data.df_raw[index[0]]
+        if sid == 8:
+            data.EE     = data.EE       [index[0]]
+            data.EE_amp = data.EE_amp   [index[0]];  data.EE_raw        = data.EE_raw[index[0]]
+        hf_hk.status_shaping(data, index[0])
+        if    mode_bg == 0: print(" cut-cal:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "  <only BG>")
+        elif  mode_bg == 1: print(" cut-cal:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "  <only CAL>")
+        else:               print(" cut-cal:", data.Eu_i.shape, data.n_time, data.n_block, data.n_samp, "  <only OFF>")
+
     data.n_time  = data.Eu_i.shape[0]
     if sid == 23:  data.n_block = data.Eu_i.shape[1]  # data.N_block[data.n_time//2]
     else:          data.n_block = 1

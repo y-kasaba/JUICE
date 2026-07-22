@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/7/19
+    JUICE RPWI HF SID2 (RAW): L1a read -- 2026/7/22
 """
 import glob
 import math
@@ -38,6 +38,7 @@ def datalist(date_str, ver_str):
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
         data_list = ['JUICE_L1a_RPWI-HF-SID2_20260716T213019-20260716T213737_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                     'JUICE_L1a_RPWI-HF-SID2_20260720T004718-20260720T005436_V01___RPR1_5200000E_2026.201.05.13.34.426.cdf'
                     ]
         """
         """
@@ -197,9 +198,10 @@ def hf_sid2_add(data, data1):
     return data
 
 
-def hf_sid2_shaping(data, cal_mode):
+def hf_sid2_shaping(data, mode_bg):
     """
-    input:  data, cal_mode
+    input:  data, mode_bg
+            mode_bg     [BG/CAL]    0: BG      1: CAL      2: off          >=3: all
     return: data
     """
     data.n_time = data.Eu_i.shape[0]
@@ -262,20 +264,23 @@ def hf_sid2_shaping(data, cal_mode):
         data.cal_signal[:] = 0
         data.cal_signal[index[0]] = 1
     # Selection: CAL
-    if cal_mode < 2:
-        index  = np.where(data.cal_signal == cal_mode);    data = hf_sid2_select_time(data, index);  data.n_time = data.Eu_i.shape[0]
-        if cal_mode == 0: print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only BG>")
-        else:             print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only CAL>")
-
+    if mode_bg < 3:
+        if mode_bg < 2: index = np.where(data.cal_signal == mode_bg)
+        else:           index = np.where((data.HF_QF & 0x01) == 1)
+        hf_sid2_select_time(data, index)
+        data.n_time = data.Eu_i.shape[0]
+        if    mode_bg == 0: print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only BG>")
+        elif  mode_bg == 1: print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only CAL>")
+        else:               print("  cut:", data.Eu_i.shape, data.n_time, "x", data.n_step, "x", data.n_samp, "  <only OFF>")
     return data
 
 
 def hf_sid2_select_time(data, index):
     # Waveform Data
-    data.Eu_i      = data.Eu_i     [index[0]];   data.Eu_q = data.Eu_q[index[0]]
-    data.Ev_i      = data.Ev_i     [index[0]];   data.Ev_q = data.Ev_q[index[0]]
-    data.Ew_i      = data.Ew_i     [index[0]];   data.Ew_q = data.Ew_q[index[0]]
-    data.time      = data.time     [index[0]]
+    data.Eu_i     = data.Eu_i    [index[0]];  data.Eu_q     = data.Eu_q[index[0]]
+    data.Ev_i     = data.Ev_i    [index[0]];  data.Ev_q     = data.Ev_q[index[0]]
+    data.Ew_i     = data.Ew_i    [index[0]];  data.Ew_q     = data.Ew_q[index[0]]
+    data.time     = data.time    [index[0]]
 
     # Spectrum Data
     data.EuEu_amp = data.EuEu_amp[index[0]];  data.EuEu_raw = data.EuEu_raw[index[0]]
@@ -284,7 +289,6 @@ def hf_sid2_select_time(data, index):
     data.gain_raw = data.gain_raw[index[0]];  data.df_raw   = data.df_raw[index[0]]
 
     data.frequency2= data.frequency2[index[0]]; data.freq_step2 = data.freq_step2[index[0]];  data.freq_width2 = data.freq_width2[index[0]]
-
     hf_hk.status_shaping(data, index[0])
     return data
 
@@ -300,22 +304,3 @@ def hf_sid2_spec_nan(data, i):
     data.EwEw_amp [i] = math.nan;  data.EwEw_raw [i] = math.nan
 
     hf_hk.status_nan(data, i, 2)
-
-
-"""
-import csv
-with open("sid2-f.csv", 'w') as f:
-    writer = csv.writer(f)
-    for i in range(n_freq1):
-        writer.writerow([ i, freq_1d[i], freq_w_1d[i]])
-print(n_freq1, spec.freq.shape)
-"""
-
-"""
-import csv
-with open("sid2-f-org.csv", 'w') as f:
-    writer = csv.writer(f)
-    for i in range(n_freq0):
-        writer.writerow([ i, data.frequency[1][i][0], data.freq_width[1][i][0], data.freq_step[1][i][0]])
-print(n_freq0, data.frequency.shape)
-"""

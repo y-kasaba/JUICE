@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID5 (PSSR1-S) L1a QL -- 2026/7/19
+    JUICE RPWI HF SID5 (PSSR1-S) L1a QL -- 2026/7/21
 """
 import glob
 import math
@@ -38,6 +38,8 @@ def datalist(date_str, ver_str):
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
         data_list = ['JUICE_L1a_RPWI-HF-SID5_20260716T215226-20260716T215839_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                     'JUICE_L1a_RPWI-HF-SID5_20260720T010925-20260720T011538_V01___RPR1_5200000E_2026.201.05.13.34.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID5_20260720T040012-20260720T042942_V01___RPR1_52000011_2026.201.05.21.53.426.cdf',
                     ]
         """
         """
@@ -132,31 +134,29 @@ def hf_sid5_add(data, data1):
     return data
 
 
-def hf_sid5_shaping(data, cal_mode):
+def hf_sid5_shaping(data, mode_bg):
     """
     input:  data
-            cal_mode    [Power]     0: background          1: CAL           2: all
+            mode_bg     [BG/CAL]    0: BG      1: CAL      2: off          >=3: all
     return: data
     """
     n_time = data.EE.shape[0];  n_freq = data.EE.shape[1]
     print("  org:", data.EE.shape, n_time, "x", n_freq, "[", n_time*n_freq, "]")
 
-    if cal_mode < 2:
-        index = np.where( (data.cal_signal == cal_mode)                                                 )
-        print("  cut:", data.EE.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
+    # Selection: CAL
+    if mode_bg < 3:
+        if mode_bg < 2: index = np.where(data.cal_signal == mode_bg)    
+        else:           index = np.where((data.HF_QF & 0x01) == 1)
+        print("  cut:", data.EE.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg)
 
-        # Data
-        data.EE          = data.EE        [index[0]]
+        data.EE       = data.EE      [index[0]]
         data.EE_raw   = data.EE_raw  [index[0]];    data.EE_amp = data.EE_amp[index[0]]
         data.gain_raw = data.gain_raw[index[0]];    data.df_raw = data.df_raw[index[0]]
-        
-        hf_hk.status_shaping(data, index[0])
-    
-        n_time = data.EE.shape[0]
-        if cal_mode < 2:
-            print("  cut:", data.EE.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
-            if cal_mode == 0:   print("<only BG>")
-            else:               print("<only CAL>")
+        hf_hk.status_shaping(data, index[0]);       data.n_time = data.EE.shape[0]
+
+        if    mode_bg == 0: print("  cut:", data.EE.shape, data.n_time, "x", n_freq, "===> cal-mode:", mode_bg, "<only BG>")
+        elif  mode_bg == 1: print("  cut:", data.EE.shape, data.n_time, "x", n_freq, "===> cal-mode:", mode_bg, "<only CAL>")
+        else:               print("  cut:", data.EE.shape, data.n_time, "x", n_freq, "===> cal-mode:", mode_bg, "<only OFF>")
 
     data.n_time = data.EE.shape[0]
     data.n_step = data.N_step[data.n_time//2]

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2026/7/19
+    JUICE RPWI HF SID7 (PSSR3 surv): L1a QL -- 2026/7/22
 """
 import glob
 import numpy as np
@@ -37,6 +37,7 @@ def datalist(date_str, ver_str):
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
         data_list = ['JUICE_L1a_RPWI-HF-SID7_20260716T220726-20260716T220814_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                     'JUICE_L1a_RPWI-HF-SID7_20260720T012425-20260720T012513_V01___RPR1_5200000E_2026.201.05.13.34.426.cdf',
                     ]
         """
         """
@@ -97,7 +98,7 @@ def hf_sid7_add(data, data1):
     return data
 
 
-def hf_sid7_shaping(data, f_max, f_min):
+def hf_sid7_shaping(data, mode_bg, f_max, f_min):
     """
     input:  data
     return: data
@@ -106,7 +107,7 @@ def hf_sid7_shaping(data, f_max, f_min):
     data.n_time  = data.auto_corr.shape[0]
     data.n_block = data.N_block[data.n_time//2]
     data.n_lag   = data.N_lag[data.n_time//2]
-    print("    org:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag)
+    print("     org:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag)
 
     # ---------------------------
     # --- frequency selection ---
@@ -118,13 +119,29 @@ def hf_sid7_shaping(data, f_max, f_min):
     data.EE          = data.EE        [index[0]]
     data.EE_amp      = data.EE_amp    [index[0]];  data.EE_raw = data.EE_raw[index[0]]
     data.gain_raw    = data.gain_raw  [index[0]];  data.df_raw = data.df_raw[index[0]]
-
     hf_hk.status_shaping(data, index[0])
-    #
+    print("cut-freq:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag, "  frequency in", f_min, "-", f_max, "kHz")
+
+    # ---------------------
+    # --- CAL selection ---
+    # ---------------------
+    if mode_bg < 3:
+        if mode_bg < 2: index = np.where(data.cal_signal == mode_bg)
+        else:           index = np.where((data.HF_QF & 0x01) == 1)
+        data.auto_corr   = data.auto_corr [index[0]]
+        data.time_block  = data.time_block[index[0]];  data.time   = data.time  [index[0]]
+        data.EE          = data.EE        [index[0]]
+        data.EE_amp      = data.EE_amp    [index[0]];  data.EE_raw = data.EE_raw[index[0]]
+        data.gain_raw    = data.gain_raw  [index[0]];  data.df_raw = data.df_raw[index[0]]
+        hf_hk.status_shaping(data, index[0])
+        if    mode_bg == 0: print(" cut-cal:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag, "  <only BG>")
+        elif  mode_bg == 1: print(" cut-cal:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag, "  <only CAL>")
+        else:               print(" cut-cal:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag, "  <only OFF>")
+
     # Size - after frequency selection
     data.n_time  = data.auto_corr.shape[0]
     data.n_block = data.N_block[data.n_time//2]
     data.n_lag   = data.N_lag[data.n_time//2]
-    print("    cut:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag, "   frequency in", f_min, "-", f_max, "kHz")
+    print("     cut:", data.auto_corr.shape, data.n_time, data.n_block, data.n_lag, "  frequency in", f_min, "-", f_max, "kHz")
 
     return data

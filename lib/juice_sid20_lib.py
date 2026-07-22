@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID4 & 20 (BURST) L1a QL -- 2026/7/19
+    JUICE RPWI HF SID4 & 20 (BURST) L1a QL -- 2026/7/22
 """
 import glob
 import math
@@ -37,17 +37,17 @@ def datalist(date_str, ver_str, sid):
     elif sid == 20:     # <<< SID-20 test datas >>>
         # *** Flight - Ver.3 ***
         # 202606 -- PC4
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID4_20260716T215148-20260716T215217_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+        data_list = ['JUICE_L1a_RPWI-HF-SID20_20260716T215148-20260716T215217_V01___RPW0_62000005_2026.198.19.00.45.441.cdf',
                     ]
+        """
         """
 
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID20_20000101T002239-20000101T002307_V01___FFT_20260602-2241.ccs.cdf']
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID20_20000113T003042-20000113T003111_V01___FFT4_0.bin.cdf',
                      #'JUICE_L1a_RPWI-HF-SID20_20000113T003042-20000113T003111_V01___260520FFT_0.bin.cdf',
@@ -128,6 +128,17 @@ def datalist(date_str, ver_str, sid):
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
         data_list = ['JUICE_L1a_RPWI-HF-SID4_20260716T215148-20260716T215217_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260718T031305-20260718T041306_V01___RPR1_52000006_2026.201.04.35.18.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260718T041308-20260718T051308_V01___RPR1_52000007_2026.201.04.42.48.423.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260718T051310-20260718T061310_V01___RPR1_52000008_2026.201.04.48.25.424.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260718T061312-20260718T071312_V01___RPR1_52000009_2026.201.04.54.03.466.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260718T071314-20260718T081314_V01___RPR1_5200000A_2026.201.04.59.40.422.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260718T081316-20260718T091316_V01___RPR1_5200000B_2026.201.05.05.19.502.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260718T091318-20260718T101256_V01___RPR1_5200000C_2026.201.05.10.57.422.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260720T010847-20260720T010916_V01___RPR1_5200000E_2026.201.05.13.34.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260720T023005-20260720T032958_V01___RPR1_52000010_2026.201.05.19.04.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260720T093006-20260720T093523_V01___RPR1_52000016_2026.201.09.41.48.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID4_20260720T093525-20260720T103526_V01___RPR1_52000017_2026.201.10.43.01.430.cdf',
                     ]
         """
         """
@@ -270,12 +281,12 @@ def hf_sid20_add(data, data1):
     return data
 
 
-def hf_sid20_shaping(data, mode_cal, mode_comp):
+def hf_sid20_shaping(data, mode_bg, mode_comp):
     """
     input:  data, sid
-            mode_cal    [Power]     0: background          1: CAL           2: all
-            N_ch0       [channel]   2: 2-ch    3: 3-ch                   0,>3: any
-            mode_comp   [Complex]   0: Poweer  1: Matrix   3: Matrix-2D    >3: any   
+            mode_bg    [BG/CAL]    0: BG      1: CAL      2: off         >=3: all
+            N_ch0      [channel]   2: 2-ch    3: 3-ch                  0,>=3: any
+            mode_comp  [Complex]   0: Poweer  1: Matrix   3: Matrix-2D   >=3: any   
     return: data
     """
     # Size
@@ -313,14 +324,21 @@ def hf_sid20_shaping(data, mode_cal, mode_comp):
             data.n_time, "x", data.n_block, "x", data.n_step, "[", data.n_time*data.n_block*data.n_step, "]")
 
     # CAL & COMP
-    if mode_cal < 2 or mode_comp < 4:
-        if mode_cal < 2:
+    if mode_bg < 3 or mode_comp < 4:
+        if mode_bg < 2:
             if mode_comp < 4:
-                index = np.where( (data.cal_signal == mode_cal) &                   (mode_comp == data.complex) )
-                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_cal, " mode_comp:", mode_comp)
+                index = np.where( (data.cal_signal == mode_bg) &                   (mode_comp == data.complex) )
+                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
             else:
-                index = np.where( (data.cal_signal == mode_cal)                                                 )
-                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_cal)
+                index = np.where( (data.cal_signal == mode_bg)                                                 )
+                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg)
+        elif mode_bg == 2:
+            if mode_comp < 4:
+                index = np.where( ((data.HF_QF & 0x01) == 1) &                   (mode_comp == data.complex) )
+                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
+            else:
+                index = np.where( ((data.HF_QF & 0x01) == 1)                                                 )
+                print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg)
         else:
             index     = np.where(                                                   (mode_comp == data.complex) )
             print(    "  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> mode_comp:", mode_comp)
@@ -338,12 +356,13 @@ def hf_sid20_shaping(data, mode_cal, mode_comp):
         hf_hk.status_shaping(data, index[0])
 
         n_time = data.EuEu.shape[0]
-        if mode_cal < 2:
-            if mode_comp < 4: print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", mode_cal, " mode_comp:", mode_comp)
-            else:             print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", mode_cal)
-            if mode_cal == 0: print("<only BG>")
-            else:             print("<only CAL>")
-        else:                 print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> mode_comp:", mode_comp)
+        if mode_bg < 3:
+            if mode_comp < 4:  print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
+            else:              print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> cal-mode:", mode_bg)
+            if   mode_bg == 0: print("<only BG>")
+            elif mode_bg == 1: print("<only CAL>")
+            else:              print("<only OFF>")
+        else:                  print("  cut:", data.EuEu.shape, n_time, "x", data.n_freq, "===> mode_comp:", mode_comp)
 
     # NAN
     index = np.where(data.complex == 0)

@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID21 (PSSR1-R) L1a QL -- 2026/7/19
+    JUICE RPWI HF SID21 (PSSR1-R) L1a QL -- 2026/7/20
 """
 import glob
 import math
@@ -36,17 +36,15 @@ def datalist(date_str, ver_str):
     else:
         # *** Flight - Ver.3 ***
         # 202606 -- PC4
-        """
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID5_20260716T215226-20260716T215839_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+        data_list = ['JUICE_L1a_RPWI-HF-SID21_20260716T215226-20260716T215839_V01___RPW0_62000005_2026.198.19.00.45.441.cdf',
                     ]
-        """
 
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID21_20000101T002317-20000101T002929_V01___FFT_20260602-2241.ccs.cdf']
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = [#'JUICE_L1a_RPWI-HF-SID21_20000113T003120-20000113T003733_V01___260520FFT_0.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID21_20000101T003534-20000101T004146_V01___260525FFT_0.bin.cdf'
@@ -155,12 +153,12 @@ def hf_sid21_add(data, data1):
     return data
 
 
-def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
+def hf_sid21_shaping(data, mode_bg, N_ch, mode_comp):
     """
     input:  data
-            cal_mode    [Power]     0: background          1: CAL           2: all
-            N_ch0       [channel]   2: 2-ch                                >3: any
-            comp_mode   [Complex]   0: Poweer  1: Matrix                   >3: any   
+            mode_bg     [BG/CAL]    0: BG      1: CAL      2: off          >=3: all
+            N_ch0       [channel]   2: 2-ch                                >=3: any
+            mode_comp   [Complex]   0: Poweer  1: Matrix                   >=3: any   
     return: data
     """
 
@@ -180,33 +178,48 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
     data.W_selected = (data.ch_selected & 0b100 ) >> 2
     N_ch0 = data.U_selected[0] + data.V_selected[0] + data.W_selected[0]
 
-    if cal_mode < 2 or N_ch < 4 or comp_mode < 4:
-        if cal_mode < 2:
+    if mode_bg < 3 or N_ch < 4 or mode_comp < 4:
+        if mode_bg < 2:
             if N_ch < 4:
-                if comp_mode < 4:
-                    index = np.where( (data.cal_signal == cal_mode) & (N_ch0 == N_ch) & (comp_mode == data.complex) )
-                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch, " comp_mode:", comp_mode)
+                if mode_comp < 4:
+                    index = np.where( (data.cal_signal == mode_bg) & (N_ch0 == N_ch) & (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch, " mode_comp:", mode_comp)
                 else:
-                    index = np.where( (data.cal_signal == cal_mode) & (N_ch0 == N_ch)                               )
-                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch)
+                    index = np.where( (data.cal_signal == mode_bg) & (N_ch0 == N_ch)                               )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch)
             else:
-                if comp_mode < 4:
-                    index = np.where( (data.cal_signal == cal_mode) &                   (comp_mode == data.complex) )
-                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
+                if mode_comp < 4:
+                    index = np.where( (data.cal_signal == mode_bg) &                   (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
                 else:
-                    index = np.where( (data.cal_signal == cal_mode)                                                 )
-                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
+                    index = np.where( (data.cal_signal == mode_bg)                                                 )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg)
+        elif mode_bg == 2:
+            if N_ch < 4:
+                if mode_comp < 4:
+                    index = np.where( ((data.HF_QF & 0x01) == 1) & (N_ch0 == N_ch) & (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch, " mode_comp:", mode_comp)
+                else:
+                    index = np.where( ((data.HF_QF & 0x01) == 1) & (N_ch0 == N_ch)                               )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch)
+            else:
+                if mode_comp < 4:
+                    index = np.where( ((data.HF_QF & 0x01) == 1) &                   (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
+                else:
+                    index = np.where( ((data.HF_QF & 0x01) == 1)                                                 )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg)
         else:
             if N_ch < 4:
-                if comp_mode < 4:
-                    index = np.where(                                 (N_ch0 == N_ch) & (comp_mode == data.complex) )
-                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch, " comp_mode:", comp_mode)
+                if mode_comp < 4:
+                    index = np.where(                                 (N_ch0 == N_ch) & (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch, " mode_comp:", mode_comp)
                 else:
                     index = np.where(                                 (N_ch0 == N_ch)                               )
                     print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch)
             else:
-                index     = np.where(                                                   (comp_mode == data.complex) )
-                print(    "  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
+                index     = np.where(                                                   (mode_comp == data.complex) )
+                print(    "  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> mode_comp:", mode_comp)
 
         # Data
         data.EuEu       = data.EuEu    [index[0]]; data.EvEv     = data.EvEv    [index[0]]; data.EwEw     = data.EwEw    [index[0]]
@@ -220,20 +233,21 @@ def hf_sid21_shaping(data, cal_mode, N_ch, comp_mode):
         hf_hk.status_shaping(data, index[0])
 
         n_time = data.EuEu.shape[0]
-        if cal_mode < 2:
+        if mode_bg < 3:
             if N_ch < 4:
-                if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch, " comp_mode:", comp_mode)
-                else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch)
+                if mode_comp < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch, " mode_comp:", mode_comp)
+                else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch)
             else:
-                if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
-                else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", cal_mode)
-            if cal_mode == 0:     print("<only BG>")
-            else:                 print("<only CAL>")
+                if mode_comp < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
+                else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> cal-mode:", mode_bg)
+            if   mode_bg == 0:    print("<only BG>")
+            elif mode_bg == 1:    print("<only CAL>")
+            else:                 print("<only OFF>")
         else:
             if N_ch < 4:
-                if comp_mode < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch, " comp_mode:", comp_mode)
+                if mode_comp < 4: print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch, " mode_comp:", mode_comp)
                 else:             print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> N_ch:", N_ch)
-            else:                 print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> comp_mode:", comp_mode)
+            else:                 print("  cut:", data.EuEu.shape, n_time, "x", n_freq, "===> mode_comp:", mode_comp)
 
     data.U_selected = (data.ch_selected & 0b1   ) 
     data.V_selected = (data.ch_selected & 0b10  ) >> 1

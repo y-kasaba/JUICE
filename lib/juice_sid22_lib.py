@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID6 (PSSR2-S) & 9 (PSSR2-S-SINGLE) & 22 (PSSR2-R) L1a QL -- 2026/7/19
+    JUICE RPWI HF SID6 (PSSR2-S) & 9 (PSSR2-S-SINGLE) & 22 (PSSR2-R) L1a QL -- 2026/7/22
 """
 import glob
 import numpy as np
@@ -36,18 +36,18 @@ def datalist(date_str, ver_str, sid):
 
     elif sid == 22: 	# <<< SID-22 test datas >>>
         # *** Flight - Ver.3 ***
-        """
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
-        data_list = ['JUICE_L1a_RPWI-HF-SID9_20260716T215924-20260716T221515_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+        data_list = ['JUICE_L1a_RPWI-HF-SID22_20260716T215924-20260716T221515_V01___RPW0_62000005_2026.198.19.00.45.441.cdf',
                     ]
+        """
         """
 
         # *** Ground Test - Ver.3 ***
         # 202605-- ASW3 FFT
+        """
         data_dir = '/Users/user/0-python/JUICE_data/test-CCSDS/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID22_20000101T003014-20000101T004605_V01___FFT_20260602-2241.ccs.cdf']
-        """
         data_dir = '/Users/user/0-python/JUICE_data/test-TMIDX/ASW3/cdf/'
         data_list = ['JUICE_L1a_RPWI-HF-SID22_20000113T003818-20000113T004500_V01___260520FFT_0.bin.cdf',
                      'JUICE_L1a_RPWI-HF-SID22_20000113T004654-20000113T005337_V01___260520FFT_1.bin.cdf',
@@ -106,6 +106,8 @@ def datalist(date_str, ver_str, sid):
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
         data_list = ['JUICE_L1a_RPWI-HF-SID9_20260716T215924-20260716T221515_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                     'JUICE_L1a_RPWI-HF-SID9_20260720T011623-20260720T013214_V01___RPR1_5200000E_2026.201.05.13.34.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID9_20260720T050011-20260720T052941_V01___RPR1_52000012_2026.201.05.43.50.470.cdf',
                     ]
         """
         """
@@ -188,7 +190,7 @@ def hf_sid22_add(data, data1):
     return data
 
 
-def hf_sid22_shaping(data, cal_mode, sid):
+def hf_sid22_shaping(data, mode_bg, sid):
     """
     input:  data
     return: data
@@ -197,29 +199,42 @@ def hf_sid22_shaping(data, cal_mode, sid):
     data.n_time  = data.auto_corr.shape[0]
     data.n_step  = data.N_step[data.n_time//2]
     data.n_lag   = data.N_lag[data.n_time//2]
-    print("    org:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag)
+    print("      org:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag)
 
     # ---------------------------
     # --- shape-check ---
     # ---------------------------
     index = np.where( (data.N_step == data.n_step) & (data.N_lag == data.n_lag) )
-    # Data
-    data.auto_corr   = data.auto_corr [index[0]]
-    data.EE          = data.EE [index[0]]
-    data.frequency   = data.frequency [index[0]];   data.freq_width  = data.freq_width[index[0]]
     #
-    data.time        = data.time [index[0]]
-    #
-    data.EE_raw   = data.EE_raw  [index[0]];        data.EE_amp = data.EE_amp[index[0]]
-    data.gain_raw = data.gain_raw[index[0]];        data.df_raw = data.df_raw[index[0]]
-
+    data.auto_corr = data.auto_corr [index[0]]
+    data.EE        = data.EE [index[0]]
+    data.time      = data.time [index[0]]
+    data.EE_raw    = data.EE_raw  [index[0]];        data.EE_amp = data.EE_amp[index[0]]
+    data.gain_raw  = data.gain_raw[index[0]];        data.df_raw = data.df_raw[index[0]]
     hf_hk.status_shaping(data, index[0])
+    print("cut-shape:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag, "  <only BG>")
 
-    data.n_time  = data.auto_corr.shape[0]
-    data.n_step  = data.N_step[data.n_time//2]
-    data.n_lag   = data.N_lag[data.n_time//2]
+    # ---------------------
+    # --- CAL selection ---
+    # ---------------------
+    if mode_bg < 3:
+        if mode_bg < 2: index = np.where(data.cal_signal == mode_bg)
+        else:           index = np.where((data.HF_QF & 0x01) == 1)
+        data.auto_corr = data.auto_corr [index[0]]
+        data.EE        = data.EE [index[0]]
+        data.time      = data.time [index[0]]
+        data.EE_raw    = data.EE_raw  [index[0]];        data.EE_amp = data.EE_amp[index[0]]
+        data.gain_raw  = data.gain_raw[index[0]];        data.df_raw = data.df_raw[index[0]]
+        hf_hk.status_shaping(data, index[0])
+        if    mode_bg == 0: print(" cut-cal:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag, "  <only BG>")
+        elif  mode_bg == 1: print(" cut-cal:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag, "  <only CAL>")
+        else:               print(" cut-cal:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag, "  <only OFF>")
+
+    data.n_time    = data.auto_corr.shape[0]
+    data.n_step    = data.N_step[data.n_time//2]
+    data.n_lag     = data.N_lag[data.n_time//2]
     if sid == 6:  data.n_lag = np.int64(data.n_lag / 16)
-    print("    cut:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag)
+    print("      cut:", data.auto_corr.shape, data.n_time, data.n_step, data.n_lag)
     
     # *** frequncy & width for spec cal
     data.freq   = data.frequency

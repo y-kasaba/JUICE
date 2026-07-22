@@ -1,4 +1,4 @@
-# JUICE RPWI HF CDF lib -- 2026/6/1
+# JUICE RPWI HF CDF lib -- 2026/7/21
 
 # import glob
 # import spacepy.pycdf
@@ -12,18 +12,6 @@ class struct:
 
 
 # ---------------------------------------------------------------------
-# --- Read CDF --------------------------------------------------------------
-# ---------------------------------------------------------------------
-"""
-def _RPWI_FSW_version(cdf_file):
-    cdf = cdfread.CDF(cdf_file)
-    globalaAttrs = cdf.globalattsget()
-    RPWI_FSW_version = globalaAttrs.get("RPWI_FSW_version", "Unknown")
-    return(RPWI_FSW_version[0])
-"""
-
-
-# ---------------------------------------------------------------------
 # --- Frequency -------------------------------------------------------
 # ---------------------------------------------------------------------
 # Sampling rate [Hz]
@@ -32,44 +20,6 @@ def _sample_rate(decimation):
     if decimation >= 0 and decimation <= 3:
         ret = (296e+3)/(2**decimation)
     return ret
-
-
-"""
-# Bandwidth in original (kHz)
-def _df_org(HF_ID):
-    sid = HF_ID[0] >> 8
-    asw = (HF_ID[0] >> 4) & 0xF
-    config = HF_ID[0] & 0xF
-
-    ret = 0
-    if sid in [4, 20]:
-        ret = 37            # SID-4/20: 37kHz simple sum
-    elif sid in [7]:
-        ret = 296           # SID-7: 296 kHz
-    elif sid in [6, 22]:
-        if config == 9 or asw < 3:
-           ret = 296        # SID-6/22: 296 or 148 kHz
-        elif config == 11:
-           ret = 148        # SID-6/22: 296 or 148 kHz
-    elif sid in [5, 21]:
-        ret = 2.3125        # SID-5/21: 296kHz/128(N_samp)
-    elif sid in [3]:
-        if asw == 1:
-            ret = 296       # SID-3: 296kHz simple sum
-        elif asw in [2, 3]:
-            ret = 2.3125    # SID-3: 296kHz/128(N_samp)
-    elif sid in [2]:
-        if asw == 1:
-            ret = 4.625     # SID-2: 148kHz/32(N_samp)
-        else:
-            ret = 2.3125    # SID-2: 296kHz/128(N_samp)
-    elif sid in [23]:
-        ret = 0.08894231    # SID-23: 296kHz/128(N_samp)/26(N_feed)
-
-    if ret == 0:
-        raise ValueError(f"proc._df_org: SID error:{sid}")
-    return ret
-"""
 
 
 # Frequency: linear [kHz]
@@ -255,6 +205,8 @@ def _frequency_sid5_sid21(asw_ver):
     freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, asw_ver)
     return freq, f_step, f_width
 
+
+"""
 # Frequency: SID-6 & SID-22
 # Output: freq, f_step, f_width
 def _frequency_sid6_sid22(asw_ver):
@@ -269,15 +221,15 @@ def _frequency_sid6_sid22(asw_ver):
     sample_rate = _sample_rate(decimation)
     freq, f_step, f_width = _get_frequencies_band(sample_rate, b_num, b_start, b_stop, b_step, b_repeat, b_sdiv, N_samp, asw_ver)
     return freq, f_step, f_width
+"""
 
-# Frequency: MASK frequency matching
+
+# Frequency: frequency matching
 # Output: tbl_sid2_to_data
 def _frequency_sid2_to_data(freq, f_step, freq_sid2, f_step_sid2):
-    """
-    Input:  freq, f_step    frequency & step of other SID      
-            freq_sid2       frequency of SID2
-    Outout: tbl_freq_to_data(n_freq, (ch_min, ch_max, ch_width))
-    """
+    # Input:  freq, f_step    frequency & step of other SID      
+    #         freq_sid2       frequency of SID2
+    # Outout: tbl_freq_to_data(n_freq, (ch_min, ch_max, ch_width))
     n_freq      = len(freq)
     n_freq_sid2 = len(freq_sid2)
     freq_sid2   = freq_sid2 - f_step_sid2/2.0

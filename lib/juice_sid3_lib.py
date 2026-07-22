@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF SID3 (Full) L1a QL -- 2026/7/19
+    JUICE RPWI HF SID3 (Full) L1a QL -- 2026/7/22
 """
 import glob
 import math
@@ -37,6 +37,33 @@ def datalist(date_str, ver_str):
         # 202606 -- PC4
         data_dir = '/Users/user/0-python/JUICE_data/Data-CDF/ASW3/'
         data_list = ['JUICE_L1a_RPWI-HF-SID3_20260716T213754-20260716T215104_V01___RPR1_52000006_2026.197.23.00.12.498.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T005453-20260720T010803_V01___RPR1_5200000E_2026.201.05.13.34.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T033323-20260720T043312_V01___RPR1_52000011_2026.201.05.21.53.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T043342-20260720T045942_V01___RPR1_52000012_2026.201.05.43.50.470.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T070012-20260720T073412_V01___RPR1_52000014_2026.201.07.41.27.422.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T073442-20260720T083440_V01___RPR1_52000015_2026.201.08.42.08.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T083510-20260720T092942_V01___RPR1_52000016_2026.201.09.41.48.426.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T100012-20260720T102942_V01___RPR1_52000017_2026.201.10.43.01.430.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T143323-20260720T143323_V01___RPR1_5200001B_2026.202.10.14.04.088.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T144323-20260720T154323_V01___RPR1_5200001C_2026.202.10.16.03.810.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T155323-20260720T165323_V01___RPR1_5200001D_2026.202.10.16.37.387.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T170323-20260720T180323_V01___RPR1_5200001E_2026.202.10.17.11.852.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T181323-20260720T191323_V01___RPR1_5200001F_2026.202.10.22.51.914.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T192323-20260720T202323_V01___RPR1_52000020_2026.202.10.23.25.584.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T203323-20260720T213323_V01___RPR1_52000021_2026.202.10.23.59.412.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T214323-20260720T224323_V01___RPR1_52000022_2026.202.10.24.33.654.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260720T225323-20260720T235323_V01___RPR1_52000023_2026.202.09.49.28.362.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T000323-20260721T010323_V01___RPR1_52000024_2026.202.09.25.41.423.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T011323-20260721T021323_V01___RPR1_52000025_2026.202.09.26.16.495.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T022323-20260721T032323_V01___RPR1_52000026_2026.202.09.26.50.423.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T033323-20260721T043323_V01___RPR1_52000027_2026.202.09.27.25.470.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T044323-20260721T054323_V01___RPR1_52000028_2026.202.09.27.58.422.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T055323-20260721T065323_V01___RPR1_52000029_2026.202.09.28.34.422.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T070323-20260721T080323_V01___RPR1_5200002A_2026.202.09.29.08.422.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T081323-20260721T091323_V01___RPR1_5200002B_2026.202.09.29.43.430.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T092323-20260721T102323_V01___RPR1_5200002C_2026.202.11.21.15.537.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T103323-20260721T113323_V01___RPR1_5200002D_2026.202.11.49.37.440.cdf',
+                     'JUICE_L1a_RPWI-HF-SID3_20260721T114323-20260721T124323_V01___RPR1_5200002E_2026.202.12.49.18.426.cdf',
                     ]
         """
         """
@@ -277,12 +304,12 @@ def hf_sid3_add(data, data1):
     return data
 
 
-def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
+def hf_sid3_shaping(data, mode_bg, N_ch, mode_comp):
     """
     input:  data
-            cal_mode    [Power]     0: background          1: CAL           2: all
-            N_ch0       [channel]   2: 2-ch    3: 3-ch                   0,>3: any
-            comp_mode   [Complex]   0: Poweer  1: Matrix   3: Matrix-2D    >3: any   
+            mode_bg     [BG/CAL]    0: BG      1: CAL      2: off          >=3: all
+            N_ch0       [channel]   2: 2-ch    3: 3-ch                   0,>=3: any
+            mode_comp   [Complex]   0: Poweer  1: Matrix   3: Matrix-2D    >=3: any   
     return: data
     """
     # Size
@@ -293,34 +320,49 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
     N_ch0 = data.U_selected + data.V_selected + data.W_selected
     print("  org:", data.EuEu.shape, data.n_time, "x", data.n_freq, "[", data.n_time * data.n_freq, "]")
 
-    # Selection: CAL, N_ch, comp_mode
-    if cal_mode < 2 or N_ch < 4 or comp_mode < 4:
-        if cal_mode < 2:
+    # Selection: CAL, N_ch, mode_comp
+    if mode_bg < 3 or N_ch < 4 or mode_comp < 4:
+        if mode_bg < 2:
             if N_ch < 4:
-                if comp_mode < 4:
-                    index = np.where( (data.cal_signal == cal_mode) & (N_ch0 == N_ch) & (comp_mode == data.complex) )
-                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch, " comp_mode:", comp_mode)
+                if mode_comp < 4:
+                    index = np.where( (data.cal_signal == mode_bg) & (N_ch0 == N_ch) & (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch, " mode_comp:", mode_comp)
                 else:
-                    index = np.where( (data.cal_signal == cal_mode) & (N_ch0 == N_ch)                               )
-                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch)
+                    index = np.where( (data.cal_signal == mode_bg) & (N_ch0 == N_ch)                               )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch)
             else:
-                if comp_mode < 4:
-                    index = np.where( (data.cal_signal == cal_mode) &                   (comp_mode == data.complex) )
-                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
+                if mode_comp < 4:
+                    index = np.where( (data.cal_signal == mode_bg) &                   (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
                 else:
-                    index = np.where( (data.cal_signal == cal_mode)                                                 )
-                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode)
+                    index = np.where( (data.cal_signal == mode_bg)                                                 )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg)
+        elif mode_bg == 2:
+            if N_ch < 4:
+                if mode_comp < 4:
+                    index = np.where( ((data.HF_QF & 0x01) == 1) & (N_ch0 == N_ch) & (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch, " mode_comp:", mode_comp)
+                else:
+                    index = np.where( ((data.HF_QF & 0x01) == 1) & (N_ch0 == N_ch)                               )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch)
+            else:
+                if mode_comp < 4:
+                    index = np.where( ((data.HF_QF & 0x01) == 1) &                   (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
+                else:
+                    index = np.where( ((data.HF_QF & 0x01) == 1)                                                 )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg)
         else:
             if N_ch < 4:
-                if comp_mode < 4:
-                    index = np.where(                                 (N_ch0 == N_ch) & (comp_mode == data.complex) )
-                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> N_ch:", N_ch, " comp_mode:", comp_mode)
+                if mode_comp < 4:
+                    index = np.where(                                 (N_ch0 == N_ch) & (mode_comp == data.complex) )
+                    print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> N_ch:", N_ch, " mode_comp:", mode_comp)
                 else:
                     index = np.where(                                 (N_ch0 == N_ch)                               )
                     print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> N_ch:", N_ch)
             else:
-                index     = np.where(                                                   (comp_mode == data.complex) )
-                print(    "  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> comp_mode:", comp_mode)
+                index     = np.where(                                                   (mode_comp == data.complex) )
+                print(    "  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> mode_comp:", mode_comp)
 
         # Data
         data.EuEu        = data.EuEu       [index[0]]; data.EvEv       = data.EvEv      [index[0]]; data.EwEw       = data.EwEw      [index[0]]
@@ -346,20 +388,21 @@ def hf_sid3_shaping(data, cal_mode, N_ch, comp_mode):
         hf_hk.status_shaping(data, index[0])
         
         data.n_time = data.EuEu.shape[0]
-        if cal_mode < 2:
+        if mode_bg < 3:
             if N_ch < 4:
-                if comp_mode < 4: print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch, " comp_mode:", comp_mode)
-                else:             print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " N_ch:", N_ch)
+                if mode_comp < 4: print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch, " mode_comp:", mode_comp)
+                else:             print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " N_ch:", N_ch)
             else:
-                if comp_mode < 4: print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode, " comp_mode:", comp_mode)
-                else:             print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", cal_mode)
-            if   cal_mode == 0:   print("<only BG>")
-            else:                 print("<only CAL>")
+                if mode_comp < 4: print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg, " mode_comp:", mode_comp)
+                else:             print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> cal-mode:", mode_bg)
+            if   mode_bg == 0:    print("<only BG>")
+            elif mode_bg == 1:    print("<only CAL>")
+            else:                 print("<only OFF>")
         else:
             if N_ch < 4:
-                if comp_mode < 4: print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> N_ch:", N_ch, " comp_mode:", comp_mode)
+                if mode_comp < 4: print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> N_ch:", N_ch, " mode_comp:", mode_comp)
                 else:             print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> N_ch:", N_ch)
-            else:                 print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> comp_mode:", comp_mode)
+            else:                 print("  cut:", data.EuEu.shape, data.n_time, "x", data.n_freq, "===> mode_comp:", mode_comp)
 
     # Size
     data.n_time = data.EuEu.shape[0];   data.n_freq = data.EuEu.shape[1]

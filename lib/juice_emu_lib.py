@@ -1,5 +1,5 @@
 """
-    JUICE RPWI HF Emulation and Comparison: L1a for all SIDs -- 2026/7/19
+    JUICE RPWI HF Emulation and Comparison: L1a for all SIDs -- 2026/7/20
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,17 +22,15 @@ def datalist(asw, space, mode_bg):
             cdf_sid2  = data_dir + 'JUICE_L1a_RPWI-HF-SID2_20260716T213019-20260716T213737_V01___RPR1_52000006_2026.197.23.00.12.498.cdf'
             cdf_sid3  = data_dir + 'JUICE_L1a_RPWI-HF-SID3_20260716T213754-20260716T215104_V01___RPR1_52000006_2026.197.23.00.12.498.cdf'
             cdf_sid4  = data_dir + 'JUICE_L1a_RPWI-HF-SID4_20260716T215148-20260716T215217_V01___RPR1_52000006_2026.197.23.00.12.498.cdf'
+            cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20260716T215148-20260716T215217_V01___RPW0_62000005_2026.198.19.00.45.441.cdf'
             cdf_sid5  = data_dir + 'JUICE_L1a_RPWI-HF-SID5_20260716T215226-20260716T215839_V01___RPR1_52000006_2026.197.23.00.12.498.cdf'
+            cdf_sid21 = data_dir + 'JUICE_L1a_RPWI-HF-SID21_20260716T215226-20260716T215839_V01___RPW0_62000005_2026.198.19.00.45.441.cdf'
             # cdf_sid6  = data_dir + ''
             cdf_sid9  = data_dir + 'JUICE_L1a_RPWI-HF-SID9_20260716T215924-20260716T221515_V01___RPR1_52000006_2026.197.23.00.12.498.cdf'
+            cdf_sid22 = data_dir + 'JUICE_L1a_RPWI-HF-SID22_20260716T215924-20260716T221515_V01___RPW0_62000005_2026.198.19.00.45.441.cdf'
             cdf_sid7  = data_dir + 'JUICE_L1a_RPWI-HF-SID7_20260716T220726-20260716T220814_V01___RPR1_52000006_2026.197.23.00.12.498.cdf'
             cdf_sid8  = data_dir + 'JUICE_L1a_RPWI-HF-SID8_20260716T220620-20260716T220708_V01___RPR1_52000006_2026.197.23.00.12.498.cdf'
-            #
-            data_dir = '/Users/D-Univ/data/data-JUICE/datasets/2026/07/16/'      # ASW3 PC4 2026/7/16
-            cdf_sid20 = data_dir + 'JUICE_L1a_RPWI-HF-SID20_20260716T215148_V01.cdf'
-            cdf_sid21 = data_dir + 'JUICE_L1a_RPWI-HF-SID21_20260716T215226_V01.cdf'
-            cdf_sid22 = data_dir + 'JUICE_L1a_RPWI-HF-SID22_20260716T215924_V01.cdf'
-            cdf_sid23 = data_dir + 'JUICE_L1a_RPWI-HF-SID23_20260716T220620_V01.cdf'
+            cdf_sid23 = data_dir + 'JUICE_L1a_RPWI-HF-SID23_20260716T220620-20260716T220814_V01___RPW0_62000005_2026.198.19.00.45.441.cdf'
         else:
             # **************************
             # ASW3      ground - EM3
