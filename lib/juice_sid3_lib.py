@@ -479,4 +479,4 @@ def spec_nan(data, i):
     data.EuEu_raw  [i] = math.nan; data.EvEv_raw  [i] = math.nan; data.EwEw_raw  [i] = math.nan
     data.EuEu_amp  [i] = math.nan; data.EvEv_amp  [i] = math.nan; data.EwEw_amp  [i] = math.nan
 
-    hf_hk.status_nan(data, i, 3)
+    hf_hk.status_nan(data, i)
